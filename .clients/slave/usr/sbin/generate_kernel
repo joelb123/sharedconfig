@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+genkernel --lvm --mdadm --oldconfig --splash=gentoo --symlink --disklabel --install --mountboot --makeopts="-j4" all
+emerge -1 --nodeps nvidia-drivers xf86-video-intel
+grub-mkconfig -o /boot/grub/grub.cfg

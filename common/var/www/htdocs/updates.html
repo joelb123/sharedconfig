@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Updating your Gentoo System</title>
+</head>
+<body>
+<h2 style="text-align: center;"><span style="font-weight: bold;">How to
+keep your Gentoo system up to date</span></h2>
+<span style="font-weight: bold;">One-line summary: do <code>glcu
+/tmp/glcuNNN</code></span><br>
+<br>
+When installed, this system was as up-to-date as possible.&nbsp; It is
+up to you to decide whether to update it as a regular chore or to
+merely update things if you actually need a new feature.&nbsp; If you
+do decide to do an update, this page will help you do it easily.&nbsp; <br>
+<br>
+First, the most complete documentation is on the web at <a
+ href="http://www.gentoo.org.">the Gentoo home page</a>.&nbsp; You can
+usually find what you need in the <a href="http://forums.gentoo.org">forums</a>
+or <a href="http://bugs.gentoo.org">bugs</a> areas.&nbsp; This is a
+short summary of system management chores for the busy.<br>
+<br>
+The most important system management chore is to log into the root
+account from time to time and read any e-mail messages that may have
+accumulated there. <br>
+<br>
+The system that keeps track of available and installed software is
+called portage.&nbsp; The database of packages may be kept current by
+executing the command <code>emerge sync</code>.&nbsp; <br>
+<br>
+If you wish to see what packages are less up-to-date than portage
+thinks they should be, you should issue the command <code>emerge -upDv
+world</code>.&nbsp; This command does nothing except show you a list of
+packages it will build, and as such it is always safe to
+do.&nbsp;&nbsp; If you wish the list of packages to actually be build,
+issue the same command without the "p" (pretend) option and it will
+build. <br>
+<br>
+Once you have done updates in the manner, there may be some
+configuration files left in /etc that need to be merged.&nbsp; The best
+utility for doing this is <code>dispatch-conf</code>.&nbsp; When it is
+run, it will look through the new config files, automatically merging
+trivial changes and saving old version to an archive if you need to
+retrieve it later.&nbsp; You will generally want to answer "u" (use new
+file) for items in /etc/init.d/, "z" (zap) for files in /etc/conf.d/,
+and use your judgement for everything else.&nbsp; If you fail to make
+these changes after an update, you may find that the system is no
+longer bootable.&nbsp; <br>
+<br>
+Sometimes updating one package will break another through
+dependencies.&nbsp; To fix these problem, you can issue the command <code>revdep-rebuild</code>,
+which causes each library dependency in installed executables to be
+checked and rebuilds issued if needed.&nbsp; <br>
+<br>
+I have installed a software package called glcu makes all of the steps
+above semi-automatic.&nbsp; Every sunday night, glcu will sync the
+database, prebuild any packages with updates, and sent an e-mail to
+root with the results and instructions on how to install the prebuilt
+packages (through the command<code> </code><acronym><code>glcu
+/tmp/glcuNNNN</code>).&nbsp; When this command is issued, glcu will
+also fire off the dispatch-conf and revdep-rebuild packages for you to
+make things as easy as possible.&nbsp; <br>
+<br>
+There are also a small number of packages that were installed by hand
+as they are not in the Gentoo system as yet.&nbsp; These packages may
+be found in /root/packages/.&nbsp; The most important is VMD.<br>
+<br>
+</acronym>
+</body>
+</html>

@@ -1,0 +1,124 @@
+Kernels in this setup are designed to be shared across all computers
+with this architecture and CPU.  The kernel therefore needs to be
+inclusive rather than inclusive.  The choice was made to generate
+desktop rather than server configurations.
+
+Use the command "generate_kernel" to issue the build command.  On
+client machines this will complete automatically.  On CPU servers
+the choices for the architecture need to be defined.
+
+The following non-default choices in the kernel configuration menu
+have been made as of kernel version 5.9.9:
+
+N marks additions for AMD processors
+
+General setup  --->  
+      -*- Control Group support  --->
+         [*] PIDs controllerd
+         [*]  HugeTLB controller
+
+Processor type and features  --->
+  [*] x86 CPU resource control support
+  [ ] Support for extended (non-PC) x86 platforms
+  [*] Linux guest support -->
+     [*] Enable paravirtualization code
+     [*] Paravirtualization layer for spinlocks
+     [*] Support for runnings PVH guests
+     [*] Paravirtual steal time accounting
+N   Processor family (Core 2/Newer Xeon)  ---> 
+N  [*]  Supported processor vendors  --->
+N     [ ]   Support Hygon processors 
+N     [ ]   Support Centaur processors
+  [*]   Support for deprecated dev/mcelog character device
+N  [ ]   AMD MCE features
+N  [ ] AMD microcode loading support
+  [*] Numa Memory Allocation and Scheduler Support
+iN  [ ] Old style AMD Opteron NUMA detection
+  [*] Intel MPX (Memory Protection Extensions)
+
+Power management and ACPI options  ---> 
+  [ ] Suspend to RAM and standby
+  [ ] Hibernation (aka 'suspend to disk')
+  [*] Energy model for CPUs
+  CPU Frequency scaling  --->
+      <M>   'powersave' governor
+      <M>   'userspace' governor for userspace frequency scaling 
+      <M>   'ondemand' cpufreq policy governor
+      <M>   'conservative' cpufreq governor
+      [*]   'schedutil' cpufreq policy governor
+	     *** CPU frequency scaling drivers ***
+      <M>   ACPI Processor P-States driver
+
+Firmware Drivers  --->
+   <*> BIOS Enhanced Disk Drive calls determine boot disk
+       EFI (Extensible Firmware Interface) Support  --->
+          <M> EFI Variable Support via sysfs
+
+[*] Virtualization  -->
+  < >    KVM for AMD processors support
+
+IO Schedulers  -->
+  <*> BFQ I/O scheduler
+  [*]   BFQ hierarchical scheduling support
+
+Memory Management Options  --->
+  [*] Transparent Hugepage Support
+         Transparent Hugepage Support sysfs defaults (always)  --->   
+            (X) madvise
+  [*] Enable cleancache driver to cache clean pages if tmem is present
+  [*] Enable frontswap to cache swap pages if tmem is present
+  [*] Continguous Memory Allocator
+  [*] Compressed cache for swap pages (EXPERIMENTAL)
+  <M> Low (Up to 2x) density storage for compressed pages
+  <M> Up to 3x density storage for compressed pages
+  <M> Memory allocator for compressed pages
+
+[*]  Networking support  --->
+   Networking options  --->
+      [*] Network packet filtering framework (Netfilter)  --->
+         IP: Netfilter Configuration  --->
+	    <M>    iptables NAT support
+	    <M>    MASQUERADE target support
+      [*] L3 Master device support    
+      [*] Network priority cgroup
+
+Device Drivers  ---> 
+   -*- Network device support   --->
+     <M>  IP-VLAN support 
+     <M>    IP-VLAN based tap driver 
+   Character devices  ---> 
+        [*] HPET - High Precision Event Timer
+   Graphics support  ---> 
+        [ ]   Bootup logo ----
+   <M>  Sound card support --->
+     <M> Advanced Linux Sound Architecture  --->
+     (2048) Pre-allocated buffer size for HD-audio driver
+   [ ] Staging drivers  ----
+   [*] Generic Dynamic Voltage and Frequency Scaling (DVFS) support  --->
+          [M]   Simple Ondemand
+          [M]   Performance
+          [M]   Powersave
+          [M]   Userspace
+          [M]   Passive
+          [*]   DEVFREQ-Event device support
+   [*] Generic powercap sysfs driver  --->
+      <M>   Intel RAPL Support
+
+File systems  --->
+N  <*> Second extended fs support
+N  <*> The Extended 4 (ext4) filesystem
+   <*>  F2FS filesystem support
+   [ ]   Print quota warnings to console (OBSOLETE)
+   <*> Overlay filesystem support
+       DOS/FAT/NT Filesystems  --->
+           [*]   NTFS write support
+       [*] Network File Systems  --->
+	    [*]     NFS client support for NFSv4.2 (NEW)
+
+-*- Cryptographic API  --->
+   <M>   Diffie-Hellman algorithm
+
+Kernel hacking  --->
+   [ ] Kernel debugging
+   [ ] Tracers  ---> 
+   [ ] Enable verbose x86 bootup info messages

@@ -1,0 +1,8 @@
+# /etc/conf.d/ntp-client
+rc_use="dns"
+NTPCLIENT_CMD="ntpdate"
+
+NTPCLIENT_OPTS="-s -b -u \
+	72.5.72.15 23.31.21.164 \
+	50.205.244.39 97.107.128.165"
+

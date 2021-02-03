@@ -1,0 +1,12 @@
+#/bin/bash
+dirlist="/usr /etc /var /opt /lib64"
+for dirname in $dirlist
+do
+  echo "Checking for broken links in $dirname"
+  for brokenlink in `find -L $dirname -type l`
+  do
+    echo "   removing $brokenlink"
+    rm -f "${brokenlink}"
+  done
+done
+

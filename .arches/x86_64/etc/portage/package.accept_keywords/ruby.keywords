@@ -1,0 +1,9 @@
+dev-ruby/minitest
+dev-ruby/rake
+dev-ruby/rubygems
+dev-ruby/test-unit
+dev-ruby/power_assert
+dev-ruby/did_you_mean
+dev-ruby/json
+dev-ruby/racc
+dev-ruby/rdoc

@@ -1,0 +1,10 @@
+# Treedyn Preferences
+set S(ltoolboxusername) {}
+set S(toolboxType)  all
+set S(Preference_display_eu) 1
+set S(Preference_fgc) black
+set S(Preference_mainXY) +155+124
+set S(ImportDIR) /
+set S(userDIR) /
+set S(Preference_display_eu) 1
+set S(Preference_fgc) black

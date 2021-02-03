@@ -1,0 +1,284 @@
+#!/usr/bin/perl -s
+#!/usr/local/bin/perl -s
+
+#  The -s option above causes perl to look for options from the command line.
+
+&PrintUsage unless($ARGV[0]);
+
+use warnings;
+use Digest::MD5 qw(md5_hex);	# for making hex numbers
+
+my $CleanSeqs = "true";
+my $ElimSubSequences = "true";
+my $UppercaseLetters = "true";
+
+# By default all eXtraneous characters like gaps, *, will be removed
+# The -x option preserves them.
+if($x){
+	$CleanSeqs = "false";
+}
+$x = "";
+
+# By default all Sub Sequences, i.e., those contained in a longer
+# sequence will be removed
+# The -s option preserves them.
+if($s){
+	$ElimSubSequences = "false";
+}
+$s = "";
+
+# By default all Lowercase Letters will be made uppercase.
+# The -l option preserves them.
+if($l){
+	$UppercaseLetters = "false";
+}
+$l = "";
+
+print "Options used:
+Remove extraneous characters from sequences: $CleanSeqs
+Make all letters uppercase: $UppercaseLetters
+Consider subsequences as duplicates: $ElimSubSequences\n\n";
+
+use strict;	# strict must follow processing of optional args under the -s option
+
+my($InFile, $dir, $return, @InputSeqs, $line, $name, $seq, %SeqsToNames, @seqs, %NamesOfDupes);
+my($UniqueSeq, $i, $InputFormat, $DupeString, $NumDupes);
+
+
+$dir = &MakeTmpDir("ELIMDUPES");
+
+
+# copy user's file to the tmp directory
+open (INPUT, "<$ARGV[0]") or die ("Could not open $ARGV[0]");
+open (OUTPUT, ">$dir/infile") or die ("Could not open $dir/infile for output");
+while(<INPUT>){
+	print OUTPUT;
+}
+close INPUT;
+close OUTPUT;
+
+# convert user's input file to tbl format
+$return = `/usr/local/bin/cf -s $dir/infile`;
+if($return =~ /Error:/){
+	&PrintError("An error occurred in converting your query to table format.\n$return");
+}
+
+# Running cf with the -s option (show format) produces output like
+# Input file: hiv-db.fasta
+# Input format: Fasta
+# Output format: tbl
+#
+# B.US.97.ARES2   ATGGGTGCGA ...etc
+
+# Remove the first 4 lines and extract the format using regex with -s option
+$return =~ s/.+Input format: (\w+).+\n\n//s;	# remove everything up to and incl the blank line
+$InputFormat = $1;	# will be used later to write result files in user's format
+
+@InputSeqs = split(/\n/, $return);	# convert the return from cf into a list of seqs
+
+#  Look at first line of table formatted input list
+$line = $InputSeqs[0];
+($name, $seq) = split(/\t/, $line);
+
+if($CleanSeqs eq "true"){
+	$seq =~ s/[^a-zA-Z]//g;		# remove all non letters
+}
+if($UppercaseLetters eq "true"){
+	$seq = uc($seq);			# make all uppercase
+}
+$InputSeqs[0] = "$name\t$seq";	# save changes to seq
+
+# Make the first entry in a hash that relates sequence to name  ACTGCCGAAT -> AY065743
+$SeqsToNames{$seq} = $name;
+
+#  Now process rest of sequence list
+#  Split each seq into name and sequence
+OUTER: for($i = 1; $i <= $#InputSeqs; $i++){
+	$line = $InputSeqs[$i];
+	($name, $seq) = split(/\t/, $line);
+	if($CleanSeqs eq "true"){
+		$seq =~ s/[^a-zA-Z]//g;		# remove all non letters
+	}
+	if($UppercaseLetters eq "true"){
+		$seq = uc($seq);			# make all uppercase
+	}
+	$InputSeqs[$i] = "$name\t$seq";	# save changes to seq
+	
+	# Build hash that relates sequence to name  ACTGCCGAAT -> AY065743
+	if($SeqsToNames{$seq}){			# have we seen this EXACT seq before?
+		# A second hash relates the name associated with the first sequence to all the names
+		# whose sequences are a duplicate of that sequence.
+		$NamesOfDupes{$SeqsToNames{$seq}} .= "$name\007";
+		next OUTER;
+	}
+	# Treat possibility that one seq contains the other, in which case the
+	# contained seq is eliminated, but its name is retained in a NamesOfDupes hash
+	if($ElimSubSequences eq "true"){
+		foreach $UniqueSeq(keys(%SeqsToNames)){	# this gets each unique sequence stored in the hash
+			if($UniqueSeq =~ $seq){				# is seq contained by a preexisting seq?
+				$NamesOfDupes{$SeqsToNames{$UniqueSeq}} .= "$name\007";	# keep track of the name of the eliminated seq
+				next OUTER;
+			}
+			elsif($seq =~ $UniqueSeq){			# is seq contained by a preexisting seq?
+				$SeqsToNames{$seq} = $name;
+				$NamesOfDupes{$SeqsToNames{$seq}} .= "$SeqsToNames{$UniqueSeq}\007";	# keep track of the name of the eliminated seq
+				if($NamesOfDupes{$SeqsToNames{$UniqueSeq}}){	# if the duplicate seq itself contained other seqs, then capture their names
+					$NamesOfDupes{$SeqsToNames{$seq}} .= "$NamesOfDupes{$SeqsToNames{$UniqueSeq}}";
+				}
+				delete($SeqsToNames{$UniqueSeq});	# remove the previously unique seq from the hash
+				next OUTER;
+			}
+		}
+		$SeqsToNames{$seq} = $name;
+	}
+	else{
+		$SeqsToNames{$seq} = $name;
+	}		
+}
+
+# Print a summary of results 
+print "-----------------------------------------------------------------------------\n";
+print "Unique seqs       Num Dupes  Duplicate seqs\n";
+print "-----------------------------------------------------------------------------\n";
+
+while(($seq, $name) = each(%SeqsToNames)){
+	$NumDupes = "";
+	if($NamesOfDupes{$name}){
+		$DupeString = $NamesOfDupes{$name};
+		$NumDupes = $DupeString =~ s/\007/, /g;
+#print "$NumDupes\n";
+		$DupeString =~ s/, $//;
+		write;	# write $name and $DupeString using format STDOUT
+	}
+	else{
+		$DupeString = "";
+		write;
+	}
+}
+print "-----------------------------------------------------------------------------\n";
+
+
+# Write a file of unique sequences and a file of eliminated seqs both in tbl format
+open(UNIQUE, ">$dir/unique") or die("I can't open $dir/unique for writing.");
+open(DUPES, ">$dir/dupes") or die("I can't open $dir/dupes for writing.");
+
+my $SeqCount = 0;
+my $DupeSeqCount = 0;
+foreach $line(@InputSeqs){
+	($name, $seq) = split(/\t/, $line);
+	if(defined($SeqsToNames{$seq})){
+		if($SeqsToNames{$seq} eq $name){	# Is this seq in the hash of unique seqs
+			print UNIQUE "$name\t$seq\n";	# write it to the UNIQUE file
+			$SeqCount++;
+			# If the original input file contained >1 copy of the same name and sequence
+			# all copies would be written (duplicated) into the UNIQUE output file. To prevent
+			# this we delete the name and seq from the hash after it has been written.
+			delete($SeqsToNames{$seq});	
+		}
+	}
+	else{	# Not in unique hash, so seq was eliminated
+		print DUPES "$name\t$seq\n";
+		$DupeSeqCount++;
+	}
+}
+print "Total unique seqs = $SeqCount\n";
+print "Total duplicate seqs = $DupeSeqCount\n";
+
+`/usr/local/bin/cf -f=Table $dir/unique $InputFormat > $dir/unique.$InputFormat`;
+print "Wrote unique seqs to file $dir/unique.$InputFormat\n";
+`/usr/local/bin/cf -f=Table $dir/dupes $InputFormat > $dir/dupes.$InputFormat`;
+print "Wrote duplicate seqs to file $dir/dupes.$InputFormat\n";
+
+
+
+#############################  FORMAT  #########################################
+format STDOUT =
+@<<<<<<<<<<<<<<<<<<<<< @>>>  ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+$name,           $NumDupes,  $DupeString
+~~                           ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                             $DupeString
+.
+
+##############################   SUBS  ##########################################
+sub PrintUsage{
+	print "\n\n
+Usage: elimdupes [options] filename\n
+Options:  All options preserve something about the sequences that 
+          otherwise will be removed by default.
+         -x  eXtraneous character preserve. By default all non-letter characters 
+             such as gaps, *, \$, etc. are removed. The -x option preserves these
+             characters so they will be used in comparing sequences.
+         -s  Sub Sequence preserve. If one sequence is ACTG and another sequence
+             is CT, the CT seq will be removed. The -c option causes it to be
+             preserved because the whole sequence, CT is different from the
+             whole sequence ACTG.
+         -l  Lowercase Letters preserve. By default sequences are changed to
+             uppercase. The -l option prevents this from happening.
+             
+Examples: given the following input (file),
+seq1   ABCDE
+seq2   CDEFG
+seq3   A--B
+seq4   abc
+seq5   DEF
+seq6   ABCDeF
+seq7   CDEFG
+--------------------
+elimdupes file     (all defaults) produces the result
+seq6 -> ABCDEF dupes: seq1      seq3    seq4
+seq2 -> CDEFG  dupes: seq5      seq7
+
+elimdupes -x file  (preserve eXtraneous chars)
+seq6 -> ABCDEF dupes: seq1      seq4
+seq2 -> CDEFG  dupes: seq5      seq7
+seq3 -> A--B
+
+elimdupes -s file  (preserve Sub Sequences)
+seq6 -> ABCDEF
+seq4 -> ABC
+seq2 -> CDEFG dupes: seq7
+seq5 -> DEF
+seq3 -> AB
+seq1 -> ABCDE
+
+elimdupes -l file  (preserve Lowercase Letters)
+seq6 -> ABCDeF
+seq2 -> CDEFG dupes: seq5       seq7
+seq4 -> abc
+seq1 -> ABCDE dupes: seq3
+";
+exit;
+}
+
+sub MakeTmpDir{
+#  Makes a directory /tmp/name/id  e.g. /tmp/QUICK/98a768
+#  The name is the arg to this sub, the id is a random hex number
+	my($name) = shift;
+	my($id) = "";
+	unless($name =~ /\w+/){	# In case user forgot to specify a name
+		print "Error: You forgot to give me a name for your tmp directory.";
+	}
+	unless(-e "/tmp/$name"){
+		unless(mkdir("/tmp/$name",0777)){
+			print "Error: I can't create directory /tmp/$name";
+		}
+	}
+	#  Inside the /tmp/$name directory will be randomly numbered directories, one for each job
+	$id = &get_id();	# get a random number
+
+	$dir = "/tmp/$name/$id";
+	unless(mkdir("$dir",0777)){
+		print "Error: I can't create directory $dir";
+	}
+	return($dir);
+}
+
+sub get_id {
+#  Returns a random hex number
+	my ($id);
+	$id = rand();
+	($id) = ($id =~ /\.(.*)/);
+	$id = md5_hex($id);
+	$id = substr($id, 0, 6);
+	return $id;
+}

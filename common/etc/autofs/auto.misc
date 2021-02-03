@@ -1,0 +1,7 @@
+#
+# This is an automounter map and it has the following format
+# key [ -mount-options-separated-by-comma ] location
+# Details may be found in the autofs(5) manpage
+generis		-rw,soft,intr		ix4-300d:/nfs/GenerisBio
+media		-rw,soft,intr		ix4-300d:/nfs/Media
+devel		-rw,soft,intr		ix4-300d:/nfs/development

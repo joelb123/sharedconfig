@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+#binutils-config --linker ld.bfd # kernel building needs bfd linker
+#genkernel --mdadm --microcode-initramfs all
+#binutils-config --linker ld.gold
+eselect kernel list
+emerge -1 @x11-module-rebuild
+grub-mkconfig -o /boot/grub/grub.cfg

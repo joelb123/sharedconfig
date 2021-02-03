@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+#  rebuild all packages depending on the package specified by the argument
+#
+#  Examples:
+#     update_dependent_packages xorg_server
+#        --JB 1 Sept 10
+pkglist=""
+for i in `equery depends $1`
+do
+   pkglist="$pkglist =${i}"
+done
+emerge --nodeps -1 $pkglist

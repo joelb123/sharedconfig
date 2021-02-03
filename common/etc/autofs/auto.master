@@ -1,0 +1,3 @@
+# Sample auto.master file
+/misc	/etc/autofs/auto.misc
+/net	/etc/autofs/auto.net

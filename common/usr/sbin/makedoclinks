@@ -1,0 +1,16 @@
+#!/bin/bash
+websvrdocdir="/var/www/localhost/htdocs/doc/"
+rm -rf $websvrdocdir
+mkdir -p $websvrdocdir
+for i in `find /usr/share/doc -name html`
+do
+  partname="${i##/usr/share/doc/}"
+  pkg_ver_rel="${partname%%/*}"
+  pkg_ver="${pkg_ver_rel%-r*}"
+  pkgname="${pkg_ver%-*}"
+  htmldir="${partname##*/}"
+  outdir="${websvrdocdir}/${pkgname}"
+  if [[ ! -e ${outdir} ]] ; then # some have html/html
+     ln -s "${i}" "${outdir}"
+  fi
+done

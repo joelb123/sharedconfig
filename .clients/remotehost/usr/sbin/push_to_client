@@ -1,0 +1,7 @@
+#!/bin/bash
+accessfile="/usr/portage/local/rsyncuser/client-rsync-key"
+excludefile="/usr/portage/local/arch/cpu/rsync_excludes.client.push"
+pushhost=${1}
+echo "pushing portage tree to client $pushhost"
+cd /usr/portage; rsync -avz --delete --bwlimit=1000 --exclude-from=${excludefile} \
+   -e "ssh -i $accessfile" .  $pushhost:/usr/portage/

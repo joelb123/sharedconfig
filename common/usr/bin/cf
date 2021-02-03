@@ -1,0 +1,4035 @@
+#!/usr/bin/perl -s
+
+#  Conceived and written by Chuck Calef, Old Iron Ass Software, 
+#  for the HIV database and Analysis Group;
+#  -p option and Subroutines for MacVector format
+#  and for enforcing unique names by Will Fischer;
+#  "-" file option for piping STDIN to cf by Werner Abfalterer;
+#  Funding for the project was provided by the NIH/NIAID. 
+
+=head1
+This software has been authored by an employee or employees of 
+Los Alamos National Security, LLC, operator of the Los Alamos 
+National Laboratory (LANL) under Contract No. DE-AC52-06NA25396 
+with the U.S. Department of Energy.  The U.S. Government has 
+rights to use, reproduce, and distribute this software.  The 
+public may copy, distribute, prepare derivative works and publicly 
+display this software without charge, provided that this Notice 
+and any statement of authorship are reproduced on all copies.  
+Neither the Government nor LANS makes any warranty, express or 
+implied, or assumes any liability or responsibility for the use 
+of this software.  If software is modified to produce derivative 
+works, such modified software should be clearly marked, so as 
+not to confuse it with the version available from LANL.
+=cut
+
+#  This program takes as input a file containing sequences in an unspecified format
+#  and converts those sequences to a different user-specified format and writes them
+#  to standard out. If no format is specified the output is in table format.
+#  The input should have unix end-of-line characters.
+#
+#  Usage examples: 
+#    cf infile outformat
+#       will write the results to standard out in "outformat" format
+#    cf infile outformat > outfile
+#       will write the results to file "outfile" in "outformat" format
+#    cf infile
+#       will write the results to standard out in "table" format
+#
+#  The program is done in three main steps.
+#  
+#  1. The input sequence is examined and its format determined logically.
+#  
+#  2. The names and sequences are parsed from this format and stored in arrays
+#     @names and @seqs which are returned to main as references $NamesRef, $SeqsRef.
+#  
+#  3. The names and seqs are then printed out in the appropriate format.
+
+######################
+#        DATA        #
+######################
+my($SplitLineLength, $SplitPrint, $ShowFormats, $InFormat, $NoConversion, $BlockWidth, $NumBlocks);
+
+#  Program takes 7 optional args -w -b -l -s -n -f -p
+#  -w means print wide output whole seq on one line if feasible
+#  -b means for pretty print option only, width of blocks of chars (default 10 chars/block)
+#  -l means for pretty print option only, number of blocks per line (default 5 blocks/line)
+#  -s means show the input and output formats and infile name at top of output
+#  -n means no file conversion, just identify the input format as one word
+#  -f means the infile is of the specified format.
+#     Note the in format must be exact: e.g., -f=Fasta, not fasta or fas
+#     (see subroutine "ReadAndStoreInput" for proper names.)
+#  -p means reading from stdin (via '<' or '|'; mnemonic: "p" for "pipe")
+#
+#  By using the -s option on the /usr/bin/perl line above, these
+#  options when specified, become the value of variables $w $s and $f etc.
+
+if($w){	# if wide output asked for
+	$SplitLineLength = 32766;	# this is the max size perl can use in regex quantifier {1,32766}
+	$SplitPrint = 0;
+}
+else{
+	$SplitLineLength = 50;
+	$SplitPrint = 1;
+}
+
+my $gap_char = '-';
+$BlockWidth = $b if($b);	# only meaningful if oal or pretty print formats
+$NumBlocks = $l if($l);
+$ShowFormats = 1 if($s);
+$NoConversion = 1 if($n);
+$InFormat = $f if($f);		# if format of input file was specified by user;
+
+unshift @ARGV,'-' if($p); 	# read from standard input;
+
+&PrintUsage unless(@ARGV);
+
+
+my $InFileName = $ARGV[0];
+my $OutFormat  = $ARGV[1]; 
+
+$OutFormat = "tbl" unless $OutFormat;		# if no output format specified then choose tbl
+
+use strict;
+
+#  Certain output formats are not allowed
+if($OutFormat =~ /embl|genbank|gb|mac|blas/i){
+	print "Error: Sorry I can't convert to your designated output: $OutFormat.\n";
+	exit;
+}
+
+
+
+##########################
+#  READ/STORE INPUT FILE #
+##########################
+
+#  Do file checks on the input file, then read it in and
+#  store as a list called @InputLines. @InputLines is  
+#  passed as a reference to all subroutines.
+
+my($InputLinesRef) = &FileToLines($InFileName);	# get a reference to the input array
+die("cf: no input\n") if (scalar @$InputLinesRef == 0);
+
+######################
+#       PART 1       #
+######################
+
+unless($InFormat){
+	$InFormat = &DetermineFormat($InputLinesRef);
+}
+
+if($NoConversion){
+	print "$InFormat\n";
+	exit;
+}
+
+if($InFormat eq "Binary"){
+	print "Error: Your input file contains a number of \"funny\" characters.\nI'm guessing it may be an MS Word file.\n";
+	exit;
+}
+
+if($ShowFormats){
+	print "   Input file: $InFileName\n";
+	print " Input format: $InFormat\n";
+	print "Output format: $OutFormat\n\n";
+}
+
+
+######################
+#       PART 2       #
+######################
+
+my($NamesRef, $SeqsRef) = &ReadAndStoreInput($InFormat, $InputLinesRef);
+
+
+######################
+#       PART 3       #
+######################
+
+my($OutputLinesRef) = &PrintOutput($OutFormat, $SplitPrint, $SplitLineLength, $BlockWidth, $NumBlocks, $NamesRef, $SeqsRef);
+
+foreach(@$OutputLinesRef){
+	print "$_";
+}
+
+
+
+######################
+#    SUBROUTINES     #
+######################
+
+sub PrintUsage{
+	print "\n\n
+Usage:  cf [options] infilename outformat
+where infilename is the name of the file whose format is to be converted and
+outformat is the name of the format to be output. Outformats are not case
+sensitive and usually several different forms are acceptable, e.g.
+fasta or fas. The default outformat is table.
+Options:
+  -w means print wide output whole seq on one line if feasible
+  -b means for pretty print option only, width of blocks of chars (default 10 chars/block)
+  -l means for pretty print option only, number of blocks per line (default 5 blocks/line)
+  -s means show the input and output formats and infile name at top of output
+  -n means no file conversion, just identify the input format as one word
+  -f means the infile is of the specified format.
+     Note the in format must be exact: e.g., -f=Fasta, not fasta or fas
+     (see subroutine \"ReadAndStoreInput\" for proper names.)
+  -p means reading from stdin (via \'<\' or \'|\'; mnemonic: \"p\" for \"pipe\")
+
+Examples:
+    cf infile outformat
+       will write the results to standard out in \"outformat\" format
+    cf infile outformat > outfile
+       will write the results to file \"outfile\" in \"outformat\" format
+    cf -f=Fasta infile outformat > outfile
+       will change a known Fasta file to \"outformat\" format and write the results to outfile
+    cf -n infile
+       will identify the format of the infile but will do no format conversion
+    cf infile
+       will write the results to standard out in table format
+
+List of recognized input formats:
+      Clustal    EMBL
+      Fasta      GCG
+      GDE        GDEFlat
+      GenBank    Mase
+      MEGAi      MEGAs
+      MSF        NEXUSi
+      NEXUSs     Phylipi
+      Phylips    PIR
+      RSF        SLX
+      Raw        Stockholm
+      Table
+\n";
+exit;
+}
+
+sub FileToLines{
+	use strict;
+	my($InFileName) = $_[0];
+	my($InputString, $EOLchars, @InputLines);
+	
+	# cf may be optionally called like this:
+		# open(OUTPUT, "| cf - $format");   # note the "-" char will be interpreted as input from STDIN
+		# print OUTPUT "$name\t$seq\n";
+	# i.e., its input is being piped in from STDIN rather than a file
+	if ($InFileName eq '-') {   # note the "-" char means input from STDIN
+		while(<STDIN>){
+			$InputString .= $_;
+		}
+	}
+	else {
+		# Do some file checks
+		unless(-e $InFileName){	# does infile exist?
+			print "Error: I can't find the input file $InFileName.\n";
+			exit;
+		}
+		if(-z $InFileName){	# if file is zero size
+			print "Error: Your file $InFileName contains no data.\n";
+			exit;
+		}
+		
+		unless(open (INPUT, "<$InFileName")){
+			print "Error: I can't open file $InFileName.\n";
+			exit;
+		}
+		#  If the input file has mac EOL chars it will appear as one long string
+		#  So we save input as a string and then convert the EOLs to unix EOLs
+		while(<INPUT>){
+			$InputString .= $_;
+		}
+		close(INPUT);
+	}
+	
+	#  Convert the EOLS from input to \n
+	($EOLchars, $InputString) = &ConvertEOLs($InputString);
+	
+	#  Now take apart the string and save as a list of lines
+	@InputLines = split(/\n/, $InputString);
+
+	while(@InputLines){	#  Remove blanks lines from beginning of array
+		$_ = shift(@InputLines);
+		if(/^\s*$/){
+			next;
+		}
+		else{
+			unshift(@InputLines, $_);
+			last;
+		}
+	}
+	return(\@InputLines);	# return a reference to the input array
+}
+
+sub ConvertEOLs{
+	# Given a string which contains unidentified end of line
+	# characters, this sub identifies the EOL type(s) and converts
+	# all EOLs to unix \n .
+	# This version of sub recognizes there may be a mixture of EOL types
+	# but identifies the preponderant EOL type and saves that as $EOLchars.
+	# Returns the string with all unix EOLs, and the $EOLchars.
+	my($str) = $_[0];
+	my($EOLchars);
+	my ($RNcount) = 0;	# dos \r\n EOLs
+	my ($Rcount)  = 0;	# mac \r   EOLs
+	my ($Ncount)  = 0;	# unix \n  EOLs
+
+	$RNcount = $str =~ s/\r\n/\n/g;
+	$Rcount = $str =~ s/\r/\n/g;
+	$Ncount = $str =~ s/\n/\n/g;	# count the total number of EOLs (now all are \n)
+
+	# Now identify the preponderant EOL type
+	if($Ncount == 0){	# there were no EOLs in the user's input
+		$EOLchars = "\n";
+	}
+	elsif(($Ncount - $RNcount)/$Ncount < .5){	# more than half are dos
+		$EOLchars = "\r\n";						# use dos
+	}
+	elsif(($Ncount - $Rcount)/$Ncount < .5){	# more than half are mac
+		$EOLchars = "\r";
+	}
+	else{
+		$EOLchars = "\n";
+	}
+	return($EOLchars, $str)
+}
+
+###########################################
+#     SUBROUTINES TO RECOGNIZE FORMATS    #
+###########################################
+
+sub DetermineFormat{
+	use strict;
+	my($Format) = '';
+
+	if(&ItsNEXUSi($_[0])){
+		$Format = "NEXUSi";
+	}
+	elsif(&ItsNEXUSs($_[0])){
+		$Format = "NEXUSs";
+	}
+	elsif(&ItsMEGAs($_[0])){
+		$Format = "MEGAs";
+	}
+	elsif(&ItsMEGAi($_[0])){
+		$Format = "MEGAi";
+	}
+	elsif(&ItsStockholm($_[0])){
+		$Format = "Stockholm";
+	}
+	elsif(&ItsMacVector($_[0])){
+		$Format = "MacVector";
+	}	
+	elsif(&ItsBinary($_[0])){
+		$Format = "Binary";
+	}
+	elsif(&ItsClustal($_[0])){
+		$Format = "Clustal";
+	}
+	elsif(&ItsRIP($_[0])){
+		$Format = "RIP";
+	}
+	elsif(&ItsBLAST($_[0])){
+		$Format = "BLAST";
+	}
+	elsif(&ItsRSF($_[0])){
+		$Format = "RSF";
+	}
+	elsif(&ItsGenBank($_[0])){
+		$Format = "GenBank";
+	}
+	elsif(&ItsGenBankRaw($_[0])){
+		$Format = "GenBankRaw";
+	}
+	elsif(&ItsEMBL($_[0])){
+		$Format = "EMBL";
+	}
+	elsif(&ItsPhylips($_[0])){
+		$Format = "Phylips";
+	}
+	elsif(&ItsPhylipi($_[0])){
+		$Format = "Phylipi";
+	}
+	elsif(&ItsPIR($_[0])){
+		$Format = "PIR";
+	}
+	elsif(&ItsMase($_[0])){
+		$Format = "Mase";
+	}
+	elsif(&ItsMSF($_[0])){
+		$Format = "MSF";
+	}
+	elsif(&ItsGCG($_[0])){
+		$Format = "GCG";
+	}
+	elsif(&ItsGDE($_[0])){
+		$Format = "GDE";
+	}
+	elsif(&ItsTable($_[0])){
+		$Format = "Table";
+	}
+	elsif(&ItsFasta($_[0])){
+		$Format = "Fasta";
+	}
+	elsif(&ItsGDEFlat($_[0])){
+		$Format = "GDEFlat";
+	}
+	elsif(&ItsPretty($_[0])){
+		$Format = "Pretty";
+	}
+	elsif(&ItsRaw($_[0])){
+		$Format = "Raw";
+	}
+	elsif(&ItsSLX($_[0])){
+		$Format = "SLX";
+	}
+	else{
+		print "Error: I don't recognize your file's format.\n";
+		#print "Read my rules for file formats here,\n";
+		#print "see if your file obeys those rules and resubmit it.\n";
+		exit;
+	}
+	return($Format);
+}
+
+sub ItsEMBL{
+# Look at lines of input and see if they
+# contain the required two beginning code letters
+# followed by 3 blanks
+# ID
+# AC
+# DE
+# SQ
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	my($i, $count);
+	for($i = 0; $i<= $#$InputLinesRef; $i++){
+		$_ = $InputLinesRef -> [$i];
+		next if(/^\s*$/);
+		if(/^\s*(ID|AC|DE|SQ|DT|KW|OS|RN)   /){
+			$count++;
+			if ($count > 3){
+				return(1);
+			}
+		}
+	}
+	return(0);
+}
+
+sub ItsGenBank{
+	# In the first 200 lines of input
+	# look for GenBank keywords like
+	# DEFINITION, ACCESSION, KEYWORDS, etc.,
+	# and create a hash whose key is the keyword.
+	# Count the number of keys in the hash which
+	# is the number of keywords seen. If > 3 this
+	# is a GenBank file.
+
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	my($i, $keyword, %found, $NumKeywords);
+	for($i = 0; $i<= 200; $i++){
+		$_ = $InputLinesRef -> [$i];
+		if(/^\s*(LOCUS|DEFINITION|ACCESSION|KEYWORDS|SOURCE|ORGANISM|REFERENCE|AUTHORS|ORIGIN)/){
+			$keyword = $&;
+			$found{$keyword} = 1;
+		}
+	}
+	$NumKeywords = keys(%found);	# how many keywords were found
+	if($NumKeywords > 3){
+		return(1);
+	}
+	else{
+		return(0);
+	}	
+}
+
+sub ItsPIR{
+	# Look at first line of input and see if it contains pattern like
+	# >P1;CBRT
+	# The > is followed by 2 characters then a ;
+	# There then follows a second line containing the name and organism
+	# and on line 3 -> n the sequence which may include ignorable blanks
+
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	if($InputLinesRef -> [0] =~ /^>[PFDRN][13LC]\;/){
+		return(1);
+	}
+	else{return(0);}
+}
+
+sub ItsNEXUSi{
+# Look at first line of input and see if it contains words "#NEXUS"
+# If so then scan rest of lines for the word "interleave"
+
+	use strict;
+	my $InputLinesRef = $_[0];
+
+
+	if($InputLinesRef -> [0] =~ /\#NEXUS/i){
+		foreach(@$InputLinesRef){	# go through lines and look for word "interleaved"
+			if(/interleave/i){
+				return(1);
+			}
+		}
+		return(0);
+	}
+	else{
+		return(0);
+	}
+}
+
+sub ItsNEXUSs{
+# Nexus sequential files not required to have word "sequential"
+# So this sub must be executed after sub ItsNEXUSi
+	use strict;
+	my $InputLinesRef = $_[0];
+
+	if($InputLinesRef -> [0] =~ /\#NEXUS/i){
+		return(1);
+	}
+	else{return(0);}
+}
+
+sub ItsMEGAs{	# MEGA sequential format
+#  Looks like
+#  #mega
+#  TITLE: Noninterleaved sequence data
+#
+#  #mouse      AATTTTTACCCCGGGGGG
+#              AGGGGGGACCCCGGGGGG
+#  #human      AACCCTTACCCCGGGGGG
+#              AGGGGGGACCCCGGGGGG
+#  #cat        AATTTTTACAAAGGGGGG
+#              AGGGGGGACCCCGGGGGG
+
+
+	# Look at first line of input and see if it contains word "#MEGA"
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+
+	if($InputLinesRef -> [0] =~ /\#MEGA/i){
+		for(my $i = 1; $i <= $#$InputLinesRef; $i++){
+			$_ = $InputLinesRef -> [$i];
+			if(/^\s*\#/){	# the first seq line e.g. 	#woman  AATTTTTACCCCGGGGGG
+				$_ = $InputLinesRef -> [$i + 1];	# get the next line
+				if(/^\#/){	# if next line looks like #rat  AATTTTTACCCCGGGGGG
+					return(0);	# then it's interleaved
+				}
+				else{
+					return(1);
+				}
+			}
+		}	
+	}
+	else{
+		return(0);
+	}
+}
+
+sub ItsMEGAi{	# MEGA interleaved format
+#  Looks like
+#  #mega
+#  TITLE: Interleaved sequence data
+#
+#  #mouse      AATTTTTACCCCGGGGGG
+#  #human      AACCCTTACCCCGGGGGG
+#
+#  #mouse      AGGGGGGACCCCGG
+#  #human      AGGGGGGACCCCGG
+
+
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+
+	# Look at first line of input and see if it contains word "#MEGA"
+	if($InputLinesRef -> [0] =~ /\#MEGA/i){
+		for(my $i = 1; $i <= $#$InputLinesRef; $i++){
+			$_ = $InputLinesRef -> [$i];
+			if(/^\s*\#/){	# the first seq line e.g. 	#woman  AATTTTTACCCCGGGGGG
+				$_ = $InputLinesRef -> [$i + 1];	# get the next line
+				if(/^\#/){	# if next line looks like #rat  AATTTTTACCCCGGGGGG
+					return(1);	# then it's interleaved
+				}
+				else{
+					return(0);
+				}
+			}
+		}	
+	}
+	else{
+		return(0);
+	}
+}
+
+sub ItsStockholm{
+	# Look at first line of input and see if it contains word "#STOCKHOLM"
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+
+	if($InputLinesRef -> [0] =~ /\#\s*STOCKHOLM/i){
+		return(1);
+	}
+	else{
+		return(0);
+	}
+}
+
+sub ItsBLAST{
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+
+	# Look at first 2 lines of input and see if they contains word BLAST and Reference
+	if($InputLinesRef -> [0] =~ /^BLAST/){
+		if($InputLinesRef -> [1] =~ /^Reference: Altschul/){
+			return(1);
+		}
+	}
+	else{
+		return(0);
+	}
+}
+
+sub ItsRIP{
+	# Look at first line of input and see if it contains word "RIPdata"
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+
+	if($InputLinesRef -> [0] =~ /RIPdata/i){
+		return(1);
+	}
+	else{
+		return(0);
+	}
+}
+
+sub ItsPhylips{
+	# Phylip Sequential file
+	# first line may be pattern like  "12 1163  s"  (i.e. 2 numbers and S for Sequential)
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	my($NumSeqs, $SeqLen, $CharCount, $i, $j, $NameLineTrue);
+	if($InputLinesRef -> [0] =~ /^\s*\d+\s+\d+\s+[Ss]\s*$/){
+		return(1);
+	}
+	elsif($InputLinesRef -> [0] =~ /^\s*(\d+)\s+(\d+)\s*$/){ # two numbers only on first line
+		$NumSeqs = $1;
+		$SeqLen  = $2;
+#print "$NumSeqs $SeqLen\n";
+		$j = 0;
+		OUTER: for($i = 1; $i <= $NumSeqs; $i++){
+			$CharCount = 0;
+			$NameLineTrue = 1;
+			while($j <= $#$InputLinesRef){	# start at 2nd line of file
+				$j++;
+				$_ = $InputLinesRef -> [$j];
+#print "This line = |$_|\n";
+				next if(/^\s*$/);	# skip blank lines
+				if($NameLineTrue){
+					s/^.{10}//;		# delete the name
+					$NameLineTrue = 0;	# expect non-Name Lines
+				}
+				s/ //g;			# strip out spaces
+				$CharCount += length($_);
+				if($CharCount < $SeqLen){
+#print "$CharCount < $SeqLen\n";
+					next;		# keep reading lines
+				}
+				elsif($CharCount > $SeqLen){
+#print "$CharCount > $SeqLen\n";
+					return(0);
+				}
+				elsif($CharCount == $SeqLen){
+#print "$CharCount == $SeqLen\n";
+					next OUTER;
+				}
+			}
+		}
+		return(1);	# have gone thru whole file and found numbers check out	
+	}
+	else{
+#print "This line = |$_|\n";
+		return(0);
+	}
+}
+
+sub ItsPhylipi{
+	# Phylip Interleaved file
+	# Idea is to read in all the input lines and sort them out into
+	# their respective sequences. Then make sure each seq is the same
+	# length and agrees with the length defined on the first line.
+
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	my($FirstLine, $NumSeqs, $SeqLen, $i, $SeqCount, %seq, $seq);
+
+	$SeqCount = 0;
+	$i = 0;
+	$FirstLine = shift(@$InputLinesRef);	# remove first line, but save to put it back later
+
+	# first line may be pattern like  "12 1163  I"  (i.e. 2 numbers and I for Interleaved)
+	if($FirstLine =~ /^\s*\d+\s+\d+\s+[Ii]\s*$/i){
+		unshift(@$InputLinesRef, $FirstLine);
+		return(1);
+	}
+	elsif($FirstLine =~ /^\s*(\d+)\s+(\d+)\s*$/){ # two numbers only on first line
+		$NumSeqs = $1;
+		$SeqLen  = $2;
+	
+		foreach(@$InputLinesRef){
+			$seq = $_;
+			if($seq =~ /^\s*$/){
+				next;
+			}
+			elsif($SeqCount < $NumSeqs){	# process lines with names here
+				$i++;			# counts sequences in a block of interleaved sequences
+				$seq =~ s/^.{10}//;	# delete the name
+				$seq =~ s/ //g;		# strip out spaces
+				$seq{$i} .= "$seq";
+				$SeqCount++;		# when we've read proper number of seqs never enter this elsif again
+				$i = 0 if($i == $NumSeqs);
+			}
+			else{				# process regular file lines without names
+				$i++;			# counts sequences in a block of interleaved sequences
+				$seq =~s/ //g;		# strip out spaces
+				$seq{$i} .= "$seq";
+				$i = 0 if($i == $NumSeqs);
+			}
+		}
+		foreach(keys(%seq)){
+			my $l = length($seq{$_});
+			if(length($seq{$_}) != $SeqLen){
+				unshift(@$InputLinesRef, $FirstLine);
+				return(0);
+			}
+		}
+		unshift(@$InputLinesRef, $FirstLine);
+		return(1);
+	}	# end elsif
+	else{
+		unshift(@$InputLinesRef, $FirstLine);
+		return(0);
+	}
+}
+
+sub ItsFasta{
+# First line of input must start with ">"
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	if($InputLinesRef -> [0] =~ /^>/){  # starts with a >
+		return(1);
+	}
+	else{return(0);}
+}
+
+sub ItsGDEFlat{
+# First line of input must start with "#"
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	if($InputLinesRef -> [0] =~ /^(\#|\%)/){  # starts with a # or a %
+		return(1);
+	}
+	else{return(0);}
+}
+
+sub ItsMase{
+# First line must start with ;
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	if($InputLinesRef -> [0] =~ /^\s*\;/){  # starts with a ;
+		return(1);
+	}
+	else{return(0);}
+}
+
+sub ItsMacVector{
+	#  Look for MMSA(null)(null)(null) as the first characters in the file
+	use strict;
+	my($InputLinesRef) = $_[0]; # a reference to the input array
+	local $_ = $InputLinesRef -> [0];
+	if(/\AMMSA\000\000\000/){
+		return(1);
+	}
+	return(0);
+}
+
+sub ItsBinary{
+# A binary file like Microsoft Word will contain lots of "funny" characters
+# with ASCII values > 177. If > 1% of the first 300 characters are funny
+# we assume the file is binary.
+	use strict;
+	my($InputLinesRef) = $_[0]; # a reference to the input array
+	my ($line, $FunnyChars, $LineLength);
+	for(@$InputLinesRef){
+		$line .= $_;
+		last if(length($line) > 300);	# gather lines till you have >300 chars
+	}
+	$LineLength = length($line);
+	if($LineLength > 300){
+		$line = substr($line, 0, 300);	# take exactly 300 chars (in case line is huge)
+	}
+	elsif($LineLength == 0){
+		print "Error: your query contained no lines.";
+	}
+	$FunnyChars = ($line =~ tr/\000-\177//c);
+	if($FunnyChars/$LineLength > .01){
+		return(1);
+	}
+	return(0);
+}
+
+
+sub ItsGCG{
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	if($InputLinesRef -> [0] =~ /\!\!NA\_SEQUENCE|\!\!AA\_SEQUENCE/i){
+		return(1);
+	}
+	else{
+		foreach(@$InputLinesRef){
+			if(/Check.*\.\.\s*$/){
+				return(1);
+			}
+		}
+	}
+	return(0);
+}
+
+sub ItsRSF{
+	#  Look for !!RICH_SEQUENCE in the first 20 lines of the file
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	my($i);
+	for($i = 0; $i <= 19; $i++){
+		$_ = $InputLinesRef -> [$i];
+		if(/\!\!RICH\_SEQUENCE/i){
+			return(1);
+		}
+	}
+	return(0);
+}
+
+sub ItsGDE{
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	my($c,$i);
+	$c = 0;
+	$i = 0;
+	foreach(@$InputLinesRef){
+		$i++;
+		last if($i > 19);	# look at first 20 lines of file
+		if(/^\s*\{/){		# line beginning {
+			$c++;
+		}
+		elsif(/^\s*name\s+\"/){   # name "short name of sequence"
+			$c++;
+		}
+		elsif(/^\s*longname\s+\"/){   # longname "long name of sequence"
+			$c++;
+		}
+		elsif(/^\s*strandedness\s+/){
+			$c++;
+		}
+		elsif(/^\s*sequence\s+\"/){    # sequence "atcgatgctagtcgac... note " mark
+			$c++;
+		}
+		elsif(/^\s*\}/){          # line beginning {
+			$c++;
+		}
+		if($c > 3){return(1);}
+	}
+	return(0);
+}
+
+sub ItsMSF{
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	foreach(@$InputLinesRef){
+		if(/\!\!NA\_MULTIPLE\_ALIGNMENT|\!\!AA\_MULTIPLE\_ALIGNMENT|Pileup/){
+			return(1);
+		}
+		elsif(/Check.*\.\.$/){   # two dots are necessary but not sufficient (could be GCG format)
+			foreach(@$InputLinesRef){
+				if(/^\s*\/\/\s*$/){  # also need a line with //
+					return(1);
+				}
+			}
+		}
+	}
+	return(0);
+}
+
+sub ItsTable{
+# First line contains characters then tab
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	if($InputLinesRef -> [0] =~ /^.+\t/){   # chars followed by tab
+		return(1);
+	}
+	else{return(0);}
+}
+
+sub ItsClustal{
+	# Look at first line of input and see if it starts with "CLUSTAL"
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	if($InputLinesRef -> [0] =~ /^\s*CLUSTAL/i){
+		return(1);
+	}
+	else{
+		return(0);
+	}
+}
+
+sub ItsGenBankRaw{
+	# Only the sequence with numbers and spaces from a GenBank file, like
+	#   1 ataataatta gatctgaaaa tctgacaaac aatgccaaaa caataatagt acagcttaag 
+	#  61 gaacctgtaa aaattaagtg tatgagaccc agcaataata caagagaaag tataaggata 
+	# 121 ggaccaggac aaacattcta tgcaacagga gacataatag gagatataag acaagcacat 
+
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	if($InputLinesRef -> [0] =~ /^\s*\d+ [A-Za-z]{10} [A-Za-z]{10} [A-Za-z]{10} [A-Za-z]{10} [A-Za-z]{10} [A-Za-z]{10}/i){
+		return(1);
+	}
+	else{
+		return(0);
+	}
+}
+
+sub ItsRaw{
+	# Counts number of nucleic acid characters as well as common gap characters
+	# If this count accounts for > 90% of the first line in the input then
+	# the sequence is "raw"
+	# Does the same analysis for amino acid chars and gaps
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	my($ATGCcount, $AAcount);
+	if(length($InputLinesRef -> [0]) == 0){
+		return(0);
+	}
+	# Look at first line of input and see if it is > 90% ATGC or > 90% amino acids
+	$ATGCcount++ while($InputLinesRef -> [0] =~ /[ATGCURY\.\-\~\#]/ig);
+
+	if($ATGCcount/length($InputLinesRef -> [0]) > .90){
+		return(1);
+	}
+	# Look at first line of input and see if it is > 90% amino acid codes
+	$AAcount++ while($InputLinesRef -> [0] =~ /[ARNDCEQGHILKMFPSTYWV\.\-\~\#]/ig);
+
+	if($AAcount/length($InputLinesRef -> [0]) > .90){
+		return(1);
+	}
+	return(0);
+}
+
+sub ItsSLX{
+	#  As of 7/27/05 this sub was not working very well, because of the ambiguities of SLX
+	#  format. Part of the worry stems from the multiple meanings of the " " character.
+	#  Names may have no spaces, but when they are of different lengths they are padded with space.
+	#  Space is also a legal gap character. Thus, consider this SLX-legal alignment:
+	#  seq1                 acatgctgatcgtagtcgtagc
+	#  longishseqname2 cgtagacatgctgatcgtagtcgtagc
+	#  Also, I'm worried about the elsif(/^[^\s]+\s+[a-zA-Z\-\_\. ]+$/) line below.
+	#  This line will fail if, for example the seq has a stop codon "$".
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	my($blanklines,$string,@blocks,$n,@DataCopy);
+	
+	#  First pass through the input lines
+	foreach(@$InputLinesRef){
+		if(/^(\#|\%)/){}   # ignore comment lines
+		elsif(/^\s*$/){    # count blank lines
+			$blanklines++;
+		}
+		elsif(/^[^\s]+\s+[a-zA-Z\-\_\. ]+$/){} # ignore sequence lines "name  atgtcgatgtcgat gt-tc"
+		#  Any other lines like >B.FR.HXB2
+		else{
+			return(0);
+		}
+	}
+
+	if($blanklines){  # sequence exists in interleaved blocks
+		# check to see if each (interleaved) block of sequences
+		# contains the same number of seqs. If not it's not slx.
+		# Do this by simplifying the data: remove comments, replace
+		# blank lines by !
+		# Begin by making a copy of the input data
+
+		@DataCopy = @$InputLinesRef;
+
+		foreach(@DataCopy){
+			s/\s$//;
+			next if(/^(\#|\%)/);  # ignore comments
+			if(/^\s*$/){
+				$string .= "!";
+			}
+			else{
+				$string .= "A";
+			}
+		}
+	}
+	$string =~ s/^!+//;
+	$string =~ s/!+/!/;
+	@blocks = split(/!/, $string);
+	$n = length $blocks[0];
+	foreach(@blocks){
+		if(length($_) ne $n){
+			return(0);
+		}
+	}
+	return(1);
+}
+
+sub ItsPretty{	# pretty-print interleaved
+#  Looks like
+#  1a.-.H77_AF009606            AGGTTGGGGT AAACACTCCG GCCTCTTAGG CCATTTCCTG TTTTTTTTTT   50
+#  1a.-.HEC278830_AJ278830      ACGGGGAGCT AAACACTCCA GGCCAATAGG CCAT--CCTG TTTTTTTTTT 
+
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	my($j, @fields, $FirstField, $FieldLength, $i, , ,);
+
+	for ($j = 0; $j <= 1; $j++){	# look at the first 2 lines of the file
+		$InputLinesRef -> [$j] =~ s/^ +//;	# remove any leading space
+		$InputLinesRef -> [$j] =~ s/ +$//;	# remove any trailing space
+		@fields = split(/ +/, $InputLinesRef -> [$j]);
+		if(@fields < 2){	# there are no fields
+			return(0);
+		}
+		# assume the first field is a name of variable length
+		# the second through n-1th fields should contain the same number of characters
+		# the nth, ie, final field might be a number
+		$_ = pop(@fields);	# look at the last field
+		unless(/\d+/){		# unless it contains numbers
+			push(@fields, $_);	# put it back on the list
+		}
+		$FirstField = $fields[1];
+		$FieldLength = length($FirstField);
+		for ($i = 2; $i <= $#fields - 1; $i++){		# don't test the final field because it could be short
+			if(length($fields[$i]) != $FieldLength){	# are field lengths unequal?
+				return(0);	# then this is not a pretty print file
+			}
+		}
+		return(1);
+	}	
+}
+
+
+sub OLDItsSLX{
+	use strict;
+	my($InputLinesRef) = $_[0];	# a reference to the input array
+	my($blanklines,$string,@blocks,$n,@DataCopy);
+	foreach(@$InputLinesRef){
+		if(/^(\#|\%)/){}   # ignore comment lines
+		elsif(/^\s*$/){    # count blank lines
+			$blanklines++;
+		}
+		elsif(/^[^\s]+\s+[a-zA-Z\-\_\. ]+$/){} # sequence lines "name  atgtcgatgtcgat gt-tc"
+		else{
+			return(0);
+		}
+	}
+
+	if($blanklines){  # sequence exists in interleaved blocks
+		# check to see if each (interleaved) block of sequences
+		# contains the same number of seqs. If not it's not slx.
+		# Do this by simplifying the data: remove comments, replace
+		# blank lines by !
+		# Begin by making a copy of the input data
+
+		@DataCopy = @$InputLinesRef;
+
+		foreach(@DataCopy){
+			s/\s$//;
+			next if(/^(\#|\%)/);  # ignore comments
+			if(/^\s*$/){
+				$string .= "!";
+			}
+			else{
+				$string .= "A";
+			}
+		}
+	}
+	$string =~ s/^!+//;
+	$string =~ s/!+/!/;
+	@blocks = split(/!/, $string);
+	$n = length $blocks[0];
+	foreach(@blocks){
+		if(length($_) ne $n){
+			return(0);
+		}
+	}
+	return(1);
+}
+
+
+##################################################################
+#     SUBROUTINES TO READ AND STORE SEQUENCES OF KNOWN FORMAT    #
+##################################################################
+
+sub ReadAndStoreInput{
+	use strict;
+	my($InFormat, $InputLinesRef) = @_;
+	my($NamesRef, $SeqsRef);
+
+	if($InFormat eq "Table"){
+		($NamesRef, $SeqsRef) = &StoreTableSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "Fasta"){
+		($NamesRef, $SeqsRef) = &StoreFastaSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "GDEFlat"){
+		($NamesRef, $SeqsRef) = &StoreGDEFlatSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "Mase"){
+		($NamesRef, $SeqsRef) = &StoreMaseSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "RIP"){
+		($NamesRef, $SeqsRef) = &StoreRIPSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "BLAST"){
+		($NamesRef, $SeqsRef) = &StoreBLASTSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "MSF"){
+		($NamesRef, $SeqsRef) = &StoreMSFSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "GCG"){
+		($NamesRef, $SeqsRef) = &StoreGCGSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "RSF"){
+		($NamesRef, $SeqsRef) = &StoreGDERSFSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "GDE"){
+		($NamesRef, $SeqsRef) = &StoreGDERSFSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "NEXUSi"){
+		($NamesRef, $SeqsRef) = &StoreNEXUSiSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "NEXUSs"){
+		($NamesRef, $SeqsRef) = &StoreNEXUSsSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "MEGAi"){
+		($NamesRef, $SeqsRef) = &StoreMEGAiSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "MEGAs"){
+		($NamesRef, $SeqsRef) = &StoreMEGAsSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "Phylips"){
+		($NamesRef, $SeqsRef) = &StorePhylipsSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "Phylipi"){
+		($NamesRef, $SeqsRef) = &StorePhylipiSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "Clustal"){
+		($NamesRef, $SeqsRef) = &StoreClustalSeqs($InputLinesRef);
+	}
+	elsif($InFormat eq "GenBank"){
+		($NamesRef, $SeqsRef) = &StoreGenBankSeqs($InputLinesRef);
+	}
+
+	elsif($InFormat eq "GenBankRaw"){
+		($NamesRef, $SeqsRef) = &StoreGenBankRawSeqs($InputLinesRef);
+	}
+
+	elsif($InFormat eq "EMBL"){
+		($NamesRef, $SeqsRef) = &StoreEMBLSeqs($InputLinesRef);
+	}
+
+	elsif($InFormat eq "PIR"){
+		($NamesRef, $SeqsRef) = &StorePIRSeqs($InputLinesRef);
+	}
+
+	elsif($InFormat eq "Stockholm"){
+		($NamesRef, $SeqsRef) = &StoreStockholmSeqs($InputLinesRef);
+	}
+
+	elsif($InFormat eq "Pretty"){
+		($NamesRef, $SeqsRef) = &StorePrettySeqs($InputLinesRef);
+	}
+
+	elsif($InFormat eq "Raw"){
+		($NamesRef, $SeqsRef) = &StoreRawSeqs($InputLinesRef);
+	}
+
+	elsif($InFormat eq "SLX"){
+		($NamesRef, $SeqsRef) = &StoreSLXSeqs($InputLinesRef);
+	}
+
+	elsif($InFormat eq "MacVector"){
+		($NamesRef, $SeqsRef) = &StoreMacVectorSeqs($InputLinesRef);
+	}
+
+	unless(@$NamesRef == @$SeqsRef){	# must be exactly one seq for each name
+		print "Error: Not a 1 to 1 correspondence between names and seqs.\n";
+		exit;
+	}
+
+	foreach(@$NamesRef){
+		s/\s+$//; # remove trailing spaces
+		 tr/ /_/; # replace space characters in the name with _
+	}
+	return($NamesRef, $SeqsRef);
+}
+
+sub StoreNEXUSsSeqs{
+#  A sequential nexus file matrix may have the sequence name
+#  followed by space(s) and the entire sequence on one line like:
+#
+# 4axED43xco GGAGGCCCTACCTCAAGTAGTGACGCCCTACCT
+# 2bxMD2b2x1 CGCTGTTGATCACCAAATCGGAGGGCACCTATG
+# 2bxMD2b9x1 CGCTGCCAAATACCGAGTCGGAAGGCATCTACG
+
+#  or the sequence may be spread out over several lines
+# 4axED43xco   
+# GGAGGCCCTACCTCAAGTAGTGACGCCCTACCT
+# TCCGCCCTCACGCGGGACCCTCCCTCTTCCTGCCAAGGGGGCGA
+# 2bxMD2b2x1   
+# CGCTGTTGATCACCAAATCGGAGGGCACCTATG
+# TCCGCCCTCACGCGGGACCCTCCCTCTTCCTGCCAAGGGGGCGA
+# 2bxMD2b9x1    
+# CGCTGCCAAATACCGAGTCGGAAGGCATCTACG
+# TCCGCCCTCACGCGGGACCCTCCCTCTTCCTGCCAAGGGGGCGA
+
+# Note, the name MUST have spaces after it. This sub should parse
+# both these forms. The value of nchar and ntax, if present, are
+# stored and used to check if the parsing worked properly.
+
+	use strict;
+
+	&checkNEXUS();
+
+	my($InputLinesRef) = $_[0];
+	my($MatrixTrue, $ntax, $nchar, $name, $seq, $NumSeqs, $SeqLength, %NamesAndSeqs, @names, @seqs, );
+	$MatrixTrue = 0;
+	$ntax = 0;
+	$nchar = 0;
+	
+	# skip lines until "matrix" line found
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		if(/NTAX=(\d+)/i){	# optional ntax
+			$ntax = $1;
+		}
+		if(/NCHAR=(\d+)/i){
+			$nchar = $1;
+		}
+		elsif(/matrix/i){
+			$MatrixTrue = 1;
+			last;
+		}
+	}
+	unless($MatrixTrue){
+		print "Error: I couldn't find a Matrix command in this Nexus file.\n";
+		exit;
+	}
+	# save lines as one long line until matching ";" is found
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		if(/^\s*$/){	# skip blank lines
+			next;
+		}
+		if(/\;/){	# marks end of matrix block
+			last;
+		}
+		s/ *\[.*\] *//;  # delete anything between square brackets  e.g. comments, char counts
+		if(/([\S]+)\s+(.*)/){	#  a line like "seqname  atgctagtcgtgatgtcgtgatgctgac"
+			$name = $1;
+			$seq = $2;
+			$name =~ s/\-/\_/g;	# dashes are evil in nexus names
+			if($NamesAndSeqs{$name}){	#  have already seen this seq
+				$NamesAndSeqs{$name} .= $seq;
+			}
+			else{						#  a new name and sequence
+				push(@names, $name);
+				$NamesAndSeqs{$name} = $seq;
+			}
+		}
+		elsif(/^([\S]+)$/){	#  a pure sequence line lacks spaces
+			$seq = $1;
+			$NamesAndSeqs{$name} .= $1;
+		}
+	}
+	$NumSeqs = @names;
+	if($ntax > 0 && $NumSeqs != $ntax){	# disagreement on number of taxa
+		print "Error: The number of sequences I found in your matrix ($NumSeqs) disagrees with your NTAX value ($ntax).";
+		exit;
+	}
+	if($nchar > 0){
+		foreach $name(@names){
+			$NamesAndSeqs{$name} =~ s/\s//g;    # added to make cf behavior consistent with PAUP, which ignores spaces in sequences (also, StoreNEXUSiSeqs removes spaces from sequences)
+			$seq = $NamesAndSeqs{$name};
+			$SeqLength = length($seq);
+			if ($SeqLength != $nchar){
+				print "Error: sequence $name, length $SeqLength, differs from your nchar value, $nchar.";
+				exit;
+			}
+			push(@seqs, $NamesAndSeqs{$name});
+		}
+	}
+	else{
+		foreach $name(@names){
+			push(@seqs, $NamesAndSeqs{$name});
+		}
+	}
+	return(\@names, \@seqs)
+}
+
+sub StoreNEXUSiSeqs{
+	use strict;
+
+	&checkNEXUS();
+
+	my($InputLinesRef) = $_[0];
+	my($MatchChar, $BeginMatrixTrue, $EndMatrixTrue, $MasterSeq, $MasterName, $name, $seq, @names, @seqs, %NamesSeqs);
+	$BeginMatrixTrue = 0;
+	$EndMatrixTrue = 0;
+	$MatchChar = "";
+	
+	# skip lines until "FORMAT" line found
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		if(/format/i){
+			if(/matchchar=(.)/i){
+				$MatchChar = $1;
+				$MatchChar = "\\" . "$MatchChar";	# say matchchar was special perl char like "." this makes it \.
+			}
+		}
+		# skip lines until "matrix" line found
+		elsif(/matrix/i){
+			$BeginMatrixTrue = 1;
+			last;
+		}
+	}
+	unless($BeginMatrixTrue){
+		print "Error: I can't find a \"matrix\" line in your NEXUS input.\n";
+		exit;
+	}
+
+	# skip any blank lines before first line of matrix
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		if(/^\s*$/){	# skip blank lines
+			next;
+		}
+		elsif(s/\[.*\]//){	# delete anything between square brackets  e.g. comments, char counts
+			if(/^\s*$/){	# if after deletion line is blank, continue
+				next;
+			}
+			else{
+				unshift(@$InputLinesRef, $_);	# put the nonblank line back on list
+				last;
+			}
+		}
+		else{
+			unshift(@$InputLinesRef, $_);	# put the nonblank line back on list
+			last;
+		}
+	}
+
+	# save the first sequence as master to compare to other seqs that may have matchchars 
+	$MasterSeq = shift(@$InputLinesRef);
+	$MasterSeq =~ /^([^\s]+)\s+(.+)/;	# match up to first space then everything else
+	$MasterName = $1;
+	$MasterSeq = $2;
+	$MasterName =~ s/\-/\_/g;	# dashes are evil in nexus names
+	push(@names, $MasterName);
+	$MasterSeq =~ s/ *\[.*\] *//;	# get rid of any square brackets
+	$MasterSeq =~ s/\s//g;	# remove all spaces from seq
+	$NamesSeqs{$MasterName} = "$MasterSeq";
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+
+		if(/^\s*$/){	# blank line?
+			last;		# leave this loop when the first blank line is found
+		}
+		else{	# these are lines like taxon_1  actagctagt cgatgctagc
+			/^([^\s]+)\s+(.+)/;	# match up to first space then everything else
+			$name = $1;
+			$seq = $2;
+			$name =~ s/\-/\_/g;	# dashes are evil in nexus names
+			push(@names, $name);
+			$seq =~ s/ *\[.*\] *//;	# get rid of any square brackets
+			$seq =~ s/\s//g;	# remove all spaces from seq
+			
+			#  In case the sequence contains MatchChars we want to replace those MatchChars
+			#  with the letter from the master seq that they match
+			if($MatchChar && $seq =~ /$MatchChar/){
+				my @SeqLetters = split(//, $seq);
+				$seq = "";
+				my @MasterSeqLetters = split(//, $MasterSeq);
+				while(my $SeqLetter = shift(@SeqLetters)){
+					my $MasterSeqLetter = shift(@MasterSeqLetters);
+					if($SeqLetter =~ /$MatchChar/){
+						$seq .= $MasterSeqLetter;
+					}
+					else{
+						$seq .= $SeqLetter;
+					}
+				}
+			}
+			$NamesSeqs{$name} = "$seq";
+		}
+	}
+
+	# save lines until matching ";" is found
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		next if(/^\s*$/);	# skip blank lines
+		if(/\;/){
+			$EndMatrixTrue = 1;
+			last;
+		}
+		else{	# these are lines like taxon_1  actagctagtcgatgctagc
+			/^([^\s]+)\s+(.+)/;	# match up to first space then everything else
+			$name = $1;
+			$seq = $2;
+			$name =~ s/\-/\_/g;	# dashes are evil in nexus names
+			$seq =~ s/ *\[.*\] *//;	# get rid of any square brackets
+			$seq =~ s/\s//g;	# remove all spaces from seq
+			
+			# Watch for the master seq in each block and save it
+			if($name eq "$MasterName"){
+				$MasterSeq = $seq;
+			}
+			else{
+				if($MatchChar && $seq =~ /$MatchChar/){
+					my @SeqLetters = split(//, $seq);
+					$seq = "";
+					my @MasterSeqLetters = split(//, $MasterSeq);
+					while(my $SeqLetter = shift(@SeqLetters)){
+						my $MasterSeqLetter = shift(@MasterSeqLetters);
+						if($SeqLetter =~ /$MatchChar/){
+							$seq .= $MasterSeqLetter;
+						}
+						else{
+							$seq .= $SeqLetter;
+						}
+					}
+				}
+			}
+			$NamesSeqs{$name} .= "$seq";
+		}
+	}
+	foreach $name(@names){
+		push(@seqs, $NamesSeqs{$name});
+	}
+	return(\@names, \@seqs)
+}
+
+
+sub OLDStoreNEXUSiSeqs{
+
+	use strict;
+
+	&checkNEXUS();
+
+	my($InputLinesRef) = $_[0];
+	my($BeginMatrixTrue, $EndMatrixTrue, $name, $seq, @names, @seqs, %NamesSeqs);
+	$BeginMatrixTrue = 0;
+	$EndMatrixTrue = 0;
+	
+	# skip lines until "matrix" line found
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		if(/matrix/i){
+			$BeginMatrixTrue = 1;
+			last;
+		}
+	}
+	unless($BeginMatrixTrue){
+		print "Error: I can't find a \"matrix\" line in your NEXUS input.\n";
+		exit;
+	}
+
+	# skip any blank lines before first line of matrix
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		if(/^\s*$/){	# skip blank lines
+			next;
+		}
+		elsif(s/\[.*\]//){	# delete anything between square brackets  e.g. comments, char counts
+			if(/^\s*$/){	# if after deletion line is blank, continue
+				next;
+			}
+			else{
+				unshift(@$InputLinesRef, $_);	# put the nonblank line back on list
+				last;
+			}
+		}
+		else{
+			unshift(@$InputLinesRef, $_);	# put the nonblank line back on list
+			last;
+		}
+	}
+
+	# save the first block of interleaved data, store names
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+
+		if(/^\s*$/){	# skip blank lines
+			last;	# leave this loop when the first blank line is found
+		}
+		else{	# these are lines like taxon_1  actagctagt cgatgctagc
+			/^([^\s]+)\s+(.+)/;	# match up to first space then everything else
+			$name = $1;
+			$seq = $2;
+			$name =~ s/\-/\_/g;	# dashes are evil in nexus names
+			push(@names, $name);
+			$seq =~ s/ *\[.*\] *//;	# get rid of any square brackets
+			$seq =~ s/\s//g;	# remove all spaces from seq
+			$NamesSeqs{$name} = "$seq";
+		}
+	}
+
+	# save lines until matching ";" is found
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		next if(/^\s*$/);	# skip blank lines
+		if(/\;/){
+			$EndMatrixTrue = 1;
+			last;
+		}
+		else{	# these are lines like taxon_1  actagctagtcgatgctagc
+			/^([^\s]+)\s+(.+)/;	# match up to first space then everything else
+			$name = $1;
+			$seq = $2;
+			$name =~ s/\-/\_/g;	# dashes are evil in nexus names
+			$seq =~ s/ *\[.*\] *//;	# get rid of any square brackets
+			$seq =~ s/\s//g;	# remove all spaces from seq
+			$NamesSeqs{$name} .= "$seq";
+		}
+	}
+	foreach $name(@names){
+		push(@seqs, $NamesSeqs{$name});
+	}
+	return(\@names, \@seqs)
+}
+
+
+sub checkNEXUS {
+
+# Added by Carla: make sure it's valid Nexus by running it through PAUP
+# Quit and report error if it doesn't pass. Reason: we can't guarantee this
+# parser doesn't produce garbage otherwise. 
+#  Modified and moved to this location by Jim T.
+
+# uses global $InFileName as input
+
+	my $pwd = qx( pwd );
+	# print $pwd;
+
+	# To capture a command's STDERR and discard its STDOUT:
+	#    my $paupmsg = qx( paup -n $InFileName >paup.log 2>&1 1>/dev/null );
+	my $paupmsg = qx( paup -n $InFileName );
+	# this doesn't seem to be working when called via convert.cgi
+
+
+	# try this a different way
+	#     open PAUP, "-|", "paup -n $InFileName 2>&1 1>/dev/null"
+	#         or die "sub checkNEXUS could not open PAUP pipe: $!";
+	#     my @paupmsg = <PAUP>;
+	#     my $paupmsg = join "\n", @paupmsg;
+	# also doesn't work via the cgi
+
+
+	# here's another try
+	#     open PAUPSH, "paup.sh"
+	#         or die "sub checkNEXUS could not open PAUP shell script file for writing";
+	#     print PAUPSH <<HEREDOC;
+	# #!/bin/sh
+	# su thurmond
+	# paup -n $InFileName 2> paup.out 1>/dev/null
+	# HEREDOC
+	#     close PAUPSH;
+	#     exit;
+	#     my $paupmsg = qx( paup.sh );
+
+
+	my @paupmsg = split( "\n", $paupmsg );
+
+	# print "\n<br />PAUP sez: $paupmsg";
+	# print "\n", '<br />PAUP $?: ', $?;
+	# print "\n", '<br />PAUP $@: ', $@;
+
+	my $msglength = @paupmsg;
+	# print "\n<br /> paup message has ", $msglength, " lines.\n<br />";
+	my ($pauperror, $paupwarn);
+
+	foreach my $line ( @paupmsg ) {
+		# print "<br />LINE: $line\n";
+			if( $line =~ m/^Error/ ) {
+				$pauperror .= $line;
+			}
+			elsif( $line =~ m/Warning/ ) {
+				$paupwarn .= $line;
+			}
+	}
+
+	#    $pauperror = 'ack!';
+
+	if ($pauperror) {
+		print "
+Error: This Nexus file was not recognized by PAUP.
+The error message was: $paupmsg";
+		print <<HEREDOC;
+<pre>
+  A few hints for Nexus format files:
+    - Sequence names (or TAXA) cannot contain spaces or tabs,
+      or any of the following punctuation characters: ()[]{}\/,;:=*"`+-<>,
+      unless the names are enclosed in 'single quotes'.
+      If you wish to include a single quote in a name, enclose the name in
+      quotes and put TWO quotes in the name where you want a quote included,
+      e.g. 'Steller''s Jay'.
+      Sequence names also cannot consist entirely of numbers.
+    - Sequences cannot contain letters other than standard or IUPAC characters,
+      or characters defined using MISSING, GAP, and MATCHCHAR inside the
+      FORMAT command, but they CAN contain whitespace.
+      The NCHARS set in the DIMENSIONS command must be equal to the number of
+      NON-WHITESPACE characters in each sequence.
+</pre>
+HEREDOC
+		exit;
+	}
+	elsif ($paupwarn) {
+		print "\n<br />Note: your nexus file has some problems: $paupmsg";
+		print "\n<br />Please check the results very carefully\n<br />";
+	}
+	else { 
+				# print "\n<br />Passed PAUP test";
+	}
+
+	return;
+}
+
+
+sub StoreGenBankSeqs{
+# This sub reads a file of GenBank record(s).
+# It first reads lines till it finds the LOCUS line and saves
+# the locus name as $ThisSeqName. Exits that loop and
+# reads lines til it finds ORIGIN line.
+# Then reads through the sequence deleting the leading number and all 
+# blanks and carriage returns. Each line is appended to the growing
+# value of the $NamesSeqs{$ThisSeqName} hash.
+
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($ThisSeqName, $FoundOrigin, @names, @seqs, %NamesSeqs);
+
+	OUTER: while(@$InputLinesRef){
+		while(@$InputLinesRef){   # go through the input looking for LOCUS line
+			$_ = shift(@$InputLinesRef);
+			if(/^\s*LOCUS\s+([^\s]+)/){
+				$ThisSeqName = $1;
+				push(@names, $ThisSeqName);
+				last;
+			}
+		}
+		unless($ThisSeqName){
+			print "Error: There was no LOCUS line in your GenBank input.\n";
+			exit;
+		}
+		while(@$InputLinesRef){
+			$_ = shift(@$InputLinesRef);   # go through the input looking for ORIGIN line
+			if(/^\s*ORIGIN/){
+				$FoundOrigin = 1;
+				last;
+			}
+		}
+		unless($FoundOrigin){
+			print "Error:  There was no ORIGIN line in your GenBank input.\n";
+			exit;
+		}
+		while(@$InputLinesRef){
+			$_ = shift(@$InputLinesRef);   # go through sequence itself
+			next if(/^\s*$/);
+			s/\s+$//;
+			if(s/^\s*\d+ +//){   # delete the leading number
+				s/ //g;         # delete all spaces
+				$NamesSeqs{$ThisSeqName} .= "$_";   # append this part of seq to hash
+			}
+			elsif(/\s*\/\/\s*/){   # skip the // at eof
+				next;
+			}
+			else{
+				unshift(@$InputLinesRef, $_);
+				push(@seqs, $NamesSeqs{$ThisSeqName});
+				next OUTER;	#  this is the next GenBank record, do again
+			}
+		}
+		push(@seqs, $NamesSeqs{$ThisSeqName});
+		last OUTER;
+	}
+	return(\@names, \@seqs);
+}
+
+sub StoreGenBankRawSeqs{
+# This sub reads a file of GenBank sequence only. The other GenBank
+# info like LOCUS ORIGIN etc. is absent.
+# It reads through the sequence deleting the leading number and all 
+# blanks and carriage returns. Each line is appended to the growing
+# value of the $NamesSeqs{$seqName} hash.
+
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($seq, @names, @seqs);
+	$seq = "";
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);   # go through sequence itself
+		next if(/^\s*$/);
+		s/\s+$//;
+		if(s/^\s*\d+ +//){	# delete the leading number
+			s/ //g;			# delete all spaces
+			$seq .= "$_";   # append this part of seq to hash
+		}
+		elsif(/\s*\/\/\s*/){   # skip the // at eof
+			last;
+		}
+		else{
+			print "Error: I expected a raw GenBank-style sequence. This line doesn't meet those requirements:\n$_";
+			exit;
+		}
+	}
+	push(@names, "sequence1");
+	push(@seqs, $seq);
+	return(\@names, \@seqs);
+}
+
+sub StoreEMBLSeqs{
+# This sub reads a file of EMBL record(s).
+# It first reads lines till it finds the ID line and saves
+# the locus name as $ThisSeqName. Exits that loop and
+# reads lines til it finds ID line.
+# Then reads through the sequence deleting the leading number and all 
+# blanks and carriage returns. Each line is appended to the growing
+# value of the $NamesSeqs{$ThisSeqName} hash.
+
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($ThisSeqName, $FoundOrigin, @names, @seqs, %NamesSeqs);
+
+	OUTER: while(@$InputLinesRef){
+		undef(%NamesSeqs);	# do this so duplicate seq names are tolerated in multiseq file
+		while(@$InputLinesRef){   # go through the input looking for ID line
+			$_ = shift(@$InputLinesRef);
+			if(/^\s*ID   ([^ ]+)/){
+				$ThisSeqName = $1;
+				push(@names, $ThisSeqName);
+				last;
+			}
+		}
+		unless($ThisSeqName){
+			print "Error: There was no ID line in your EMBL input.\n";
+			exit;
+		}
+		while(@$InputLinesRef){
+			$_ = shift(@$InputLinesRef);   # go through the input looking for ORIGIN line
+			if(/^\s*SQ   /){
+				$FoundOrigin = 1;
+				last;
+			}
+		}
+		unless($FoundOrigin){
+			print "Error:  There was no SQ (sequence) line in your EMBL input.\n";
+			exit;
+		}
+		while(@$InputLinesRef){
+			$_ = shift(@$InputLinesRef);   # go through sequence itself
+			next if(/^\s*$/);
+			next if(/\s*\/\/\s*/);   # skip the // between records or at eof
+			if(/^\s*ID   ([^ ]+)/){
+				unshift(@$InputLinesRef, $_);
+				push(@seqs, $NamesSeqs{$ThisSeqName});
+				next OUTER;	#  this is the next EMBL record, do again
+			}
+			s/\s+$//;
+			s/\d+$//;	# delete numbers from end of line
+			s/ //g;         # delete all spaces
+			$NamesSeqs{$ThisSeqName} .= "$_";   # append this part of seq to hash
+		}
+		push(@seqs, $NamesSeqs{$ThisSeqName});
+		last OUTER;
+	}
+	return(\@names, \@seqs);
+}
+
+sub StorePIRSeqs{
+#>P1;CRAB_HUMAN
+#ALPHA CRYSTALLIN B CHAIN (ALPHA(B)-CRYSTALLIN) (ROSENTHAL FIBER).
+# 
+#  QVSGPERTIP ITREEKPAVT AAPKK*
+
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($ThisSeqName, %NamesSeqs,@seqs, @names);
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		if(/^>..\;(.+)/){	# match the name line like >RC;seqname1
+			$ThisSeqName = $1;
+			$ThisSeqName =~ s/\s+$//;  # delete trailing blanks
+			$ThisSeqName =~ s/ /_/g;   # replace internal blanks
+
+			push(@names, $ThisSeqName);
+			$_ = shift(@$InputLinesRef);  # read and ignore the second line (descriptive)
+		}
+		elsif(/^>..\;/){	# name not present on first line >P1;
+			$ThisSeqName = shift(@$InputLinesRef);  # use second line as name
+			$ThisSeqName =~ s/\s+$//;  # delete trailing blanks
+			$ThisSeqName =~ s/ /_/g;   # replace internal blanks
+
+			push(@names, $ThisSeqName);
+			$_ = shift(@$InputLinesRef);  # read and ignore the second line (descriptive)
+		}
+		else{	# sequence lines
+			next if(/^\s*$/);  # skip blank lines
+			s/\s+$//;
+			s/ //g;   # delete all spaces
+			s/\*//g;   # delete the * that marks end of sequence
+			$NamesSeqs{$ThisSeqName} .= "$_";   # append this part of seq to hash
+		}
+	}
+	foreach $ThisSeqName(@names){
+		push(@seqs, $NamesSeqs{$ThisSeqName});
+	}
+	return(\@names, \@seqs);
+}
+
+
+
+sub StoreMSFSeqs{
+#  This sub parses the interleaved MSF format. It uses
+#  a hash %NamesSeqs to collect all the sequence data
+#  for each name. Then it writes the seq data so collected
+#  to the @seqs array.
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($ThisSeqName, $seq, $i, @names, %NamesSeqs, @seqs);
+	for($i = 0; $i <= $#$InputLinesRef; $i++){
+		$_ = $InputLinesRef -> [$i];
+		if(/^\s*Name:\s*(.*)\s*Len:/){
+			$ThisSeqName = $1;
+			$ThisSeqName =~ s/ +$//;
+			push(@names, $ThisSeqName);
+		}
+		elsif(/^\s*\/\/\s*$/){  # divider line // after this comes seq
+			for($i++; $i <= $#$InputLinesRef; $i++){
+				$_ = $InputLinesRef -> [$i];
+				next if(/^\s*$/);
+				/^\s*(\S+)\s+(.*)/;
+				$ThisSeqName = $1;
+				$seq = $2;
+				$seq =~ s/ //g;
+				$NamesSeqs{$ThisSeqName} .= "$seq";   # append this part of seq to hash
+			}
+		}
+	}
+	foreach $ThisSeqName(@names){
+		push(@seqs, $NamesSeqs{$ThisSeqName});
+	}
+	return(\@names, \@seqs);
+}
+
+sub StoreGDERSFSeqs{
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($ThisSeqName, $seq, $i, $longname, @block, @names, @seqs, %NamesSeqs, $NoNameCount);
+	$NoNameCount = 0;
+	for($i = 0; $i <= $#$InputLinesRef; $i++){
+		$_ = $InputLinesRef -> [$i];
+		if(/^\s*\{/){  # look for "{" which opens a block
+			for($i++; $i <= $#$InputLinesRef; $i++){
+				$_ = $InputLinesRef -> [$i];
+				if(!/\}/){
+					push(@block, $_);  # collect lines in a { ... } sequence block
+				}
+				else{
+					($ThisSeqName, $seq) = &ProcessBlock(@block);
+					if($ThisSeqName eq ""){	# This sequence has no name
+						$NoNameCount++;
+						$ThisSeqName = "seq_$NoNameCount";	# so assign one
+					}
+					unless($seq){
+						print "Error: I can't find a sequence in this GDE/RSF file.";
+						exit;
+					}
+					push(@names, $ThisSeqName);
+					$NamesSeqs{$ThisSeqName} = "$seq";   # add this seq to hash
+					@block = ();
+					last;
+				}
+			}
+		}
+	}
+	foreach $ThisSeqName(@names){
+		push(@seqs, $NamesSeqs{$ThisSeqName});
+	}
+	return(\@names, \@seqs);
+}
+
+
+sub ProcessBlock{
+	# GDE and RSF formats have blocks of sequence info delimited
+	# by curly brackets. All lines of material between the curly
+	# brackets are sent (as an array) to this sub which parses them
+	# in order to extract the name and the sequence info.
+
+	use strict;
+	my($ThisSeqName, $seq, $i, $longname, $NumQuotes);
+	for($i = 0; $i <= $#_; $i++){
+		$_ = $_[$i];
+		if(/^\s*name\s+(.+)$/){  # look for name
+			$ThisSeqName = $1;
+		}
+		elsif(/^\s*longname\s+(.+)$/){  # look for longname
+			$longname = $1;
+			$longname =~ s/\s+$//;	#remove trailing spaces
+			if(length($longname) > length($ThisSeqName)){  # use longname if longer
+				$ThisSeqName = $longname;
+				$ThisSeqName =~ s/\s/\_/g;	#replace internal spaces with _
+			}
+		}
+		# if there's a "comments" line(s) we must remove these because of the slight
+		# chance that the word sequence (as part of the comment) might start a line
+		# and appear to the program as the keyword "sequence"
+		elsif(/^\s*comment/i){
+			$NumQuotes = tr/\"//;
+			if($NumQuotes == 1){	# unbalanced quotes. Must be more lines
+				for($i++; $i <= $#_; $i++){  # go through rest of block
+					$_ .= $_[$i];
+					$NumQuotes = tr/\"//;
+					last if($NumQuotes == 2);	# quit when closing quote found
+				}
+			}
+		}
+		# Two lines in a GDE file may start with word "sequence". Must distinguish.
+		elsif(/^\s*sequence-id\s*\"*(.+)\"*/i){  # if there's a sequence ID in GDE file use it in place of name
+			$ThisSeqName = $1 if(length($1) > 0);
+		}
+		elsif(/^\s*sequence(.*)/){  # look for keyword "sequence"
+			$seq = $1;
+			for($i++; $i <= $#_; $i++){  # go through rest of block
+				$seq .= $_[$i];
+			}
+		}
+	}
+	$ThisSeqName =~ s/\s+$//;	# remove trailing spaces
+	$ThisSeqName =~ s/\s/\_/g;	# replace internal spaces with _
+	$ThisSeqName =~ s/\"//g;		# get rid of any quotes
+	$seq =~ s/\s|\"//g;
+	return($ThisSeqName, $seq);
+}
+
+
+sub StoreGCGSeqs{
+#!!AA_SEQUENCE 1.0
+#
+#pir:ccho (1-104)
+#    pir:ccho  Length: 104  (today)  Check: 8847  ..
+#   1  GDVEKGKKIF VQKCAQCHTV EKGGKHKTGP NLHGLFGRKT GQAPGFTYTD
+#  51  ANKNKGITWK EETLMEYLEN PKKYIPGTKM IFAGIKKKTE REDLIAYLKK
+
+#  This sub uses hash %NamesSeqs which is only useful for
+#  keeping track of multiple names and multiple seqs in an
+#  input file.  Does GCG format ever store multiple seqs? If
+#  not then perhaps this sub should be rewritten to simply
+#  use @seqs array directly.
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($ThisSeqName, @names, @seqs, $seq, $i, %NamesSeqs);
+	for($i = 0; $i <= $#$InputLinesRef; $i++){
+		$_ = $InputLinesRef -> [$i];
+		s/\s+$//;
+		if(/\.\.$/){  # find line like "SeqName Length: 5390 Type: N Check: 8167 .." (ends with ..)
+			/^\s*(\S+)\s/;
+			$ThisSeqName = $1;
+			unless($ThisSeqName){  # if no seq name found
+				$ThisSeqName = "MySequence";
+			}
+			push(@names, $ThisSeqName);
+			for($i++; $i <= $#$InputLinesRef; $i++){
+				$_ = $InputLinesRef -> [$i];
+				s/\s+$//;
+			# find line like "1 tagcgcgatcgt agctgtgctgatgtg ctgtagcgacgagc acgaagagagcga"
+				if(/^\s*\d+\s+(.*)/){
+					$seq = $1;
+					$seq =~ s/ //g;
+					$NamesSeqs{$ThisSeqName} .= "$seq";   # append this part of seq to hash
+				}
+			}
+		}
+	}
+	foreach $ThisSeqName(@names){
+		push(@seqs, $NamesSeqs{$ThisSeqName});
+	}
+	return(\@names, \@seqs);
+}
+
+sub StoreBLASTSeqs{
+	# This is plain text, flat query-anchored with/without identities.
+	# 3 parts to this format: a preamble like
+	# BLASTP 2.2.13 [Nov-27-2005]
+	# Reference: Altschul, Stephen F., Thomas L. Madden, Alejandro A. Schaeffer,
+	# ...
+	# A second part of 
+	# Sequences producing significant alignments:                        (Bits)  Value
+	# gi|36365545|gb|AAQ86748.1|  gag protein [Human immunodeficiency v  36.6    0.21 
+	# ...
+	# and a third part alignment:
+	# ALIGNMENTS
+	# Query     1   GSEELRSLYNTVATLY  16
+	# 36365545  71  GSEELRSLYNTVATLY  86
+	# ...
+	# We skip through part 1. We parse part2 to relate the gi ($id) to the name which is
+	# the accession number plus the description. Part3 is the hardest to parse because
+	# the alignment is presented as blocks, but each sequence is not necessarily present
+	# in each block.
+	
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($n, $flag, $AccNo, $name, %IDNameHash, $id, $seq, @names, @seqs, %AllSeq, $width, @align, %AlignOrder, @SeqInAlign, $padding);
+	
+	#  Before parsing, remove all blank lines following the alignment section.
+	#  This insures we don't add extra gaps following each seq when parsing the
+	#  alignment section, Part 3.
+	
+	OUTER: for($n = 0; $n <= $#$InputLinesRef; $n++){
+		if($$InputLinesRef[$n] =~ /  Database: /){
+			$n--;
+			for(; $n >= 0; $n--){
+				if($$InputLinesRef[$n] =~ /^\s*$/){	# if preceeding line is
+					splice(@$InputLinesRef, $n, 1);
+				}
+				else{last OUTER;}
+			}
+		}
+	}
+	
+	#######################  Parse Part I preamble  #######################
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		if(/^Sequences producing significant alignments/){
+			$flag = 1;
+			$_ = shift(@$InputLinesRef);	# discard blank line
+			last;
+		}
+	}
+	unless($flag == 1){	# error trap
+		print "Error: could not find any \"Sequences producing significant alignments\" in putative BLAST format.";
+		exit;
+	}
+	
+	#######################  Parse Part 2 significant sequences table  #######################
+
+	$flag = 0;
+	$IDNameHash{"Query"} = "Query";	# relate the id and name in a hash
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		if(/^\s*$/){	# blank line marks end of table
+			$_ = shift(@$InputLinesRef);	# discard next blank line
+			unless(/ALIGNMENTS/){	# next line should be ALIGNMENTS
+				print "Error: In BLAST parsing I expected an \"ALIGNMENT\" line but got \"$_\"\n.";
+				exit;
+			}
+			$_ = shift(@$InputLinesRef);	# del one last blank
+			last;	# done with this part of output
+		}
+		#  Parse lines like: "gi|36365545|gb|AAQ86748.1|  gag protein [Human immunodeficiency v  36.6    0.21"
+		if(/^.+?\|(.+?)\|.+?\|(.+)\|(.+)\s+[\d\.]+\s+[\d\.]+/){	# use non-greedy quantifiers
+			$id = $1;
+			$AccNo = $2;
+			$name = $3;
+			$name = "$AccNo" . " $name";	# AccNo becomes part of name
+			$name =~ s/\s+$//;	# del trailing spaces
+			$name =~ s/^\s+//;	# del leading spaces
+			$name =~ s/\s+/_/g;
+			$IDNameHash{$id} = "$name";	# relate the id and name in a hash
+		}
+		else{
+			print "Error: I can't parse BLAST line \"$_\".";
+			exit;
+		}
+	}
+	
+	
+	#######################  Parse Part 3 the alignment  #######################
+
+	# Read through (and store in @align) the alignment section to find which seqs actually occur
+	# in the alignment. Each block may not contain every one of the seqs that appears somewhere
+	# in the alignment. e.g.,
+	# seq A  atcgtagctgatgctagtcgac
+	# seq B  atcgtagctgatgctagtcgac
+	
+	# seq A  atcgtagctgatgctagtcgac
+	# seq B  atcgtagctgatgctagtcgac
+
+	# seq A  atcgtagctgatgctagtcgac
+	# seq X        gctgatgct
+	# Later we reread through the @align. In block 1 (etc.) we must enter gaps
+	# for seq X, so that when it finally does appear it will be aligned to the rest of the seqs.
+
+	$n = 1;
+	while(@$InputLinesRef){		# first read through alignment to determine which seqs occur
+		$_ = shift(@$InputLinesRef);
+		if(/^\s*Database:/){	# marks the end of the alignment section
+			last;
+		}
+		if(/^\s*$/){	# save blank lines but don't parse
+			push(@align, $_);
+			next;
+		}
+		push(@align, $_);	# save the alignment on a stack
+		/^([^ ]+) /;	# match the first field which is the id
+		$id = "$1";
+		# $AlignOrder{1} = 837250, i.e., relate order in the alignment to ID
+		unless(exists ($AlignOrder{"$id"})){	# unless we've seen this ID before add it to hash
+			$AlignOrder{"$id"} = "$n";
+			push(@SeqInAlign, $id);
+			$n++;
+		}
+	}
+	
+	$_ = shift(@align);	# query line "Query  AF72764     GACGGACGAAATATATCAGTCATTGTCTCCTCCTCCATTTAATGCGAGGCCGATGGGAAA  60"
+	unless(/^Query/){	# this line should be the start of the alignment which begins with the query
+		print "Error: I expect a Query in the line \"$_\".";
+		exit;
+	}
+	#  Use the query line to find sequence length and calculate padding (a line of gaps)
+	/^(Query\s+.+?\s+)[^\s]/;	# match everything left of the actual sequence
+	$width = length($1);		# measure its width
+	s/^.{$width}//;			# delete everything left of the actual sequence
+	$id = "$&";				# but store it
+	$id =~ s/\s+.+$//;			# delete everything downstream of first space, leaving just the id
+	s/  \d+$//;				# delete everything following sequence
+	s/ /-/g;					# replace spaces with gaps
+	$padding = "-" x length($_);
+	$AllSeq{"$id"} .= "$_";		# add this bit of seq to the growing query seq
+	
+	$n = 0;
+	while(@align){
+		$_ = shift(@align);
+		if($_ !~ /^\s*$/){	# a line like "30519405  72764     GACGGACGAAATATATCAGTCATTGTCTCCTCCTCCATTTAATGCGAGGCCGATGGGAAA  72705"
+			s/^.{$width}//;		# delete everything left of the actual sequence
+			$id = "$&";			# but store it
+			$id =~ s/\s+.+$//;		# delete everything downstream of first space, leaving just the id
+			s/  \d+$//;			# delete everything following sequence
+			s/ /-/g;				# replace spaces with gaps
+			$AllSeq{"$id"} .= "$_";	# add this bit of seq to the growing seq
+			unless($id = $SeqInAlign[$n]){
+				print "Error: line $n \"$id\" not equal to \"$SeqInAlign[$n]\"\n";	# make sure we're in synch
+				exit;
+			}
+			$n++;
+		}
+		elsif(/^\s*$/){	# end of this block of alignment.  Now add unrepresented seqs.
+			$n++;
+			for($n; $n <= $#SeqInAlign; $n++){
+				$id = $SeqInAlign[$n];
+				$AllSeq{"$id"} .= "$padding";	# add a line of gaps
+#print "$n: $id: |$AllSeq{$id}|\n";
+			}
+			$n = 0;
+		}
+	}
+
+	foreach $id(@SeqInAlign){
+#print "id = $id\n";
+		$seq = $AllSeq{"$id"};
+#print "AllSeq of $id = $AllSeq{$id}\n";
+		#if($seq){	# some ids don't have seqs associated with them
+			push(@seqs, $seq);
+			$name = $IDNameHash{$id};
+			push(@names, $name);
+		#}
+	}
+	#  Some of the seqs may have to be padded on their right end with gaps
+	&PadWords(\@seqs, "L", '-');
+	return(\@names, \@seqs);
+}
+
+		
+sub StoreMaseSeqs{
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($seq, @names, @seqs, $FoundName, %NamesSeqs);
+	foreach(@$InputLinesRef){
+		if(/^\s*$/){   # skip blank lines
+			next;
+		}
+		elsif(/^\;/ && $seq){		# marks end of one seq and beginning of next
+			push(@seqs, $seq);	# save the current seq
+			$seq = "";		# clear
+		}
+		elsif(/^\;/ && !$seq){		# first sequence name (because there's no growing seq)
+			next;
+		}
+		elsif(!$seq && !$FoundName){	# a name line
+			$FoundName = 1;
+			s/ /_/g;
+			push(@names, $_);
+		}
+		elsif(!$seq && $FoundName){	# first sequence line
+			$FoundName = 0;
+			$seq .= $_;
+		}
+		else{
+			$seq .= $_;		# other lines add to seq
+		}
+	}
+	push(@seqs, $seq);
+
+	return(\@names, \@seqs);
+}    
+
+sub StoreStockholmSeqs{
+
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($name, $seq, $i, @names, %NamesSeqs, @seqs);
+	foreach(@$InputLinesRef){
+		next if(/^\#/);		# skip lines starting with #
+		next if(/^\s*$/);	# skip blank lines
+		next if(/\/\//);	# skip //
+		if(/^(\S+)\s+(.*)/){
+			$name = $1;
+			$seq = $2;
+			$seq =~ s/ //g;
+			push(@names, $name) unless($NamesSeqs{$name});
+			$NamesSeqs{$name} .= "$seq";   # append this part of seq to hash
+		}
+		else{
+			print "Error: something's wrong with this Stockholm format line:\n$_\n";
+			exit;
+		}
+	}
+	foreach $name(@names){
+		push(@seqs, $NamesSeqs{$name});
+	}
+	return(\@names, \@seqs);
+}
+
+sub StoreTableSeqs{
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my(@names, @seqs);
+	foreach(@$InputLinesRef){
+		next if(/^\s*$/);	# skip blank lines
+		/^([^\t]+)\t(.*)/;
+		push(@names, $1);
+		push(@seqs, $2);
+	}
+	return(\@names, \@seqs);
+}
+
+sub StoreMacVectorSeqs{
+	#  MacVector is a binary format. Will Fischer, who wrote this sub in Jan. 2006, could 
+	#  not find out much about MacVector format from the Macvector company. So use with caution.
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($stated_alignedLength, $data, $name_start, $name_length, $names,$unknown_codes,$sequences);
+	my(@names, @seqs, $alignedLength);
+	my $IUPAC = 'ACGTUMRWSYKVHDBN';
+	$data = join "\n",@$InputLinesRef;
+	$data =~ /alignedLength=(\d+)/i and $stated_alignedLength=$1;
+
+	# It appears to me (Will Fischer) that the 90th character of the file is an ascii code
+	# specifying the length of the names; I don't know if this is generally true.
+	# The examples I worked with had 33-character names, and a "!" (ascii 33) in this position
+	$name_start = substr($data,89,1); 
+	$name_length = ord($name_start); # e.g. "!" is ascii 33
+	($names,$unknown_codes,$sequences) = ($data =~ m/\000\000\000$name_start([^\cG]*)\000\000\000\cG(.{4})([-$IUPAC]*)\000\000\000\cJ/);
+	
+	# names are $name_length-character null-padded strings (33 characters for "!")
+	if ( length($names) % $name_length ) {
+		print "Error: name-string mismatch in sub StoreMacVectorSeqs.\n";
+		exit;
+		#warn qq($cmd: parsing error --\n    name-string mismatch in file "$file":\n\tlength of names string not a multiple of $name_length\n);
+	}
+	@names = fixed_length_substrings($names,$name_length);
+	map {tr/ /_/} @names;   # can't have spaces in fasta names
+	# names end with first null, but other characters may follow (from names having been shortened in MacVector?)!
+	map {s/\c@.*//} @names; 
+	eval q($alignedLength = length($sequences)/scalar(@names));
+	if ($stated_alignedLength != $alignedLength) {
+		my $l=length($sequences);
+		my $c=scalar(@names);
+		print "Error: aligned-length mismatch in sub StoreMacVectorSeqs.\n";
+		exit;
+		#warn qq($cmd: parsing error --\n    aligned-length mismatch in file "$file":\n    in file: $stated_alignedLength\n    as parsed: length of sequence string ($l) / number of sequences ($c) = $alignedLength\n);
+	}
+	@seqs = fixed_length_substrings($sequences,$alignedLength);
+	return(\@names,\@seqs);
+}
+
+sub fixed_length_substrings ($$) {
+	# break string into $length-character substrings
+	# (only full-length substrings returned!)
+	my($string,$length) = @_;
+	my $format = "a$length" x (length($string) / $length);
+	return(unpack($format,$string));
+}
+
+sub StoreSLXSeqs{
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($seq, $name, @names, @seqs, %NamesSeqs);
+	foreach(@$InputLinesRef){
+		next if(/^\s*(\#|\%)/);  # ignore comments
+		next if(/^\s*$/); 	 	# skip blank lines
+		#s/\s$//;				# removed 7/26/05 because space allowed in SLX seqs
+		if(/^([^\s]+)\s+(.+)/){
+			$name = $1;
+			$seq = $2;
+			push(@names, $name) unless($NamesSeqs{$name});	# save name unless we've seen before
+			$NamesSeqs{$name} .= $seq;
+		}
+	}
+	foreach $name(@names){
+		push(@seqs, $NamesSeqs{$name});
+	}
+	return(\@names, \@seqs);
+}
+
+sub StoreRawSeqs{
+	#  Sub assumes that if there are multiple lines in a raw input file
+	#  then each line is a separate sequence. Generate multiple names
+	#  of the form seq1, seq2, for these seqs
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($i, @names, @seqs);
+	$i = 0;
+	foreach(@$InputLinesRef){
+		chomp;
+		unless(/^\s*$/){	# ignore blank lines
+			$i++;
+			push(@seqs, "$_");
+			push(@names, "seq$i");
+		}
+	}
+	return(\@names, \@seqs);
+}
+
+sub StoreFastaSeqs{
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($seq, @names, @seqs);
+
+	foreach(@$InputLinesRef){
+		if(/^\s*$/){ # skip blank lines
+			next;
+		}
+		elsif(/^\s*\;/){ # skip comment lines
+			next;
+		}
+		elsif(/^>(.*)/ && $seq){	# marks end of one seq and beginning of next
+			push(@names, $1);	# store the name
+			push(@seqs, $seq);	# save the current seq
+			$seq = "";		# clear
+		}
+		elsif(/^>(.*)/ && !$seq){	# first sequence name (because there's no growing seq)
+			push(@names, $1);	# store the name
+			next;
+		}
+		else{
+			$seq .= $_;		# other lines add to seq
+		}
+	}
+	push(@seqs, $seq);
+	return(\@names, \@seqs);
+}    
+
+sub StoreGDEFlatSeqs{
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($seq, @names, @seqs);
+
+	foreach(@$InputLinesRef){
+		if(/^\s*$/){ # skip blank lines
+			next;
+		}
+		elsif(/^(\#|\%)(.*)/ && $seq){	# marks end of one seq and beginning of next
+			push(@names, $2);			# store the name
+			push(@seqs, $seq);			# save the current seq
+			$seq = "";					# clear
+		}
+		elsif(/^(\#|\%)(.*)/ && !$seq){	# first sequence name (because there's no growing seq)
+			push(@names, $2);			# store the name
+			next;
+		}
+		else{
+			$seq .= $_;					# other lines add to seq
+		}
+	}
+	push(@seqs, $seq);
+	return(\@names, \@seqs);
+}    
+
+sub StoreRIPSeqs{
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($line, $numseqs, $seqlength, $NumLinesPerSeq, $remainder, $i, $j, $seq, @names, @seqs);
+	
+	$line = shift(@$InputLinesRef);	# discard first line (RIPdata)
+	$line = shift(@$InputLinesRef);	# grab second line (RIPdata)
+	($numseqs, $seqlength) = split(/\s+/, $line);
+	$NumLinesPerSeq = $seqlength / 50;
+	$remainder = $seqlength % 50;
+	$NumLinesPerSeq++ if($remainder > 0);
+	
+	
+	for($i = 1; $i <= $numseqs; $i++){	# go through rest of alignment
+		$_ = shift(@$InputLinesRef);	# this should be a name line
+		push(@names, $_);			# store the name
+		
+		for($j = 1; $j <= $NumLinesPerSeq; $j++){	# go through the sequence lines following the name
+			$_ = shift(@$InputLinesRef);	# a sequence line
+			$seq .= $_;		# other lines add to seq
+		}
+		push(@seqs, $seq);
+		$seq = "";
+	}
+	return(\@names, \@seqs);
+}    
+
+
+sub StoreClustalSeqs{
+#  CLUSTAL W (1.8) multiple sequence alignment
+#  
+#                  1                                                         60
+#  TRGJ1_01        ------------GAATTATTATAAGAAACTCTTTGGCAGTGGAACAACACTGGTTGTCAC
+#  TRGJ2_01        ------------GAATTATTATAAGAAACTCTTTGGCAGTGGAACAACTCTTGTTGTCAC
+#  TRGJP_01        TGGGCAAGAGTTGGGCAAAAAAATCAAGGTATTTGGTCCCGGAACAAAGCTTATCATTAC
+#  TRGJP1_01       --------ATACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAAC
+#  TRGJP2_01       --------ATAGTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAAC
+#                                                 ***         *              **
+#  
+#                  61    68
+#  TRGJ1_01        AG------
+#  TRGJ2_01        AG------
+#  TRGJP_01        AG------
+#  TRGJP1_01       TTCACCTG
+#  TRGJP2_01       TTCGCCTG
+
+#  Note: apparently sequence lines can end with a number e.g.,  ..GTCAC  60
+
+	use strict;
+	my($InputLinesRef) = $_[0];
+	
+	my($ThisSeqName, $ThisSeq, $DoingFirstBlock, @simple, @names, @seqs, %NamesSeqs);
+	#  simplify the input
+	while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		next if(/CLUSTAL/i);	# skip CLUSTAL line
+		next if(/^\s*$/);		# skip blank lines
+		next if(/^[\s\*\.\:\d]+$/);  # skip lines that are entirely blanks, stars, colons, dots or digits
+		s/[\s\d]+$//;			# remove trailing blanks and digits
+		push(@simple, $_);		# this is where first sequence block begins
+		OUTER: while(@$InputLinesRef){
+			$_ = shift(@$InputLinesRef);
+			next if(/^[\s\*\.\:\d]+$/);  # skip lines that are entirely blanks, stars, colons, dots or digits
+			if(/^\s*$/){	# a blank line marks boundary between blocks
+				push(@simple, "!!!!");  # this marks boundary between blocks
+				while(@$InputLinesRef){   # look ahead for multiple blank lines
+					$_ = shift(@$InputLinesRef);
+					next if(/^\s*$/);      # skip blank lines
+					unshift(@$InputLinesRef, $_);	# put back on stack; next block
+					next OUTER;
+				}
+			}
+			else{
+				s/[\s\d]+$//;		# remove trailing blanks and digits
+				push(@simple, $_);  # save a line of sequence
+			}
+		}
+	}
+	$DoingFirstBlock = 1;	# set flag to indicate processing first interleaved block
+	foreach(@simple){		# go through the simplified input
+		if(/!!!!/){
+			$DoingFirstBlock = 0;	# set to false when end of first block encountered
+			next;
+		}
+		/^([^\s]+)\s+(.*)/;	# match name and sequence
+		$ThisSeqName = $1;
+		$ThisSeq = $2;
+		$ThisSeq =~ s/\s//g;
+		push(@names, $ThisSeqName) if $DoingFirstBlock;	# save names on list only from first block
+		$NamesSeqs{$ThisSeqName} .= "$ThisSeq";
+	}
+	foreach $ThisSeqName(@names){   # go through the simplified input
+		push(@seqs, $NamesSeqs{$ThisSeqName});
+	}
+	return(\@names, \@seqs);
+}
+
+sub StorePrettySeqs{
+	use strict;
+	my($InputLinesRef) = $_[0];
+	
+	my($ThisSeqName, $ThisSeq, $DoingFirstBlock, @simple, @names, @seqs, %NamesSeqs);
+	#  simplify the input
+	$DoingFirstBlock = 1;	# set flag to indicate processing first interleaved block
+	OUTER: while(@$InputLinesRef){
+		$_ = shift(@$InputLinesRef);
+		if(/^\s*$/){	# a blank line marks boundary between blocks
+			push(@simple, "!!!!");  # this marks boundary between blocks
+			while(@$InputLinesRef){   # look ahead for multiple blank lines
+				$_ = shift(@$InputLinesRef);
+				next if(/^\s*$/);      # skip multiple blank lines
+				unshift(@$InputLinesRef, $_);	# put back on stack; next block
+				next OUTER;
+			}
+		}
+		else{
+			s/[\s\d]+$//;		# remove trailing blanks and digits
+			s/^\s+//;			# remove leading blanks in case names are right-justified
+			push(@simple, $_);  # save a line of sequence
+		}
+	}
+	foreach(@simple){		# go through the simplified input
+		if(/!!!!/){
+			$DoingFirstBlock = 0;	# set to false when end of first block encountered
+			next;
+		}
+		/^([^\s]+)\s+(.*)/;	# match name and sequence
+		$ThisSeqName = $1;
+		$ThisSeq = $2;
+		$ThisSeq =~ s/\s//g;
+		push(@names, $ThisSeqName) if $DoingFirstBlock;	# save names on list only from first block
+		$NamesSeqs{$ThisSeqName} .= "$ThisSeq";
+	}
+	foreach $ThisSeqName(@names){   # go through the simplified input
+		push(@seqs, $NamesSeqs{$ThisSeqName});
+	}
+	return(\@names, \@seqs);
+}
+
+sub StoreMEGAiSeqs{
+	use strict;
+	my($InputLinesRef) = $_[0];
+	
+	my($name, $seq, $NamesComplete, @names, @seqs, %NamesSeqs);
+
+	#  First simplify input by removing all lines above and below the sequence region
+	$_ = shift(@$InputLinesRef);  # discard first line "#Mega"
+	while(@$InputLinesRef){   # read from begin to first seq
+		$_ = shift(@$InputLinesRef);
+		if(/^\#/){   # find line that starts with "#"
+			unshift(@$InputLinesRef, $_);
+			last;
+		}
+	}
+	while(@$InputLinesRef){   # read from end to first nonblank line
+		$_ = pop(@$InputLinesRef);
+		if(/\w+/){   # skip lines until first seq line
+			push(@$InputLinesRef, $_);
+			last;
+		}
+	}
+	$NamesComplete = "0";
+	while(@$InputLinesRef){   # read from begin to first seq
+		$_ = shift(@$InputLinesRef);
+		if(/^\s*$/){	# blank line
+			$NamesComplete = "1";	# processed first block, therefore seen all names
+			next;
+		}
+		if(/^\#(\S+)\s+(.*)/){	# match the name and sequence
+			$name = $1;
+			$seq = $2;
+			$seq =~ s/\"[^\"]+\"//g;  # remove all comments
+			$seq =~ s/\s//g;          # delete spaces embedded in the sequence
+			$NamesSeqs{$name} .= "$seq";
+			push(@names, $name) unless($NamesComplete);	# save names until each name has been stored
+		}
+		else{
+			print "Error: Mega interleaved sequence lines must start with \# and have an associated sequence.\n";
+			exit;
+		}
+	}
+	foreach $name(@names){   # go through the simplified input
+		push(@seqs, $NamesSeqs{$name});
+	}
+	return(\@names, \@seqs);
+}
+
+sub StoreMEGAsSeqs{	# Mega sequential
+	use strict;
+	my($InputLinesRef) = $_[0];
+	
+	my($name, $seq, @names, @seqs, %NamesSeqs);
+
+	#  First simplify input by removing all lines above and below the sequence region
+	$_ = shift(@$InputLinesRef);  # discard first line "#Mega"
+	while(@$InputLinesRef){   # read from begin to first seq
+		$_ = shift(@$InputLinesRef);
+		if(/^\#/){   # find line that starts with "#"
+			unshift(@$InputLinesRef, $_);
+			last;
+		}
+	}
+	while(@$InputLinesRef){   # read from end upwards to first nonblank line
+		$_ = pop(@$InputLinesRef);
+		if(/\w+/){   # skip lines until first seq line
+			push(@$InputLinesRef, $_);
+			last;
+		}
+	}
+	while(@$InputLinesRef){   # read from begin to first seq
+		$_ = shift(@$InputLinesRef);
+		if(/^\s*$/){	# skip blank lines
+			next;
+		}
+
+
+		#  two options: name and seq can be on same line like
+		#  #SeqName1  actagctagctagtcgatcgtagctagtcgac
+		#  or the name might appear on one line and the
+		#  sequence begins on the next line
+		if(/^\#(\S+)\s*$/){	# name only
+			$name = $1;
+			push(@names, $name);
+		}
+		elsif(/^\#(\S+)\s*(.*)$/){	# name with seq
+			$name = $1;
+			push(@names, $name);
+			$seq = $2;
+			$seq =~ s/\"[^\"]+\"//g;  # remove all comments
+			$seq =~ s/\s//g;          # delete spaces embedded in the sequence
+			push(@names, $name);
+			$NamesSeqs{$name} = "$seq";
+		}
+		else{	# all other lines must be sequence
+			$seq = $_;
+			$seq =~ s/\"[^\"]+\"//g;  # remove all comments
+			$seq =~ s/\s//g;          # delete spaces embedded in the sequence 
+			$NamesSeqs{$name} .= "$seq";
+		}
+	}
+	foreach $name(@names){   # go through the simplified input
+		push(@seqs, $NamesSeqs{$name});
+	}
+	return(\@names, \@seqs);
+}
+
+sub StorePhylipiSeqs{	# phylip interleaved
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($NumSeqs, $SeqLength, $ThisSeqName, $ThisSeq, $i, @seqs, @names);
+
+	$InputLinesRef = &DeleteBlankLines($InputLinesRef);
+
+	$_ = shift(@$InputLinesRef);  # look at first line
+	unless(/^\s*(\d+) +(\d+)/){  # match 2 digits
+		print "Error: Your phylip file must have the number of sequences and their length on the first line.\n";
+		exit;
+	}
+	$NumSeqs = $1;
+	$SeqLength = $2;
+	
+	# Look at first $NumSeqs lines of input. Only these lines contain
+	# the sequence names (and some sequence)
+	for($i = 1; $i <= $NumSeqs; $i++){
+		$_ = shift(@$InputLinesRef);   # go through the input line by line
+		if(length($_) < 10){   # seq names must be 10 chars long
+			print "Error: Sequence names must be at least 10 chars long even if some chars are blank.\n";
+			print "$_\n";
+			exit;
+		}
+		/^(.{10})(.*)/;  # match the name field and sequence field
+		$ThisSeqName = $1;
+		$ThisSeq = $2;
+		$ThisSeqName =~ s/ +$//;  # delete trailing blanks only
+		$ThisSeq =~ s/\s//g;  # delete spaces embedded in the sequence
+		push(@names, $ThisSeqName);
+		push(@seqs, $ThisSeq);
+	}
+
+	$i = -1;
+	while(@$InputLinesRef){	# continue with rest of input
+		$_ = shift(@$InputLinesRef);
+		$i++;   # count lines
+		s/\s//g;  # delete spaces embedded in the sequence
+		$seqs[$i] .= "$_";   # add on this part of sequence
+		if($i == $NumSeqs - 1){
+			$i = -1;
+		}
+	}
+	return(\@names, \@seqs);
+}
+
+sub StorePhylipsSeqs{	# phylip sequential
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my($NumSeqs, $SeqLength, $FirstLine, $ThisLine, $LengthSoFar, $ThisSeqName, @names, @seqs, $seq);
+
+	$InputLinesRef = &DeleteBlankLines($InputLinesRef);
+
+	$ThisLine = shift(@$InputLinesRef);   # look at first line
+#print "0thLine = |$ThisLine|\n";
+	unless($ThisLine =~ /^\s*(\d+) +(\d+)/){  # match 2 digits
+		print "Error: Your phylip file must have the number of sequences and their length on the first line.\n";
+		exit;
+	}
+	$NumSeqs = $1;
+	$SeqLength = $2;
+	$FirstLine = 1;
+	while(@$InputLinesRef){   # go through the input line by line
+		$ThisLine = shift(@$InputLinesRef);
+
+		if($FirstLine){  # a line like "Homo sapieAGUCGAGUC---GCAGAAACGCAUGC"
+			$ThisLine =~ /^(.{10})(.*)/;  # match the name field and sequence field
+			$ThisSeqName = $1;
+			$seq = $2;
+			$ThisSeqName =~ s/ +$//;  # delete trailing blanks only
+			push(@names, $ThisSeqName);
+			$seq =~ s/ //g;	# delete any spaces
+			$LengthSoFar = length($seq);
+			if($LengthSoFar < $SeqLength){  # need to read more sequence lines
+				$FirstLine = 0;  # set flag to false
+			}
+			elsif($LengthSoFar == $SeqLength){  # first line contains entire sequence
+				push(@seqs, $seq);
+			}
+		}
+		else{  # not first line
+			$ThisLine =~ s/ //g;
+			$LengthSoFar += length($ThisLine);
+			if($LengthSoFar < $SeqLength){  # need to read more sequence lines
+				$seq .= "$ThisLine";
+			}
+			elsif($LengthSoFar == $SeqLength){  # end of sequence
+				$seq .= "$ThisLine";
+				$FirstLine = 1;   # set flag to true
+				$LengthSoFar = 0;
+				push(@seqs, $seq);
+			}
+			else{
+				print "Error: in sub StorePhylipsSeqs (perhaps sequences aren't aligned?)\n";
+				exit;
+			}
+		}
+	}
+	return(\@names, \@seqs);
+}
+
+
+
+
+#########################################
+#     SUBROUTINES TO PRINT SEQUENCES    #
+#########################################
+
+sub PrintOutput{
+	#  This sub calls one of numerous sub-subs based on the user's $OutFormat.
+	#  Each of the sub-subs creates a list of OutputLines that will be
+	#  actually printed out back in the MAIN. Each sub-sub returns a reference
+	#  to that list. PrintOutput in turn returns (implicitly) that reference.
+	use strict;
+	my($OutFormat, $SplitPrint, $SplitLineLength, $BlockWidth, $NumBlocks, $NamesRef, $SeqsRef) = @_;
+	if($OutFormat =~ /table|tbl/i){
+		&PrintTable($NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /fasta|fas|fast/i){
+		&PrintFasta($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /RIP/i){
+		&PrintRIP($NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /mas|ig/i){
+		&PrintMase($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /rsf|rich/i){
+		&PrintRSF($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /raw/i){
+		&PrintRaw($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /gdeflat|flatgde/i){
+		&PrintGDEFlat($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /gde/i){
+		&PrintGDE($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /pir|nbrf/i){
+		&PrintPIR($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /gcg/i){
+		&PrintGCG($NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /clust/i){
+		&PrintClustal($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /phi|phyi|phylipi/i){
+		&PrintPhylipi($SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /phs|phys|phylips/i){
+		&PrintPhylips($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /msf/i){
+		&PrintMSF($NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /megs|megas/i){
+		&PrintMegas($SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /megi|megai/i){
+		&PrintMegai($SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /nexusi|nexi/i){
+		&PrintNEXUSi($SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /nexus\b|nexuss|nexs/i){
+		&PrintNEXUSs($SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /stock|stockholm/i){
+		&PrintStockholm($SplitLineLength, $NamesRef, $SeqsRef);
+	}
+
+	elsif($OutFormat =~ /slx/i){
+		&PrintSLX($SplitLineLength, $NamesRef, $SeqsRef);
+	}
+	
+	elsif($OutFormat =~ /pret/i){
+		&PrintPrettyInterleaved($NamesRef, $SeqsRef, $BlockWidth, $NumBlocks);
+	}
+
+	elsif($OutFormat =~ /outali|oal|aln/i){
+		&PrintOutputAlign($SplitPrint, $NamesRef, $SeqsRef, $BlockWidth, $NumBlocks);
+	}
+
+	else{
+		print "Error: I don't understand your output format \"$OutFormat\"\n";
+		exit;
+	}
+}
+
+
+sub PrintTable{
+	use strict;
+	my($NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, $ThisSeqName, $seq);
+	foreach $ThisSeqName(@$NamesRef){
+		$seq = shift(@$SeqsRef);
+		push(@OutputLines, "$ThisSeqName\t$seq\n");
+	}
+	return(\@OutputLines);
+}
+
+sub PrintMase{
+	use strict;
+	my($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, $line, $ThisSeqName, $seq, $SplitLinesRef);
+	if($SplitPrint){   # $SplitPrint is a flag to break seq lines every n characters
+		foreach $ThisSeqName(@$NamesRef){
+			$seq = shift(@$SeqsRef);
+			$SplitLinesRef = &SplitSeq($seq, $SplitLineLength);
+			push(@OutputLines,  ";\n$ThisSeqName\n");
+			foreach $line(@$SplitLinesRef){
+				push(@OutputLines,  "$line\n");
+			}
+		}
+	}
+	else{
+		foreach $ThisSeqName(@$NamesRef){
+			$seq = shift(@$SeqsRef);
+			push(@OutputLines,  ";\n$ThisSeqName\n$seq\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrintFasta{
+	use strict;
+	my($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, $line, $ThisSeqName, $seq, $SplitLinesRef);
+	if($SplitPrint){
+		foreach $ThisSeqName(@$NamesRef){
+			$seq = shift(@$SeqsRef);
+			$SplitLinesRef = &SplitSeq($seq, $SplitLineLength);
+			push(@OutputLines, ">$ThisSeqName\n");
+			foreach $line(@$SplitLinesRef){
+				push(@OutputLines, "$line\n");
+			}
+		}
+	}
+	else{
+		foreach $ThisSeqName(@$NamesRef){
+			$seq = shift(@$SeqsRef);
+			push(@OutputLines, ">$ThisSeqName\n$seq\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrintGDEFlat{
+	use strict;
+	my($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, $line, $ThisSeqName, $seq, $answer, $StartChar, $SplitLinesRef);
+	$seq = $SeqsRef -> [0];	# get the first seq
+	$answer = &IsNuc($seq);
+	if($answer == 1){
+		$StartChar = "\#";
+	}
+	elsif($answer == 0){
+		$StartChar = "\%";
+	}
+	else{
+		$StartChar = "\#";
+	}
+	if($SplitPrint){
+		foreach $ThisSeqName(@$NamesRef){
+			$seq = shift(@$SeqsRef);
+			$SplitLinesRef = &SplitSeq($seq, $SplitLineLength);
+			push(@OutputLines, "$StartChar$ThisSeqName\n");
+			foreach $line(@$SplitLinesRef){
+				push(@OutputLines, "$line\n");
+			}
+		}
+	}
+	else{
+		foreach $ThisSeqName(@$NamesRef){
+			$seq = shift(@$SeqsRef);
+			push(@OutputLines, "$StartChar$ThisSeqName\n$seq\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrintRIP{
+	use strict;
+	my($NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, $line, $ThisSeqName, $seq);
+	my($LongestSeq, $NumSeqs, $SeqLength, $start);
+	
+	$LongestSeq = &FindLongest($SeqsRef);	# find longest seq
+	&PadWords($SeqsRef, 'L', '-');		# pad seqs with - to left-justify them
+	$SeqLength = length($SeqsRef -> [0]);	# get seq length (all are now equal)
+	$NumSeqs = @$SeqsRef;				# number of seqs
+	push(@OutputLines, "RIPdata\n");
+	push(@OutputLines, "$NumSeqs $SeqLength\n");
+	foreach $seq(@$SeqsRef){
+		$ThisSeqName = shift(@$NamesRef);
+		push(@OutputLines, "$ThisSeqName\n");
+		for($start = 0; $start < $SeqLength; $start += 50){
+			$line = substr($seq, $start, 50);		# split off lines 50 chars wide
+			push(@OutputLines, "$line\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrintPIR{
+	use strict;
+	my($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, $line, $ThisSeqName, $seq, $SplitLinesRef, $ID, $answer);
+	if($SplitPrint){
+		foreach $ThisSeqName(@$NamesRef){
+			$seq = shift(@$SeqsRef);
+			$answer = &IsNuc($seq);
+			if($answer == 1){
+				$ID = "DL";
+			}
+			elsif($answer == 0){
+				$ID = "P1";
+			}
+			else{
+				print "Error: I can't tell if your sequence is nucleotide or protein.\n";
+				exit;
+			}
+			$SplitLinesRef = &SplitSeq($seq, $SplitLineLength);
+			push(@OutputLines, ">$ID\;$ThisSeqName\n$ThisSeqName\n");
+			foreach $line(@$SplitLinesRef){
+				push(@OutputLines, "$line\n");
+			}
+			$line = pop(@OutputLines);
+			chomp($line);	# remove the final \n
+			push(@OutputLines, "$line*\n");
+		}
+	}
+	else{
+		foreach $ThisSeqName(@$NamesRef){
+			$seq = shift(@$SeqsRef);
+			$answer = &IsNuc($seq);
+			if($answer == 1){
+				$ID = "DL";
+			}
+			elsif($answer == 0){
+				$ID = "P1";
+			}
+			else{
+				print "Error: I can't tell if your sequence is nucleotide or protein.\n";
+				exit;
+			}
+			push(@OutputLines, ">$ID\;$ThisSeqName\n$ThisSeqName\n");
+			push(@OutputLines, "$seq*\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrintRSF{
+	use strict;
+	my($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, $line, $ThisSeqName, $seq, $SplitLinesRef);
+	push(@OutputLines, "!!RICH_SEQUENCE 1.0\n");
+	push(@OutputLines, "..\n");
+	if($SplitPrint){
+		foreach $ThisSeqName(@$NamesRef){
+			$seq = shift(@$SeqsRef);
+			$SplitLinesRef = &SplitSeq($seq, $SplitLineLength);
+			push(@OutputLines, "{\n");
+			push(@OutputLines, "name $ThisSeqName\n");
+			push(@OutputLines, "sequence\n");
+			foreach $line(@$SplitLinesRef){
+				push(@OutputLines, "$line\n");
+			}
+			push(@OutputLines, "}\n");
+		}
+	}
+	else{
+		foreach $ThisSeqName(@$NamesRef){
+			$seq = shift(@$SeqsRef);
+			push(@OutputLines, "{\n");
+			push(@OutputLines, "name $ThisSeqName\n");
+			push(@OutputLines, "sequence\n");
+			push(@OutputLines, ">$ThisSeqName\n$seq\n");
+			push(@OutputLines, "}\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+
+sub PrintStockholm{
+#  # STOCKHOLM 1.0
+
+#  seq1      AATTTTTACCCCGGGGGG
+#  seq2      AACCCTTACCCCGGGGGG
+
+#  seq1      AGGGGGGACCCCGG
+#  seq2      AGGGGGGACCCCGG
+
+	use strict;
+	my($SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, %PaddedNameHash, $i, $longestname, $ThisSeqName, $ThisSeq, $InterLeavedRef);
+
+	push(@OutputLines, "\# STOCKHOLM 1.0\n\n");
+
+	$longestname = &FindLongest($NamesRef);
+	%PaddedNameHash = &PadNames($NamesRef, $longestname, "L");  # fill out names with blanks
+
+	$InterLeavedRef = &PrepInterleaved($SplitLineLength, $NamesRef, $SeqsRef);
+	$i = 0;
+	foreach(@$InterLeavedRef){	# go thru the raw interleaved list
+		($ThisSeqName, $ThisSeq) = split(/\t/, $_);
+		$ThisSeqName =~ s/\#//g;	# remove "#" chars from name (# is the stockholm comment char)
+		$ThisSeqName = $PaddedNameHash{$ThisSeqName}; # get the padded version of each name
+		push(@OutputLines, "$ThisSeqName $ThisSeq\n");
+		$i++;
+		if($i > $#$NamesRef){	# end of a block
+			$i = 0;	# reset block counter
+			push(@OutputLines, "\n");
+		}
+	}
+	push(@OutputLines, "//\n");
+	return(\@OutputLines);
+}
+
+sub PrintGCG{
+#  The GCG format is for a single sequence.
+	use strict;
+	my($NamesRef, $SeqsRef) = @_;
+	my $NumSeqs = @$SeqsRef;
+	if($NumSeqs > 1){
+		print "Error: GCG output format should contain only one sequence. Your file contained more than one.\n";
+		exit;
+	}
+	my(@OutputLines, $ThisSeqName, $ThisSeq, $answer);
+	my($NumLines, $type, $today, $len, $i, %PaddedNumHash, $check, $line, $num, @nums, $longest);
+
+	$ThisSeq = $SeqsRef -> [0];
+	$ThisSeqName = $NamesRef -> [0];
+	$answer = &IsNuc($ThisSeq);
+	if($answer == 1){
+		$type = "!!NA_SEQUENCE 1.0";
+	}
+	elsif($answer == 0){
+		$type = "!!AA_SEQUENCE 1.0";
+	}
+	else{
+		print "Error: I can't tell if your sequence is nucleotide or protein.\n";
+		exit;
+	}
+
+	$today = `date`;
+	chomp($today);
+	$len = length($ThisSeq);
+	$check = &GCG_checksum($ThisSeq);
+
+	$NumLines = $len/50;
+	$NumLines =~ /(.*)\./;
+	for($i = 0; $i <= $NumLines; $i++){
+		$num = 50 * $i +1;
+		push(@nums, $num);
+	}
+	$longest = FindLongest(\@nums);
+	%PaddedNumHash = &PadNames(\@nums, $longest, "R");
+
+	push(@OutputLines, "$type\n\ncf:$ThisSeqName Length: $len $today Check: $check ..\n");
+
+	my $start = 0;
+	for($i = 0; $i <= $NumLines; $i++){
+		$line = substr($ThisSeq, $start, 50);
+		$start += 50;
+		$line =~ s/(.{10})/$1 /g;	# put a space ever 10 chars in the seq
+		$line =~ s/ +$//;		# remove trailing space
+		$num = shift(@nums);
+		push(@OutputLines, "$PaddedNumHash{$num} $line\n");
+	}
+	return(\@OutputLines);
+}
+
+
+sub PrintGDE{
+	use strict;
+	my($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, $line, $ThisSeqName, $seq, $SplitLinesRef);
+	if($SplitPrint){
+		foreach $ThisSeqName(@$NamesRef){
+			$seq = shift(@$SeqsRef);
+			$SplitLinesRef = &SplitSeq($seq, $SplitLineLength);
+			push(@OutputLines, "{\nname \"$ThisSeqName\"\n");
+			push(@OutputLines, "sequence \"\n");
+			foreach $line(@$SplitLinesRef){
+				push(@OutputLines, "$line\n");
+			}
+			push(@OutputLines, "\"\n}\n");
+		}
+	}
+	else{
+		foreach $ThisSeqName(@$NamesRef){
+			$seq = shift(@$SeqsRef);
+			push(@OutputLines, "{\nname \"$ThisSeqName\"\n");
+			push(@OutputLines, "sequence \"$seq\"\n}\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrintRaw{
+	use strict;
+	my($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	my(@OutputLines, $seq, $SplitLinesRef);
+
+	if($SplitPrint){
+		foreach $seq(@$SeqsRef){
+			$SplitLinesRef = &SplitSeq($seq, $SplitLineLength);
+			foreach(@$SplitLinesRef){
+				push(@OutputLines, "$_\n");
+			}
+		}
+	}
+	else{
+		foreach $seq(@$SeqsRef){
+			#$seq = shift(@$SeqsRef);
+			push(@OutputLines, "$seq\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrintClustal{
+	use strict;
+	my($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, $seq, $ThisSeqName, $longestname, $l, $i, $padding, $PrintName, $SplitLinesRef, $InterLeavedRef);
+
+	push(@OutputLines, "CLUSTAL W\n\n");
+	$longestname = &FindLongest($NamesRef);
+	$longestname++;
+	if($SplitPrint){   # $SplitPrint is a flag to break seq lines every n characters
+		$InterLeavedRef = &PrepInterleaved($SplitLineLength, $NamesRef, $SeqsRef);
+		$i = 0;
+		foreach(@$InterLeavedRef){	# go thru the raw interleaved list
+			($ThisSeqName, $seq) = split(/\t/, $_);
+			$l = length($ThisSeqName);
+			$padding = " " x ($longestname - $l);
+			$PrintName = $ThisSeqName . $padding;
+			push(@OutputLines, "$PrintName$seq\n");
+			$i++;
+			if($i > $#$NamesRef){	# end of a block
+				$i = 0;	# reset block counter
+				push(@OutputLines, "\n");
+			}
+		}
+	}
+	else{
+		foreach $ThisSeqName(@$NamesRef){
+			$l = length($ThisSeqName);
+			$padding = " " x ($longestname - $l);
+			$PrintName = $ThisSeqName . $padding;
+			$seq = shift(@$SeqsRef);
+			push(@OutputLines, "$PrintName$seq\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrepInterleaved{
+#  Given a linelength, a list of names and a list of sequences
+#  (the number of names must = number of seqs)
+#  this sub breaks up the sequences into chunks of length =
+#  SplitLineLength and prepends the name followed by a tab.
+#  It does this in an interleaved way. e.g., if seqs =
+#  ABCDE
+#  abcde   and SplitLineLength = 2, then the result list of @chunks is
+#  name1  AB
+#  name2  ab
+#  name1  CD
+#  name2  cd
+#  name1  E
+#  name2  e
+#  Returns a reference to the @chunks array.
+	use strict;
+	my($SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	my(@chunks, $i, $name, $seq, %AllDone, $NumSeqsDone);
+	OUTER: while(@$SeqsRef){
+		for($i = 0; $i <= $#$SeqsRef; $i++){
+			$name = $NamesRef -> [$i];
+			if($SeqsRef -> [$i]){
+				if($SeqsRef -> [$i] =~ s/(.{1,$SplitLineLength})(.*)/$2/){	# match first n characters
+					push(@chunks, "$name\t$1");	# store these chars
+					unless(length($2) > 0){	# is there more seq downstream
+						$AllDone{$i} = "1" unless($AllDone{$i});
+					}
+				}
+				else{	# fewer than n chars left so save them all
+					$seq = $SeqsRef -> [$i];
+					push(@chunks, "$name\t$seq");	# store no sequence
+					$SeqsRef -> [$i] = "";
+					$AllDone{$i} = "1" unless($AllDone{$i});
+				}
+			}
+			else{
+				push(@chunks, "$name\t");
+				$AllDone{$i} = "1" unless($AllDone{$i});
+			}
+		}
+		$NumSeqsDone = keys(%AllDone);
+		if($NumSeqsDone > $#$SeqsRef){	# reached end of each seq
+			last OUTER;
+		}
+	}
+	return(\@chunks);
+}
+
+sub PrintPhylipi{
+	use strict;
+	my($SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef,10);
+	my(@OutputLines, $longestseq, $NumSeqs, $i, $j, $longestname, $ThisSeqName, $ThisSeq, $InterLeavedRef);
+
+	$longestseq = &FindLongest($SeqsRef);
+	$NumSeqs = @$SeqsRef;
+	push(@OutputLines, "$NumSeqs  $longestseq  i\n\n");
+
+	$InterLeavedRef = &PrepInterleaved($SplitLineLength, $NamesRef, $SeqsRef);
+
+	for($j = 0; $j <= $#$NamesRef; $j++){	# do first n lines where n = number of names
+		$_ = $InterLeavedRef -> [$j];
+		($ThisSeqName, $ThisSeq) = split(/\t/, $_);
+		$ThisSeqName .= "          ";			# add 10 spaces to end of each name
+		$ThisSeqName = substr($ThisSeqName, 0, 10);	# extract first ten chars of name
+		push(@OutputLines, "$ThisSeqName $ThisSeq \n");	# print names before seqs
+	}
+	push(@OutputLines, "\n");
+	for(; $j <= $#$InterLeavedRef; $j++){	# do all the rest of the lines
+		$_ = $InterLeavedRef -> [$j];
+		($ThisSeqName, $ThisSeq) = split(/\t/, $_);
+		push(@OutputLines, "           $ThisSeq \n");
+		$i++;
+		if($i >= $NumSeqs){	# end of a block	# print spaces instead of names
+			$i = 0;	# reset block counter
+			push(@OutputLines, "\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrintPhylips {
+	use strict;
+	my($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef,10);
+	my(@OutputLines, $line, $NumSeqs, 	$SplitLinesRef, $ThisSeqName, $ThisSeq, $longestseq);
+
+	$longestseq = &FindLongest($SeqsRef);
+	$NumSeqs = @$SeqsRef;
+	push(@OutputLines, "$NumSeqs  $longestseq  s\n\n");
+
+	foreach $ThisSeq(@$SeqsRef){	# go thru the sequence list
+		$ThisSeqName = shift(@$NamesRef);
+		$ThisSeqName .= "          ";# add 10 spaces to end of each name
+		$ThisSeqName = substr($ThisSeqName, 0, 10);	# extract first ten chars of name
+		if($SplitPrint){   # $SplitPrint is a flag to break seq lines every n characters
+			push(@OutputLines, "$ThisSeqName\n");
+			$SplitLinesRef = &SplitSeq($ThisSeq, $SplitLineLength);
+			foreach $line(@$SplitLinesRef){
+				push(@OutputLines, "$line\n");
+			}
+		}
+		else{
+			push(@OutputLines, "$ThisSeqName\n$ThisSeq\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrintNEXUSi{
+	use strict;
+	my($SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, $longestseq, $NumSeqs, $i, $longestname, $ThisSeqName);
+	my($answer, $datatype, $ThisSeq, $InterLeavedRef, %PaddedNameHash);
+
+	$longestseq = &FindLongest($SeqsRef);
+	$longestname = &FindLongest($NamesRef);
+	$NumSeqs = @$SeqsRef;
+	$answer = &IsNuc($SeqsRef -> [0]);
+	if($answer == 1){
+		$datatype = "DNA";
+	}
+	elsif($answer == 0){
+		$datatype = "protein";
+	}
+	else{
+		print "Error: I can't tell if your sequence is nucleotide or protein.\n";
+		exit;
+	}
+
+	push(@OutputLines, "\#NEXUS\n\n");
+	push(@OutputLines, "begin taxa\;\n");
+	push(@OutputLines, "dimensions ntax=$NumSeqs\;\n");
+	push(@OutputLines, "taxlabels\n");
+
+	foreach $ThisSeqName(@$NamesRef){
+		push(@OutputLines, "$ThisSeqName\n");
+	}
+	push(@OutputLines, "\;\nend\;\n\n");
+	push(@OutputLines, "begin characters\;\n");
+	push(@OutputLines, "dimensions nchar=$longestseq\;\n");
+	push(@OutputLines, "format interleave datatype=$datatype gap=$gap_char\;\n");
+	push(@OutputLines, "matrix\n");
+
+	%PaddedNameHash = &PadNames($NamesRef, $longestname, "L");  # fill out names with blanks
+	$InterLeavedRef = &PrepInterleaved($SplitLineLength, $NamesRef, $SeqsRef);
+
+	foreach(@$InterLeavedRef){	# go thru the raw interleaved list
+		($ThisSeqName, $ThisSeq) = split(/\t/, $_);
+		push(@OutputLines, "$PaddedNameHash{$ThisSeqName} $ThisSeq\n");
+		$i++;
+		if($i > $#$NamesRef){	# end of a block
+			$i = 0;	# reset block counter
+			push(@OutputLines, "\n");
+		}
+	}
+	push(@OutputLines, "\;\nend\;\n");
+	return(\@OutputLines);
+}
+
+sub PrintNEXUSs{
+	use strict;
+	my($SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, $longestseq, $NumSeqs, $i, $longestname, $ThisSeqName);
+	my($answer, $datatype, $ThisSeq, %PaddedNameHash);
+
+	$longestseq = &FindLongest($SeqsRef);
+	$longestname = &FindLongest($NamesRef);
+	$NumSeqs = @$SeqsRef;
+	$answer = &IsNuc($SeqsRef -> [0]);
+	if($answer == 1){
+		$datatype = "dna";
+	}
+	elsif($answer == 0){
+		$datatype = "protein";
+	}
+	else{
+		print "Error: I can't tell if your sequence is nucleotide or protein.\n";
+		exit;
+	}
+
+	push(@OutputLines, "\#NEXUS\n\n");
+	push(@OutputLines, "begin taxa\;\n");
+	push(@OutputLines, "dimensions ntax=$NumSeqs\;\n");
+	push(@OutputLines, "taxlabels\n");
+
+	foreach $ThisSeqName(@$NamesRef){
+		push(@OutputLines, "$ThisSeqName\n");
+	}
+	push(@OutputLines, "\;\nend\;\n\n");
+	push(@OutputLines, "begin characters\;\n");
+	push(@OutputLines, "dimensions nchar=$longestseq\;\n");
+	push(@OutputLines, "format datatype=$datatype gap=$gap_char\;\n");
+	push(@OutputLines, "matrix\n");
+
+	%PaddedNameHash = &PadNames($NamesRef, $longestname, "L");  # fill out names with blanks
+
+	foreach $ThisSeqName(@$NamesRef){	# go thru the raw interleaved list
+		$ThisSeq = shift(@$SeqsRef);
+		push(@OutputLines, "$PaddedNameHash{$ThisSeqName} $ThisSeq\n");
+	}
+	push(@OutputLines, "\;\nend\;\n");
+	return(\@OutputLines);
+}
+
+sub PrintMegas{   # MEGA sequential
+#  #MEGA
+#  TITLE: Noninterleaved sequence data
+#
+#  #mouse
+#  AATTTTTACCCCGGGGGG
+#  AGGGGGGACCCCGGGGGG
+#  #human
+#  AACCCTTACCCCGGGGGG
+#  AGGGGGGACCCCGGGGGG
+#  #cat
+#  AATTTTTACAAAGGGGGG
+#  AGGGGGGACCCCGGGGGG
+
+	use strict;
+	my($SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, $BlankName, $ThisSeqName, $ThisSeq, $SplitLinesRef, $line);
+
+	push(@OutputLines, "\#MEGA\nTITLE: Noninterleaved sequence data\n\n");
+
+	foreach $ThisSeq (@$SeqsRef){	# go thru the list of seqs
+		$ThisSeqName = shift(@$NamesRef);	# get the corresponding name
+		if($ThisSeqName =~ /[^0-9a-zA-Z\-\+\.\_\*\:\(\)\|\\\/]+/g){
+			print "Error: The sequence name \"$ThisSeqName\" is not a valid MEGA taxon label because the
+			\"$&\" character(s) is forbidden. Please clean up the taxa labels in your input and resubmit.\n";
+		}
+
+		if($SplitPrint){   # $SplitPrint is a flag to break seq lines every n characters
+			$SplitLinesRef = &SplitSeq($ThisSeq, $SplitLineLength);
+			push(@OutputLines, "\#$ThisSeqName\n");
+			foreach $line(@$SplitLinesRef){
+				push(@OutputLines, "$line\n");
+			}
+		}
+		else{
+			push(@OutputLines, "\#$ThisSeqName\n$ThisSeq\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrintMegai{   # MEGA interleaved
+#  #MEGA
+#  TITLE: Interleaved sequence data
+#
+#  #mouse      AATTTTTACCCCGGGGGG
+#  #human      AACCCTTACCCCGGGGGG
+#
+#  #mouse      AGGGGGGACCCCGG
+#  #human      AGGGGGGACCCCGG
+
+	use strict;
+	my($SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my(@OutputLines, %PaddedNameHash, $i, $longestname, $ThisSeqName, $ThisSeq, $InterLeavedRef);
+
+	foreach $ThisSeqName(@$NamesRef){
+		if($ThisSeqName =~ /[^0-9a-zA-Z\-\+\.\_\*\:\(\)\|\\\/]+/g){
+			print "Error: The sequence name \"$ThisSeqName\" is not a valid MEGA taxon label because the
+			\"$&\" character(s) is forbidden. Please clean up the taxa labels in your input and resubmit.\n";
+		}
+	}
+
+	push(@OutputLines, "\#MEGA\nTITLE: Interleaved sequence data\n\n");
+
+	$longestname = &FindLongest($NamesRef);
+	%PaddedNameHash = &PadNames($NamesRef, $longestname, "L");  # fill out names with blanks
+
+	$InterLeavedRef = &PrepInterleaved($SplitLineLength, $NamesRef, $SeqsRef);
+	$i = 0;
+	foreach(@$InterLeavedRef){	# go thru the raw interleaved list
+		($ThisSeqName, $ThisSeq) = split(/\t/, $_);
+		$ThisSeqName = $PaddedNameHash{$ThisSeqName}; # get the padded version of each name
+		push(@OutputLines, "\#$ThisSeqName $ThisSeq\n");
+		$i++;
+		if($i > $#$NamesRef){	# end of a block
+			$i = 0;	# reset block counter
+			push(@OutputLines, "\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrintSLX{   # SLX is an interleaved format
+
+	use strict;
+	my($SplitLineLength, $NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef,32);
+	my(@OutputLines, %PaddedNameHash, $i, $longestname, $ThisSeqName, $ThisSeq, $InterLeavedRef);
+
+	$SplitLineLength = 4096 if($SplitLineLength > 4096);	# max line length for SLX
+
+	foreach $ThisSeqName(@$NamesRef){				# go thru list of names
+		$ThisSeqName = substr($ThisSeqName, 0, 32);	# to insure they are <=32 chars length
+	}
+
+	$longestname = &FindLongest($NamesRef);
+	%PaddedNameHash = &PadNames($NamesRef, $longestname, "L");  # fill out names with blanks
+
+	$InterLeavedRef = &PrepInterleaved($SplitLineLength, $NamesRef, $SeqsRef);
+	$i = 0;
+	foreach(@$InterLeavedRef){	# go thru the raw interleaved list
+		($ThisSeqName, $ThisSeq) = split(/\t/, $_);
+		$ThisSeqName = $PaddedNameHash{$ThisSeqName}; # get the padded version of each name
+		push(@OutputLines, "$ThisSeqName $ThisSeq\n");
+		$i++;
+		if($i > $#$NamesRef){	# end of a block
+			$i = 0;	# reset block counter
+			push(@OutputLines, "\n");
+		}
+	}
+	return(\@OutputLines);
+}
+
+sub PrintMSF{
+#  &PrintMSF($SplitPrint, $SplitLineLength, $NamesRef, $SeqsRef);
+	use strict;
+	my($NamesRef, $SeqsRef) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	my($answer, @OutputLines, $longestseq, $longestname, $ThisSeqName, $ThisSeq);
+	my($type, $today, $len, $i, $j, %PaddedNameHash, $check, @done, $AllDone, $NumSeqs, $line);
+	$NumSeqs = @$SeqsRef;
+	$longestseq = &FindLongest($SeqsRef);
+	$longestname = &FindLongest($NamesRef);
+	%PaddedNameHash = &PadNames($NamesRef, $longestname, "L");  # fill out names with blanks
+	$ThisSeq = $$SeqsRef[0];
+	$answer = &IsNuc($ThisSeq);
+	if($answer == 1){
+		$type = "N";;
+	}
+	elsif($answer == 0){
+		$type = "P";
+	}
+	else{
+		print "Error: I can't tell if your sequence is nucleotide or protein.\n";
+		exit;
+	}
+
+	$today = `date`;
+	chomp($today);
+	push(@OutputLines, "MSF: $longestseq  Type: $type  $today Check: 1 ..\n\n");
+	$i = 0;
+	foreach $ThisSeqName(@$NamesRef){
+		$ThisSeq = $SeqsRef -> [$i];
+		$i++;
+		$len = length($ThisSeq);
+		$check = &GCG_checksum($ThisSeq);
+		push(@OutputLines, "Name: $PaddedNameHash{$ThisSeqName}  Len: $len  Check: $check  Weight: 1.00\n");
+	}
+	push(@OutputLines, "\n//\n\n");
+
+	foreach(@$SeqsRef){
+		s/(.{10})/$1 /g;	# put a space ever 10 chars
+	}
+
+	@done = ();
+	$AllDone = 0;
+	$j = 0;
+	OUTER: while(){
+		last OUTER if($AllDone == $NumSeqs);
+		if($j > 1000){
+			print "Error: I'm looping endlessly in PrintMSF subroutine.\n";
+			exit;
+		}
+		for($i = 0; $i < $NumSeqs; $i++){		
+			$ThisSeqName = $NamesRef -> [$i];
+			$ThisSeqName = $PaddedNameHash{$ThisSeqName};
+			my $LineLength = length($SeqsRef -> [$i]);
+			if($done[$i]){
+				push(@OutputLines, "$ThisSeqName \n");
+			}
+			elsif(length($SeqsRef -> [$i]) <= 55){
+				$$SeqsRef[$i] =~ s/ $//;
+				push(@OutputLines, "$ThisSeqName $$SeqsRef[$i]\n");
+				$$SeqsRef[$i] = "";
+				$done[$i] = 1;
+				$AllDone++;
+			}
+			else{
+				$$SeqsRef[$i] =~ s/^(.{55})//;
+				$line = $1;
+				$line =~ s/ $//;
+				push(@OutputLines, "$ThisSeqName $line\n");
+			}
+		}
+		push(@OutputLines, "\n");
+	}
+	return(\@OutputLines);
+}
+
+sub PrintOutputAlign{
+# Given a reference to an alignment as a list of sequences (no names)
+# the sub OutputAlign returns a list of sequences
+# in which sequences 2 through n have been compared
+# letter by letter to sequence 1. Sequence 1 is called
+# the MasterSeq -- the one against which all others are
+# compared. The sub produces output like the mase
+# function Output Align. Note: only seqs are aligned; the
+# names of the sequences are not part of this sub
+# Here are the possible combinations of comparison and the result
+
+# Master Seq:  - - A A A
+#  Align Seq:  - A - B A
+#     Result:  . A . B -
+
+# If $SplitPrint is true, the result of this sub is sent to the sub PrintPrettyInterleaved,
+# which is why we need BlockWidth and NumBlocks as args to this sub.
+
+	use strict;
+	my($SplitPrint, $NamesRef, $SeqsRef, $BlockWidth, $NumBlocks) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	$BlockWidth = 10 unless($BlockWidth);	# default is 10
+	$NumBlocks = 5 unless($NumBlocks);	# default is 5
+	my($letter1, $letter2, $seq3, @seq2, $i, $j, $MasterSeq, @MasterSeq, @OutAligned, $line, @OutputLines);
+	$MasterSeq = $SeqsRef -> [0];			# master seq defined as first element of array passed to sub
+	@MasterSeq = split(//, $MasterSeq);
+
+	for($i = 1; $i <= $#$SeqsRef; $i++){	# go thru alignment line by line starting with 2nd seq
+		@seq2 = split(//, $SeqsRef -> [$i]);
+		for($j = 0; $j <= $#MasterSeq; $j++){	# go thru seqs letter by letter
+			$letter1 = $MasterSeq[$j];	# the master sequence letter
+			$letter2 = $seq2[$j];		# the letter of align sequence
+
+			if($letter1 eq "-" && $letter2 eq "-"){		# master seq gap, align seq gap
+				$seq3 .= ".";
+			}
+			elsif($letter1 eq "-" && $letter2 ne "-"){	# master seq gap, align seq not gap
+				$seq3 .= "$letter2";
+			}
+			elsif($letter1 ne "-" && $letter2 eq "-"){	# master seq not gap, align seq gap
+				$seq3 .= ".";
+			}
+			elsif(uc($letter2) eq uc($letter1)){		# master seq letter, align seq differ by case only
+				$seq3 .= "-";
+			}
+			else{										# two letters really different
+				$seq3 .= "$letter2";
+			}
+		}
+		push(@OutAligned, "$seq3");
+		$seq3 = "";
+	}
+	$MasterSeq =~ s/\-/\./g;			# replace - by . in master seq
+	$MasterSeq .="";					# add an eol char
+	unshift(@OutAligned, $MasterSeq);	# and put it at front of array
+	
+	#  If user did not specify wide output, then pretty print the long
+	#  output aligned lines.
+	if($SplitPrint){
+		&PrintPrettyInterleaved($NamesRef, \@OutAligned, $BlockWidth, $NumBlocks);
+	}
+	else{	# print wide format but first preprend padded names to each seq
+		&PadWords($NamesRef, 'R', ' ');
+		foreach(@OutAligned){
+			$line = shift(@$NamesRef);
+			$line .= " $_";
+			push(@OutputLines, "$line\n");
+		}
+		return(\@OutputLines);
+	}
+}
+
+
+sub PrintPrettyInterleaved{
+
+# Prints an alignment in a formatted easy to read way like
+#        name1 poiupppoiu poiupppoiu poiupppoiu poiupppoiu
+#  longername2 poiupppoiu poiupppoiu poiupppoiu poiupppoiu
+#  Number of characters per block is $BlockWidth, and number
+#  of blocks per line is $NumBlocks. In example above 10 and 4
+#  respectively. 
+#  Copies are made of the names and seqs arrays. The seq array
+#  is progressively shortened by removing groups of $BlockWidth
+#  characters from its left end until nothing remains of that
+#  seq. When the seq is exhausted a hash finished{seqnumber}
+#  is set to true. From now on that seq will be skipped. In this
+#  way, an array of seqs of unequal length will be accomodated.
+#  This sub pads the names to an equal length.
+
+
+#  Example call:  &PrintPrettyInterleaved(\@names, \@Seqs, 10, 5);
+
+	use strict;
+	my($NamesRef, $SeqsRef, $BlockWidth, $NumBlocks) = @_;
+	&EnforceUniqSeqNames($NamesRef);
+	$BlockWidth = 10 unless($BlockWidth);	# default is 10
+	$NumBlocks = 5 unless($NumBlocks);	# default is 5
+	my(@seqs) = @$SeqsRef;		# make a copy of the seqs array
+	my(@OutputLines, $NumSeqs, $k, $j, $line, $chunk, %finished, $name, $CharCount, $ChunkLength);
+	$NumSeqs = @seqs;
+
+	&PadWords($NamesRef, 'R', ' ');
+
+	$CharCount = 0;
+	while(){
+		last if(keys(%finished) == $NumSeqs);
+		for($j = 0; $j <= $#seqs; $j++){			# counts seqs through the alignment
+			next if($finished{$j});					# skip this one if no more sequence left
+			for($k = 1; $k <= $NumBlocks; $k++){	# counts blocks of columns
+				$seqs[$j] =~ s/^(.{0,$BlockWidth})//;		# remove next ten (or fewer if there are fewer) chars
+				$chunk = $1;						# and save
+				$ChunkLength = length($chunk);
+				if($j == 0){						# is this the "master" sequence?
+					$CharCount += $ChunkLength;
+				}
+				if($ChunkLength < $BlockWidth || $seqs[$j] eq ""){		# nothing left in this sequence after this match
+					$finished{$j} = 1;
+					$line .= " $chunk";				# add to growing line
+					last;							# leave k loop
+				}
+				$line .= " $chunk";					# add to growing line
+			}
+			$line =~ s/ +$//;
+			if($j == 0){
+				$line .= "  $CharCount";			# add the character count to end of master line
+			}			
+			$name = $NamesRef -> [$j];
+			push(@OutputLines, "$name$line\n");	# print line with name
+			$line = "";
+		}
+		if($NumSeqs > 1){
+			push(@OutputLines, "\n");			# add a blank line between blocks
+		}
+	}
+	return(\@OutputLines);
+}
+
+
+
+sub PadWords{
+#  Given a list of words, a "right or left justify" "R" or "L"
+#  and a character to use to do the padding (justification)
+#  this sub finds the longest word
+#  and uses that to calculate the padding to be
+#  added to the left or right of each word in order to 
+#  right or left justify each word. If no PadChar specified, use space.
+#  The list of words is sent as a reference to an array.
+#  Sample call: &PadWords(\@names, "R", '-');
+	use strict;
+	my($WordsRef, $LeftOrRight, $PadChar) = @_;
+	my($l, $LongestWord, $padding, $i);
+	$LongestWord = 0;
+	$PadChar = " " unless $PadChar;
+
+	foreach (@$WordsRef){
+		$l = length($_);
+		if($l > $LongestWord){
+			$LongestWord = $l;
+		}
+	}
+
+	if($LeftOrRight =~ /^L/i){  # left-justified
+		for($i = 0; $i <= $#$WordsRef; $i++){
+			$l = length($WordsRef -> [$i]);
+			$padding = "$PadChar" x ($LongestWord - $l);
+			$WordsRef -> [$i] .= $padding;
+		}
+	}
+
+	elsif($LeftOrRight =~ /^R/i){  # right-justified
+		for($i = 0; $i <= $#$WordsRef; $i++){
+			$l = length($WordsRef -> [$i]);
+			$padding = "$PadChar" x ($LongestWord - $l);
+			$WordsRef -> [$i] = $padding . $WordsRef -> [$i];
+		}
+	}
+
+}
+
+
+sub FindLongest{
+#  Given a list as a reference, this sub finds the longest
+#  item in the list and returns its length
+	use strict;
+	my($ListRef) = $_[0];
+	my($longest, $l);
+	$l = 0;
+	$longest = 0;
+	foreach(@$ListRef){
+		$l = length($_);
+		if($l > $longest){
+			$longest = $l;
+		}
+	}
+	return($longest);
+}
+
+sub PadNames{
+# Given a reference to a list of names, $NamesRef,
+# a "longest name length", $lnl,
+# and an R or an L meaning right or left justify,
+# this sub justifies the names and returns a hash of "padded"
+# names suitable for printing. e.g., if names = XX, YYY, ZZZZ
+# and $lnl = 4, and L specified then
+# PaddedNameHash{"XX"} = "XX  "
+
+	use strict;
+	my($NamesRef, $lnl, $LeftOrRight) = @_;
+	my($l, $ThisSeqName, $padding, $PaddedName, %PaddedNameHash);
+
+	foreach $ThisSeqName(@$NamesRef){
+		$l = length($ThisSeqName);
+		$padding = " " x ($lnl - $l);
+
+		if($LeftOrRight =~ /^L/i){  # left-justified
+			$PaddedName = $ThisSeqName . $padding;
+		}
+
+		elsif($LeftOrRight =~ /^R/i){  # right-justified
+			$PaddedName = $padding . $ThisSeqName;
+		}
+		else{  # to justification specified
+			print "Error: you forgot to specify Right or Left justification.\n";
+		}
+		$PaddedNameHash{$ThisSeqName} = "$PaddedName";
+	}
+	return(%PaddedNameHash);
+}
+
+sub IsNuc{
+#  Sub determines if the sequence passed to this sub is nucleotide or amino acid or indeterminate.
+#  These three possibilities are returned as values 1, 0, and -1 respectively.
+#  First, remove all gaps and other non letter characters. If the resulting string
+#  is of length 0 then return -1. If the string is > 100 characters than substring it to get
+#  a sample string of 100 characters. Examine the character content of the first 100 characters.
+#  If more than 2% of these characters are unambiguously amino acid codes [QEILFP] then the seq is protein.
+#  If more that 94% of those characters are ATGCUNRY it is a nucleotide sequence.
+#  Else it's an ambiguous sequence.
+
+	use strict;
+	my($SampleString) = $_[0];
+	my($StringLength, $ATGCcount, $AAcount);
+	$ATGCcount = 0;
+	$AAcount = 0;
+	$SampleString =~ tr/A-Za-z//cd;
+	$StringLength = length($SampleString);
+	if($StringLength < 1){
+		return(-1);
+	}
+	elsif($StringLength > 100){
+		$SampleString = substr($SampleString, 0, 100);
+	}
+
+	$AAcount = $SampleString =~ tr/QEILFPqeilfp//;
+	if($AAcount/length($SampleString) > .019){	# if >= 2% of letters are obligatory AAs
+		return(0);
+	}
+
+	$ATGCcount = $SampleString =~ tr/ATGCUNRYatgcunry//;
+	if($ATGCcount/length($SampleString) > .94){
+		return(1);
+	}
+	else{
+		return(-1);
+	}
+}
+
+
+
+sub GCG_checksum {
+	my ($seq) = @_;
+	my $index = 0;
+	my $checksum = 0;
+	my $char;
+	$seq =~ tr/a-z/A-Z/;
+	
+	foreach $char (split(/[\.\-]*/, $seq)) {
+		$index++;
+		$checksum += ($index * (unpack("c",$char) || 0) );
+		if( $index == 57 ) {
+			$index = 0;
+		}
+	}
+	return ($checksum % 10000);
+}
+
+sub SplitSeq{
+#  Given a long sequence and a line length, split the
+#  sequence into lines of length $SplitLineLength. Store
+#  these lines in a list called @SplitLines, and return a
+#  reference to this list
+	use strict;
+	my($seq, $SplitLineLength) = @_;
+	my($line, $start, @SplitLines, $len);
+	$start = 0;
+	$len = length($seq);
+	while($len - $start +1 >= $SplitLineLength){
+		$line = substr($seq, $start, $SplitLineLength);
+		push(@SplitLines, $line);
+		$start += $SplitLineLength;
+	}
+	$line = substr($seq, $start, $len - $start +1);
+	push(@SplitLines, $line);
+	return(\@SplitLines);
+}
+
+sub DeleteBlankLines{
+#  Given a list of sequences, this sub writes a new list
+#  that of nonblank lines. A blank line is one that contains
+#  nothing or white space.
+	use strict;
+	my($InputLinesRef) = $_[0];
+	my(@NoBlanks) = grep { /\S/ } @$InputLinesRef;
+	return(\@NoBlanks);
+}
+
+sub EnforceUniqSeqNames {
+# given a reference to a list of sequence names,
+# append an alphabetic tag to each occurrence of the same name;
+# trim to a given length if length limit specified
+# (directly modify supplied list reference)
+	use strict;
+	use List::Util qw(sum);
+	my($NamesRef,$LengthLimit) = @_;
+	my %seen = (); # hash values are alphabetic tags (that are magically incremented)
+	               # keys are assigned (perhaps modified) sequence names
+	               # qw/ a b c ... y z  aa ab ac ... zy zz  aaa aab aac ... zzy zzz aaaa ... /
+	               # if compared numerically, incrementing becomes numeric (so don't do that)
+	my(@RevisedNames,%OrigNameCount,%RevisedNameCount,%OrigIsDuplicate,%RevisedIsDuplicate,%CurrentTagForName,) = ();
+	my(@TooLong,@ChangedNameList);
+	my $TagDelimiter;
+	my($SomeDuplicateNames,$SomeNamesTooLong) = 0;
+
+	my @OriginalNames = @$NamesRef;
+	@RevisedNames = @OriginalNames;
+	
+	# separate original name and added tag with period
+	# unless names are length-limited
+	if (! $LengthLimit) {
+		$TagDelimiter = '.';
+	}
+	else {
+		$TagDelimiter = '';
+		# check names for excessive length
+		if ( grep { length($_) > $LengthLimit } @OriginalNames ) {
+			$SomeNamesTooLong++;
+			@RevisedNames = map { substr($_,0,$LengthLimit) } @OriginalNames ;
+		}
+	}
+	# check for duplicate names
+	for ( @OriginalNames ) {
+		if ($OrigNameCount{$_}++ ) {
+			$OrigIsDuplicate{$_}++;
+		}
+	}
+	for ( @RevisedNames ) {
+		if ($RevisedNameCount{$_}++ ) {
+			$RevisedIsDuplicate{$_}++;
+		}
+	}
+	$SomeDuplicateNames++ if ( keys %RevisedIsDuplicate or keys %OrigIsDuplicate);
+	# don't do *anything else* unless necessary
+	# (i.e., don't change @$NamesRef)
+	if ( $SomeDuplicateNames or $SomeNamesTooLong ) {
+		for ( 0 .. $#OriginalNames ) {
+			my $OriginalName = $OriginalNames[$_];
+			my $RevisedName  =  $RevisedNames[$_];
+			if ( $RevisedIsDuplicate{$RevisedName} ) {
+				if ( ! defined $CurrentTagForName{$RevisedName} ) {
+					# don't change or compare %CurrentTagForName values except here ...
+					$CurrentTagForName{$RevisedName} = 'a' ;
+				}
+				else {
+					$CurrentTagForName{$RevisedName}++     ; # ... and here
+				}
+				if (! $LengthLimit) {
+					$RevisedName .= $TagDelimiter . $CurrentTagForName{$RevisedName} ;
+				}
+				else {
+					my $tryTag	= $CurrentTagForName{$RevisedName};
+					my $truncName = $RevisedName;
+					my $rootNamelength = length($RevisedName);
+					$truncName = substr($RevisedName,0, $rootNamelength - length($tryTag));
+					while ( $seen{ $truncName . $tryTag }++ ) {
+						$tryTag++;
+						$truncName = substr($RevisedName,0, $rootNamelength - length($tryTag));
+					}
+					# warn "$truncName . $tryTag\n";
+					$CurrentTagForName{$RevisedName} = $tryTag ;
+					$RevisedName = $truncName . $tryTag;
+				}
+			}
+			$RevisedNames[$_] = $RevisedName;
+			push @ChangedNameList, "$OriginalName\t$RevisedName\n" if ($OriginalName ne $RevisedName);
+		}
+		@$NamesRef = @RevisedNames; # replace originals!
+		warn sprintf(
+		    "cf: of %d original sequences, %d had unique names,\n"
+		  . "    and %d had names that occurred more than once\n"
+		  . "%s"
+		  ,
+		  scalar @OriginalNames,
+			sum( grep { $_ == 1 } values %OrigNameCount),
+			sum( grep { $_ >  1 } values %OrigNameCount),
+		);
+		if ($SomeNamesTooLong) {
+			my $RevisedDuplicateCount = sum( grep { $_ > 1 } values %RevisedNameCount);
+			warn sprintf(
+			    "    after truncation to $LengthLimit characters,\n" 
+			  . "    %d duplicated names were applied to %d of those sequences!\n"
+			  ,
+			  scalar keys %RevisedIsDuplicate,
+			  $RevisedDuplicateCount,
+			);
+		}
+		&WriteNameChangeFile(\@ChangedNameList);
+	}
+}
+
+sub WriteNameChangeFile {
+	# uses GLOBAL $InFileName
+	my $PairedNamesListRef = $_[0];
+	my $ChangedNamesFile;
+	if ($InFileName eq '-') {
+		$ChangedNamesFile = $$;
+	}
+	else {
+		$ChangedNamesFile = $InFileName;
+	}
+	$ChangedNamesFile .= q(.changed_names);
+	open my $CHANGED_NAMES_FH, ">$ChangedNamesFile" or die qq(cf: unable to write to $ChangedNamesFile: $!\n);
+	print {$CHANGED_NAMES_FH} @$PairedNamesListRef;
+	close $CHANGED_NAMES_FH;
+	warn qq(cf: Some sequence names were changed: check $ChangedNamesFile\n);
+}

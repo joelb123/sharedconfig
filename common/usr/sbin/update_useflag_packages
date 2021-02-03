@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+#  rebuild all packages with useflags specified by the argument
+#
+#  Examples:
+#     update_dependent_packages kernel_linux
+#          --JB 1 Sep 10
+pkglist=""
+for i in `equery hasuse $1`
+do
+   pkglist="$pkglist =${i}"
+done
+emerge --nodeps -1 $pkglist

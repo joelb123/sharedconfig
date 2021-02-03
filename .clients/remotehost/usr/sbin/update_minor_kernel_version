@@ -1,0 +1,11 @@
+#!/bin/bash
+# update_minor_kernel_version oldversion newversion
+# update_minor_kernel_version 3.0.1 3.0.3
+emerge -1 =gentoo-sources-${2}
+eselect kernel set 2
+eselect kernel list
+emerge -C =gentoo-sources-${1}
+cp /etc/kernels/kernel-config-x86_64-${1} /etc/kernels/kernel-config-x86_64-${2}
+cd /usr/src
+rm -r linux-${1}-gentoo
+generate_kernel

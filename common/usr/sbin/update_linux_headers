@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+setfile="header-deps"
+setdir="/etc/portage/sets"
+DOC="""# Rebuild linux headers and dependencies.
+#
+#  Usage:
+#         update_linux_headers [-n] [-p]
+#
+#  Options:
+#         -n check for new dependencies
+#         -p pretend mode, don't actually emerge anything
+#
+#  Side-effects:
+#         defines the emerge @${setfile} set"""
+#
+# Parse command-line arguments.
+#
+newdeps=0
+if [ "$1" == "-n" ]; then
+   newdeps=1
+   shift 1
+fi
+pretend=""
+if [ "$1" == "-p" ]; then
+   pretend="-p"
+   shift 1
+fi
+if [ "$#" -ne 0 ]; then
+   echo "$DOC"
+   exit 1
+fi
+if [ ! -e "$setdir" ]; then
+  echo "Creating set directory ${setdir}."
+  mkdir -p $setdir
+fi
+set -e
+if [ "$newdeps" -eq 1 ] || [ ! -e "${setdir}/${setfile}" ]; then
+  echo "Finding dependencies of linux-headers."
+  tmpfile=$(mktemp /tmp/pkglist.XXX)
+  equery -q --no-color hasuse kernel_linux >>$tmpfile
+  equery -q --no-color depends os-headers >>$tmpfile 
+  equery -q --no-color depends linux-headers >>$tmpfile
+  echo "# packages that directly depend upon sys-kernel/linux-headers" >${setdir}/${setfile}
+  sort ${tmpfile} |uniq | strip_gentoo_versions > ${setdir}/${setfile}
+  rm -f $tmpfile
+fi
+#echo "Emerging linux-headers"
+#emerge -1v $pretend linux-headers
+echo "Doing emerge of linux-headers dependencies."
+emerge --nodeps -1v $pretend @$setfile

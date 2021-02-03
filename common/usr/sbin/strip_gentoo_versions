@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Strip the version string from a gentoo package specification.
+# Taken from:
+#    https://forums.gentoo.org/viewtopic-t-823844-start-0.html
+sed -e 's/\(.*\)-[0-9]\+.*$/\1/'

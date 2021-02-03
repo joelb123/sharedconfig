@@ -1,0 +1,24 @@
+#!/bin/bash
+PKGDIR="/usr/portage/local/arch/cpu/packages"
+
+echo "cleaning up portage files"
+
+# remove unneeded packages
+
+eclean packages
+
+#
+# delete kernel-dependent packages, since each client needs to build
+# this for its own kernel version
+#
+for i in `equery hasuse kernel_linux`
+do
+  linkfile="${repository}/${i}.tbz2"
+  tbzfile="${repository}/All/${i##*/}.tbz2"
+  if [ -e $linkfile ]; then
+    rm -f $linkfile
+  fi
+  if [ -e $tbzfile ]; then
+    rm -f $tbzfile
+  fi
+done

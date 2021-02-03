@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+genkernel --menuconfig  --mdadm --microcode --mdadm-config=/etc/mdadm.conf all
+emerge -1 @x11-module-rebuild nvidia-drivers
+grub-mkconfig -o /boot/grub/grub.cfg

@@ -1,0 +1,3 @@
+#!/bin/bash
+grub2-install --modules="part_gpt ext2 mdraid09 raid5rec" --no-floppy /dev/sda
+grub2-install --modules="part_gpt ext2 mdraid09 raid5rec" --no-floppy /dev/sdb

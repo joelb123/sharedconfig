@@ -1,0 +1,10 @@
+#!/bin/bash
+mount /boot
+for i in 0 1 2
+do UUID=$(mdadm -D /dev/md$i | grep UUID | awk '{ print $3 }')
+  UUID=${UUID//:}; uuid=${UUID:0:8}
+  for j in 9 13 15; do uuid+=-${UUID:$j:4}; done
+  uuid+=-${UUID:21:12}
+  echo "(md$i)    /dev/disk/by-id/md-uuid-$uuid"  >> /boot/grub2/device.map
+  unset UUID uuid
+done

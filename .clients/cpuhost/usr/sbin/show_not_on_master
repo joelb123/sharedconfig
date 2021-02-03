@@ -1,0 +1,2 @@
+#!/bin/bash
+diff -C 0  /var/lib/portage/world.master /var/lib/portage/world | grep + | cut --delim=" " --fields=2

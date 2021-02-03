@@ -1,0 +1,30 @@
+#!/bin/bash
+etclist="etc/ clienttype/etc arch/etc arch/cpu/etc"
+filelist=""
+for i in $etclist
+do
+  filelist="$filelist `find /usr/portage/local/$i -type l`"
+  filelist="$filelist `find /usr/portage/local/$i -type f`"
+done
+
+for i in $filelist
+do
+  etcfile="/etc/${i#*etc/}"
+  symlink=`ls -l --full-time $etcfile | awk '{print $11}'`
+  if [[ $symlink != $i ]]
+  then
+    if [[ -e $etcfile ]]
+    then
+      echo "moving $etcfile to ${etcfile}.old"
+      mv $etcfile ${etcfile}.old
+    fi
+    if [[ -h $etcfile ]]
+    then  #symlink points to nothing
+      rm $etcfile
+    fi
+    echo "symlinking $etcfile to ${i}"
+    ln -s $i $etcfile
+  fi
+done
+env-update
+echo "you may need to source /etc/profile"

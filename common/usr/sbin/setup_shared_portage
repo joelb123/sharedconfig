@@ -1,0 +1,120 @@
+#!/bin/bash
+# set up portage so it will use binary packages and other information
+# from the shared portage host
+# 
+#  usage:
+#      setup_shared_portage ARCH CPU CLIENTTYPE
+#        where ARCH is either x86_64 or x86
+#                if ARCH is x86_64, CPU may be either k8 or core2
+#                if ARCH is x86, CPU may be either pentium4 or prescott
+#              CLIENTTYPE is either archhost or cpuhost or client
+#
+#  example:
+#      setup_shared_portage x86_64 k8 client
+#  --JB  7 APR 08
+#
+if [[ $1 == "x86_64" ]]
+then
+  ARCH=$1
+  if [[ $2 == "core2" ]]
+  then
+    CPU=$2
+  elif [[ $2 == "k8" ]]
+  then
+    CPU=$2
+  else
+    echo "unknown CPU type $2"
+    exit 1
+  fi
+elif [[ $1  == 'x86' ]]
+then
+  ARCH=$1
+  if [[ $2 == "pentium4" ]]
+  then
+    CPU=$2
+  elif [[ $2 == "prescott" ]]
+  then
+    CPU=$2
+  else
+    echo "unknown CPU type $2"
+    exit 1
+  fi
+else
+  echo "unrecognized architecture $1"
+  exit 1
+fi
+
+echo "ARCH=$ARCH"
+echo "CPU=$CPU"
+rm -f /usr/portage/local/arch
+ln -s ${ARCH}/ /usr/portage/local/arch
+rm -f /usr/portage/local/arch/cpu
+ln -s ${CPU}/ /usr/portage/local/arch/cpu
+rm -f /etc/make.conf
+ln -s /usr/portage/local/etc/make.conf /etc/make.conf
+rm /etc/make.profile
+ln -s /usr/portage/local/arch/etc/make.profile /etc/make.profile
+rm  -f /etc/portage
+ln -s /usr/portage/local/etc/portage /etc/portage
+rm -f /usr/sbin/recompile_kerneldependent_packages
+ln -s /usr/portage/local/scripts/recompile_kerneldependent_packages /usr/sbin/recompile_kerneldependent_packages
+rm -f /usr/portage/packages
+ln -s /usr/portage/local/arch/cpu/packages /usr/portage/packages
+HOSTNAME=`hostname
+mkdir /usr/portage/local/hosts/$HOSTNAME
+echo /usr/portage/local/hosts/$hostname <<EOF
+#
+# In this file live overrides of make.conf variables that are specific
+# to this particular host.
+#               --JB 10-Jun-09
+MAKEOPTS="-j3"
+VIDEO_CARDS="nvidia fglrx"
+EOF
+ln -s /usr/portage/local/hosts/$HOSTNAME /usr/portage/local/host
+touch /var/lib/portage/make.conf
+if [[ $3 == "archhost" || $3 == "cpuhost"  ]]
+then
+  CLIENTTYPE=$3
+  rm -f /etc/rsync_excludes
+  ln -s /usr/portage/local/arch/etc/rsync_excludes.${CLIENTTYPE} /etc/rsync_excludes
+  cp /var/lib/portage/world /usr/portage/local/arch/cpu/world.cpuhost.saved
+  mv /var/lib/portage/world /usr/portage/local/arch/cpu/world.cpuhost
+  ln -s /usr/portage/local/arch/cpu/world.cpuhost /var/lib/portage/world
+  for i in /usr/portage/local/etc/cron.weekly
+  do
+    rm -f /usr/portage/local/etc/cron.weekly/$i
+    ln -s /usr/portage/local/etc/cron.weekly/$i /etc/cron.weekly/$i
+  done
+  for i in /usr/portage/local/etc/cron.daily
+    ln -s /usr/portage/local/etc/cron.daily/$i /etc/cron.daily/$i
+  done
+  rm -f /etc/conf.d/glcu /etc/cron.daily/glcu
+  ln -s /usr/portage/local/access/glcu/glcu.conf /etc/conf.d/glcu
+  ln -s /usr/lib/glcu/glcu.py /etc/cron.weekly/10glcu
+  #
+  # Create an incoming rsyncuser account for the master server to get files from.
+  # Don't forget to add the name of the cpuhost at the master server.
+  #
+  newusers /usr/portage/local/rsyncuser/passwd
+  hostname=`hostname -f`
+  echo "$hostname" > /usr/portage/local/arch/cpu/cpuhost.hostname
+  if [[ $CLIENTTYPE == "archhost" ]]
+  then
+     echo "$hostname" > /usr/portage/local/arch/archhost.hostname
+  fi
+elif [[ $3 == 'client' ]]
+then
+  CLIENTTYPE=$3
+  rm -f /etc/rsync_excludes
+  ln -s /usr/portage/local/arch/etc/rsync_excludes.client.${CPU} /etc/rsync_excludes
+else
+  echo "unrecognized client type $3"
+  exit 1
+fi
+
+echo "CLIENTTYPE=$CLIENTTYPE"
+rm -f /etc/env.d/99sharedportage
+ln -s /usr/portage/local/scripts/env/99sharedportage.${CLIENTTYPE} /etc/env.d/99sharedportage
+env-update
+echo "source /etc/profile for open windows to pick up new environmental variables"
+exit 0

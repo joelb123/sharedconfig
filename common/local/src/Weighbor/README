@@ -1,0 +1,25 @@
+Weighbor -- WEIGHted neighBOR joining
+    ver 1.2 [21-Jun-01]
+
+See the file INSTALL for information on how to compile the
+program. The Doc subdirectory contains a manual page describing how to
+run the program and the various command line options.
+
+Further information on how the algorithm works can be found in the
+following references:
+
+    Bruno, W. J., Socci, N. D. and Halpern, A. L., ``Weighted 
+       Neighbor Joining: A Fast Approximation to Maximum-Likelihood
+       Phylogeny Reconstruction,'' Molecular Biology and Evolution, 
+       17(1): 189-197, (2000).
+
+Additionally the source code as been formatted to allow pretty printing
+using the cnoweb package (which is also included). Simply tex any of
+the source files and print (or view) the resulting dvi file.
+
+N.B. This release of the program is a ALPHA release. Use at your own risk.
+
+DEVELOPMENT TEAM:
+  W. Bruno (wjb@dnamining.com)
+  A. Halpern (halpern@ender.unm.edu)
+  N. D. Socci (soccin@rockefeller.edu)

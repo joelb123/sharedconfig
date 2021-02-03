@@ -1,0 +1,320 @@
+### v1.5 - 2002
+set E(tree) {1 2} 
+### T
+set ET(1,nwk,1g1g2g3d) { (G.panamensis:1.0,G.setzeri:1.0):1.0} 
+set ET(1,ctl,1g1g2d) { G.chapini} 
+set ET(1,nwk,1d1d) { T.wardi:1.0} 
+set ET(1,nwk,1g1g2g3g) { (G.cherriei:1.0,G.costaricensis:1.0):1.0} 
+set ET(1,sox,1g1d2d) { 3.0} 
+set ET(1,sox,1g1g2g3g4d) { 5.0} 
+set ET(1,dbl,1g1d2d) { 1.0} 
+set ET(1,dbl,1g1g2g3g4d) { 1.0} 
+set ET(1,nwk,1d1g) { T.minor:1.0} 
+set ET(1,nwk,1d) { (T.wardi:1.0,T.minor:1.0):1.0} 
+set ET(1,ltc,G.panamensis) { 1g1g2g3d4d} 
+set ET(1,sox,1g1d2g3d) { 4.0} 
+set ET(1,dbl,1g1d2g3d) { 1.0} 
+set ET(1,sox,1g1g2g3g4g) { 5.0} 
+set ET(1,dbl,1g1d2g) { 1.0} 
+set ET(1,dbl,1g1g2g3g4g) { 1.0} 
+set ET(1,nwk,1g) { ((G.thomomyus:1.0,(G.actuosi:1.0,G.ewingi:1.0):1.0):1.0,(G.chapini:1.0,((G.panamensis:1.0,G.setzeri:1.0):1.0,(G.cherriei:1.0,G.costaricensis:1.0):1.0):1.0):1.0):1.0} 
+set ET(1,nwk,1g1g2g3d4d) { G.panamensis:1.0} 
+set ET(1,sox,1g1d2g3g) { 4.0} 
+set ET(1,dbl,1g1d2g3g) { 1.0} 
+set ET(1,dbl,1) { 0} 
+set ET(1,nwk,1g1g2g3d4g) { G.setzeri:1.0} 
+set ET(1,ltc,T.wardi) { 1d1d} 
+set ET(1,ctl,1g1d2d) { G.thomomyus} 
+set ET(1,dbl,1d) { 1.0} 
+set ET(1,nwk,1) { ((T.wardi:1.0,T.minor:1.0):1.0,((G.thomomyus:1.0,(G.actuosi:1.0,G.ewingi:1.0):1.0):1.0,(G.chapini:1.0,((G.panamensis:1.0,G.setzeri:1.0):1.0,(G.cherriei:1.0,G.costaricensis:1.0):1.0):1.0):1.0):1.0)} 
+set ET(1,ltc,G.costaricensis) { 1g1g2g3g4g} 
+set ET(1,sox,1g1g2g3d4d) { 5.0} 
+set ET(1,dbl,1g) { 1.0} 
+set ET(1,dbl,1g1g2g3d4d) { 1.0} 
+set ET(1,ue_lab) { G.costaricensis G.cherriei G.setzeri G.panamensis G.chapini G.ewingi G.actuosi G.thomomyus T.minor T.wardi} 
+set ET(1,cbg,0) { 0} 
+set ET(1,cbg,1) { 1g1 1d1} 
+set ET(1,sox,1g1g2g3d4g) { 5.0} 
+set ET(1,dbl,1g1g2g3d4g) { 1.0} 
+set ET(1,cbg,2) { 1g1g2 1g1d2} 
+set ET(1,cbg,3) { 1g1g2g3 1g1d2g3} 
+set ET(1,cbg,4) { 1g1g2g3g4 1g1g2g3d4} 
+set ET(1,xmax) { 5.0} 
+set ET(1,ltc,G.chapini) { 1g1g2d} 
+set ET(1,nwk,1g1d2g3d) { G.actuosi:1.0} 
+set ET(1,dbl,1g1d) { 1.0} 
+set ET(1,nwk,1g1d2g3g) { G.ewingi:1.0} 
+set ET(1,ctl,1g1d2g3d) { G.actuosi} 
+set ET(1,dbl,1g1g) { 1.0} 
+set ET(1,ltc,G.ewingi) { 1g1d2g3g} 
+set ET(1,ctl,1g1d2g3g) { G.ewingi} 
+set ET(1,ctl,1d1d) { T.wardi} 
+set ET(1,ctl,1d1g) { T.minor} 
+set ET(1,all_cod) { 1 1g 1g1g 1g1g2g 1g1g2g3g 1g1g2g3g4g 1g1g2g3g4d 1g1g2g3d 1g1g2g3d4g 1g1g2g3d4d 1g1g2d 1g1d 1g1d2g 1g1d2g3g 1g1d2g3d 1g1d2d 1d 1d1g 1d1d} 
+set ET(1,dbl,1g1g2g3d) { 1.0} 
+set ET(1,tot) { 5} 
+set ET(1,sox,1d1d) { 2.0} 
+set ET(1,dbl,1d1d) { 1.0} 
+set ET(1,dbl,1g1g2g3g) { 1.0} 
+set ET(1,nwk,1g1g2d) { G.chapini:1.0} 
+set ET(1,ctl,1g1g2g3g4d) { G.cherriei} 
+set ET(1,sox,1d1g) { 2.0} 
+set ET(1,dbl,1d1g) { 1.0} 
+set ET(1,ltc,G.actuosi) { 1g1d2g3d} 
+set ET(1,nwk,1g1g2g) { ((G.panamensis:1.0,G.setzeri:1.0):1.0,(G.cherriei:1.0,G.costaricensis:1.0):1.0):1.0} 
+set ET(1,ctl,1g1g2g3g4g) { G.costaricensis} 
+set ET(1,ltc,T.minor) { 1d1g} 
+set ET(1,nwk,1g1d) { (G.thomomyus:1.0,(G.actuosi:1.0,G.ewingi:1.0):1.0):1.0} 
+set ET(1,sox,1g1g2d) { 3.0} 
+set ET(1,dbl,1g1g2d) { 1.0} 
+set ET(1,nwk,1g1g) { (G.chapini:1.0,((G.panamensis:1.0,G.setzeri:1.0):1.0,(G.cherriei:1.0,G.costaricensis:1.0):1.0):1.0):1.0} 
+set ET(1,ltc,G.cherriei) { 1g1g2g3g4d} 
+set ET(1,ue_cod) { 1g1g2g3g4g 1g1g2g3g4d 1g1g2g3d4g 1g1g2g3d4d 1g1g2d 1g1d2g3g 1g1d2g3d 1g1d2d 1d1g 1d1d} 
+set ET(1,dbl,1g1g2g) { 1.0} 
+set ET(1,nwk,1g1d2d) { G.thomomyus:1.0} 
+set ET(1,nwk,1g1g2g3g4d) { G.cherriei:1.0} 
+set ET(1,ctl,1g1g2g3d4d) { G.panamensis} 
+set ET(1,ltc,G.thomomyus) { 1g1d2d} 
+set ET(1,ltc,G.setzeri) { 1g1g2g3d4g} 
+set ET(1,nwk,1g1g2g3g4g) { G.costaricensis:1.0} 
+set ET(1,nwk,1g1d2g) { (G.actuosi:1.0,G.ewingi:1.0):1.0} 
+set ET(1,ctl,1g1g2g3d4g) { G.setzeri} 
+### S
+set ES(1,a_uni) { 0} 
+set ES(1,w) { .t1.c} 
+set ES(1,LabelMatrixBase) { 5} 
+set ES(1,orient) { W} 
+set ES(1,display_eu) { normal} 
+set ES(1,tit) { parasites} 
+set ES(1,type) { PhyNJ} 
+set ES(1,init) { 0} 
+set ES(1,a_ori) { 0} 
+### B
+set EB(1,bgs) {} 
+set EB(1,shi) {} 
+set EB(1,ova) {} 
+set EB(1,bll) {} 
+set EB(1,bgl) {} 
+set EB(1,qyn) {} 
+### T
+set ET(2,nwk,2g1g2g3g4g) { (O.cherriei:1.0,O.heterodus:1.0):1.0} 
+set ET(2,ltc,O.cavator) { 2g1g2g3d} 
+set ET(2,sox,2g1d) { 2.0} 
+set ET(2,dbl,2g1d) { 1.0} 
+set ET(2,xmax) { 6.0} 
+set ET(2,ctl,2g1g2d) { O.hispidus} 
+set ET(2,nwk,2) { ((T.talpoides:1.0,T.bottae:1.0):1.0,(G.bursarius:1.0,(O.hispidus:1.0,(O.cavator:1.0,(O.underwoodi:1.0,(O.cherriei:1.0,O.heterodus:1.0):1.0):1.0):1.0):1.0):1.0)} 
+set ET(2,dbl,2g1g) { 1.0} 
+set ET(2,cbg,0) { 0} 
+set ET(2,cbg,1) { 2g1 2d1} 
+set ET(2,cbg,2) { 2g1g2} 
+set ET(2,sox,2g1g2g3g4d) { 5.0} 
+set ET(2,ctl,2d1d) { T.talpoides} 
+set ET(2,nwk,2d) { (T.talpoides:1.0,T.bottae:1.0):1.0} 
+set ET(2,dbl,2g1g2g3g4d) { 1.0} 
+set ET(2,cbg,3) { 2g1g2g3} 
+set ET(2,cbg,4) { 2g1g2g3g4} 
+set ET(2,cbg,5) { 2g1g2g3g4g5} 
+set ET(2,ctl,2d1g) { T.bottae} 
+set ET(2,nwk,2g) { (G.bursarius:1.0,(O.hispidus:1.0,(O.cavator:1.0,(O.underwoodi:1.0,(O.cherriei:1.0,O.heterodus:1.0):1.0):1.0):1.0):1.0):1.0} 
+set ET(2,dbl,2g1g2g3g4g) { 1.0} 
+set ET(2,tot) { 6} 
+set ET(2,sox,2g1g2g3d) { 4.0} 
+set ET(2,dbl,2g1g2g3d) { 1.0} 
+set ET(2,ue_lab) { O.heterodus O.cherriei O.underwoodi O.cavator O.hispidus G.bursarius T.bottae T.talpoides} 
+set ET(2,sox,2d1d) { 2.0} 
+set ET(2,dbl,2d1d) { 1.0} 
+set ET(2,dbl,2g1g2g3g) { 1.0} 
+set ET(2,sox,2d1g) { 2.0} 
+set ET(2,nwk,2g1g2g3g4g5d) { O.cherriei:1.0} 
+set ET(2,dbl,2d1g) { 1.0} 
+set ET(2,dbl,2d) { 1.0} 
+set ET(2,nwk,2g1g2g3g4g5g) { O.heterodus:1.0} 
+set ET(2,dbl,2g) { 1.0} 
+set ET(2,nwk,2g1d) { G.bursarius:1.0} 
+set ET(2,ltc,O.underwoodi) { 2g1g2g3g4d} 
+set ET(2,nwk,2g1g) { (O.hispidus:1.0,(O.cavator:1.0,(O.underwoodi:1.0,(O.cherriei:1.0,O.heterodus:1.0):1.0):1.0):1.0):1.0} 
+set ET(2,ltc,T.talpoides) { 2d1d} 
+set ET(2,nwk,2g1g2g3d) { O.cavator:1.0} 
+set ET(2,nwk,2d1d) { T.talpoides:1.0} 
+set ET(2,ctl,2g1g2g3d) { O.cavator} 
+set ET(2,nwk,2g1g2g3g) { (O.underwoodi:1.0,(O.cherriei:1.0,O.heterodus:1.0):1.0):1.0} 
+set ET(2,nwk,2d1g) { T.bottae:1.0} 
+set ET(2,ltc,O.hispidus) { 2g1g2d} 
+set ET(2,all_cod) { 2 2g 2g1g 2g1g2g 2g1g2g3g 2g1g2g3g4g 2g1g2g3g4g5g 2g1g2g3g4g5d 2g1g2g3g4d 2g1g2g3d 2g1g2d 2g1d 2d 2d1g 2d1d} 
+set ET(2,ltc,O.heterodus) { 2g1g2g3g4g5g} 
+set ET(2,ltc,T.bottae) { 2d1g} 
+set ET(2,ctl,2g1g2g3g4d) { O.underwoodi} 
+set ET(2,nwk,2g1g2d) { O.hispidus:1.0} 
+set ET(2,nwk,2g1g2g) { (O.cavator:1.0,(O.underwoodi:1.0,(O.cherriei:1.0,O.heterodus:1.0):1.0):1.0):1.0} 
+set ET(2,ue_cod) { 2g1g2g3g4g5g 2g1g2g3g4g5d 2g1g2g3g4d 2g1g2g3d 2g1g2d 2g1d 2d1g 2d1d} 
+set ET(2,ctl,2g1g2g3g4g5d) { O.cherriei} 
+set ET(2,ctl,2g1g2g3g4g5g) { O.heterodus} 
+set ET(2,ltc,G.bursarius) { 2g1d} 
+set ET(2,sox,2g1g2d) { 3.0} 
+set ET(2,ctl,2g1d) { G.bursarius} 
+set ET(2,dbl,2g1g2d) { 1.0} 
+set ET(2,sox,2g1g2g3g4g5d) { 6.0} 
+set ET(2,dbl,2g1g2g3g4g5d) { 1.0} 
+set ET(2,ltc,O.cherriei) { 2g1g2g3g4g5d} 
+set ET(2,nwk,2g1g2g3g4d) { O.underwoodi:1.0} 
+set ET(2,dbl,2) { 0} 
+set ET(2,dbl,2g1g2g) { 1.0} 
+set ET(2,sox,2g1g2g3g4g5g) { 6.0} 
+set ET(2,dbl,2g1g2g3g4g5g) { 1.0} 
+### S
+set ES(2,orient) { W} 
+set ES(2,w) { .t1.c} 
+set ES(2,LabelMatrixBase) { 5} 
+set ES(2,tit) { hosts} 
+set ES(2,type) { PhyNJ} 
+set ES(2,init) { 0} 
+set ES(2,a_ori) { 0} 
+set ES(2,a_uni) { 0} 
+set ES(2,display_eu) { normal} 
+### B
+set EB(2,bgs) {} 
+set EB(2,shi) {} 
+set EB(2,ova) {} 
+set EB(2,bll) {} 
+set EB(2,bgl) {} 
+set EB(2,qyn) {} 
+set EC(1,opts,104859278634) { line 215.0 242.0 175.0 242.0 } 
+set EC(1,tags,104859278634) { 1g1g2g3g4g EUG.costaricensis T1 1g1g2g3g4gC Z} 
+set EC(1,opts,104859278635) { text 217.0 242.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text G.costaricensis} 
+set EC(1,tags,104859278635) { T1 EULG.costaricensis L} 
+set EC(1,opts,104859278636) { line 215.0 262.0 175.0 262.0 } 
+set EC(1,tags,104859278636) { 1g1g2g3g4d EUG.cherriei T1 1g1g2g3g4dC Z} 
+set EC(1,opts,104859278637) { text 217.0 262.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text G.cherriei} 
+set EC(1,tags,104859278637) { T1 EULG.cherriei L} 
+set EC(1,opts,104859278638) { line 215.0 282.0 175.0 282.0 } 
+set EC(1,tags,104859278638) { 1g1g2g3d4g EUG.setzeri T1 1g1g2g3d4gC Z} 
+set EC(1,opts,104859278639) { text 217.0 282.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text G.setzeri} 
+set EC(1,tags,104859278639) { T1 EULG.setzeri L} 
+set EC(1,opts,104859278640) { line 215.0 302.0 175.0 302.0 } 
+set EC(1,tags,104859278640) { 1g1g2g3d4d EUG.panamensis T1 1g1g2g3d4dC Z} 
+set EC(1,opts,104859278641) { text 217.0 302.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text G.panamensis} 
+set EC(1,tags,104859278641) { T1 EULG.panamensis L} 
+set EC(1,opts,104859278642) { line 135.0 322.0 95.0 322.0 } 
+set EC(1,tags,104859278642) { 1g1g2d EUG.chapini T1 1g1g2dC Z} 
+set EC(1,opts,104859278643) { text 137.0 322.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text G.chapini} 
+set EC(1,tags,104859278643) { T1 EULG.chapini L} 
+set EC(1,opts,104859278644) { line 175.0 342.0 135.0 342.0 } 
+set EC(1,tags,104859278644) { 1g1d2g3g EUG.ewingi T1 1g1d2g3gC Z} 
+set EC(1,opts,104859278645) { text 177.0 342.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text G.ewingi} 
+set EC(1,tags,104859278645) { T1 EULG.ewingi L} 
+set EC(1,opts,104859278646) { line 175.0 362.0 135.0 362.0 } 
+set EC(1,tags,104859278646) { 1g1d2g3d EUG.actuosi T1 1g1d2g3dC Z} 
+set EC(1,opts,104859278647) { text 177.0 362.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text G.actuosi} 
+set EC(1,tags,104859278647) { T1 EULG.actuosi L} 
+set EC(1,opts,104859278648) { line 135.0 382.0 95.0 382.0 } 
+set EC(1,tags,104859278648) { 1g1d2d EUG.thomomyus T1 1g1d2dC Z} 
+set EC(1,opts,104859278649) { text 137.0 382.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text G.thomomyus} 
+set EC(1,tags,104859278649) { T1 EULG.thomomyus L} 
+set EC(1,opts,104859278650) { line 95.0 402.0 55.0 402.0 } 
+set EC(1,tags,104859278650) { 1d1g EUT.minor T1 1d1gC Z} 
+set EC(1,opts,104859278651) { text 97.0 402.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text T.minor} 
+set EC(1,tags,104859278651) { T1 EULT.minor L} 
+set EC(1,opts,104859278652) { line 95.0 422.0 55.0 422.0 } 
+set EC(1,tags,104859278652) { 1d1d EUT.wardi T1 1d1dC Z} 
+set EC(1,opts,104859278653) { text 97.0 422.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text T.wardi} 
+set EC(1,tags,104859278653) { T1 EULT.wardi L} 
+set EC(1,opts,104859278654) { line 175.0 242.0 175.0 262.0 } 
+set EC(1,tags,104859278654) { 1g1g2g3gC T1 Z} 
+set EC(1,opts,104859278655) { line 175.0 252.0 135.0 252.0 } 
+set EC(1,tags,104859278655) { 1g1g2g3g 1g1g2g3gC T1 Z} 
+set EC(1,opts,104859278656) { line 175.0 282.0 175.0 302.0 } 
+set EC(1,tags,104859278656) { 1g1g2g3dC T1 Z} 
+set EC(1,opts,104859278657) { line 175.0 292.0 135.0 292.0 } 
+set EC(1,tags,104859278657) { 1g1g2g3d 1g1g2g3dC T1 Z} 
+set EC(1,opts,104859278658) { line 135.0 252.0 135.0 292.0 } 
+set EC(1,tags,104859278658) { 1g1g2gC T1 Z} 
+set EC(1,opts,104859278659) { line 135.0 272.0 95.0 272.0 } 
+set EC(1,tags,104859278659) { 1g1g2g 1g1g2gC T1 Z} 
+set EC(1,opts,104859278660) { line 135.0 342.0 135.0 362.0 } 
+set EC(1,tags,104859278660) { 1g1d2gC T1 Z} 
+set EC(1,opts,104859278661) { line 135.0 352.0 95.0 352.0 } 
+set EC(1,tags,104859278661) { 1g1d2g 1g1d2gC T1 Z} 
+set EC(1,opts,104859278662) { line 95.0 272.0 95.0 322.0 } 
+set EC(1,tags,104859278662) { 1g1gC T1 Z} 
+set EC(1,opts,104859278663) { line 95.0 297.0 55.0 297.0 } 
+set EC(1,tags,104859278663) { 1g1g 1g1gC T1 Z} 
+set EC(1,opts,104859278664) { line 95.0 352.0 95.0 382.0 } 
+set EC(1,tags,104859278664) { 1g1dC T1 Z} 
+set EC(1,opts,104859278665) { line 95.0 367.0 55.0 367.0 } 
+set EC(1,tags,104859278665) { 1g1d 1g1dC T1 Z} 
+set EC(1,opts,104859278666) { line 55.0 297.0 55.0 367.0 } 
+set EC(1,tags,104859278666) { 1gC T1 Z} 
+set EC(1,opts,104859278667) { line 55.0 332.0 15.0 332.0 } 
+set EC(1,tags,104859278667) { 1g 1gC T1 Z} 
+set EC(1,opts,104859278668) { line 55.0 402.0 55.0 422.0 } 
+set EC(1,tags,104859278668) { 1dC T1 Z} 
+set EC(1,opts,104859278669) { line 55.0 412.0 15.0 412.0 } 
+set EC(1,tags,104859278669) { 1d 1dC T1 Z} 
+set EC(1,opts,104859278670) { line 15.0 332.0 15.0 412.0 } 
+set EC(1,tags,104859278670) { 1C T1 Z} 
+set EC(1,opts,104859278671) { text 37.0 259.0 -fill magenta -font {-family times -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -text parasites} 
+set EC(1,tags,104859278671) { TXT T1} 
+set EC(1,ids) { 104859278634 104859278635 104859278636 104859278637 104859278638 104859278639 104859278640 104859278641 104859278642 104859278643 104859278644 104859278645 104859278646 104859278647 104859278648 104859278649 104859278650 104859278651 104859278652 104859278653 104859278654 104859278655 104859278656 104859278657 104859278658 104859278659 104859278660 104859278661 104859278662 104859278663 104859278664 104859278665 104859278666 104859278667 104859278668 104859278669 104859278670 104859278671} 
+set EC(2,opts,104859278672) { line 234.0 34.0 200.666666666 34.0 } 
+set EC(2,tags,104859278672) { 2g1g2g3g4g5g EUO.heterodus T2 2g1g2g3g4g5gC Z} 
+set EC(2,opts,104859278673) { text 236.0 34.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text O.heterodus} 
+set EC(2,tags,104859278673) { T2 EULO.heterodus L} 
+set EC(2,opts,104859278674) { line 234.0 59.0 200.666666666 59.0 } 
+set EC(2,tags,104859278674) { 2g1g2g3g4g5d EUO.cherriei T2 2g1g2g3g4g5dC Z} 
+set EC(2,opts,104859278675) { text 236.0 59.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text O.cherriei} 
+set EC(2,tags,104859278675) { T2 EULO.cherriei L} 
+set EC(2,opts,104859278676) { line 200.666666666 84.0 167.333333333 84.0 } 
+set EC(2,tags,104859278676) { 2g1g2g3g4d EUO.underwoodi T2 2g1g2g3g4dC Z} 
+set EC(2,opts,104859278677) { text 202.666666666 84.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text O.underwoodi} 
+set EC(2,tags,104859278677) { T2 EULO.underwoodi L} 
+set EC(2,opts,104859278678) { line 167.333333333 109.0 134.0 109.0 } 
+set EC(2,tags,104859278678) { 2g1g2g3d EUO.cavator T2 2g1g2g3dC Z} 
+set EC(2,opts,104859278679) { text 169.333333333 109.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text O.cavator} 
+set EC(2,tags,104859278679) { T2 EULO.cavator L} 
+set EC(2,opts,104859278680) { line 134.0 134.0 100.666666667 134.0 } 
+set EC(2,tags,104859278680) { 2g1g2d EUO.hispidus T2 2g1g2dC Z} 
+set EC(2,opts,104859278681) { text 136.0 134.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text O.hispidus} 
+set EC(2,tags,104859278681) { T2 EULO.hispidus L} 
+set EC(2,opts,104859278682) { line 100.666666667 159.0 67.3333333333 159.0 } 
+set EC(2,tags,104859278682) { 2g1d EUG.bursarius T2 2g1dC Z} 
+set EC(2,opts,104859278683) { text 102.666666667 159.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text G.bursarius} 
+set EC(2,tags,104859278683) { T2 EULG.bursarius L} 
+set EC(2,opts,104859278684) { line 100.666666667 184.0 67.3333333333 184.0 } 
+set EC(2,tags,104859278684) { 2d1g EUT.bottae T2 2d1gC Z} 
+set EC(2,opts,104859278685) { text 102.666666667 184.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text T.bottae} 
+set EC(2,tags,104859278685) { T2 EULT.bottae L} 
+set EC(2,opts,104859278686) { line 100.666666667 209.0 67.3333333333 209.0 } 
+set EC(2,tags,104859278686) { 2d1d EUT.talpoides T2 2d1dC Z} 
+set EC(2,opts,104859278687) { text 102.666666667 209.0 -anchor w -font {-family Courier -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -state normal -text T.talpoides} 
+set EC(2,tags,104859278687) { T2 EULT.talpoides L} 
+set EC(2,opts,104859278688) { line 200.666666666 34.0 200.666666666 59.0 } 
+set EC(2,tags,104859278688) { 2g1g2g3g4gC T2 Z} 
+set EC(2,opts,104859278689) { line 200.666666666 46.5 167.333333333 46.5 } 
+set EC(2,tags,104859278689) { 2g1g2g3g4g 2g1g2g3g4gC T2 Z} 
+set EC(2,opts,104859278690) { line 167.333333333 46.5 167.333333333 84.0 } 
+set EC(2,tags,104859278690) { 2g1g2g3gC T2 Z} 
+set EC(2,opts,104859278691) { line 167.333333333 65.25 134.0 65.25 } 
+set EC(2,tags,104859278691) { 2g1g2g3g 2g1g2g3gC T2 Z} 
+set EC(2,opts,104859278692) { line 134.0 65.25 134.0 109.0 } 
+set EC(2,tags,104859278692) { 2g1g2gC T2 Z} 
+set EC(2,opts,104859278693) { line 134.0 87.125 100.666666666 87.125 } 
+set EC(2,tags,104859278693) { 2g1g2g 2g1g2gC T2 Z} 
+set EC(2,opts,104859278694) { line 100.666666666 87.125 100.666666666 134.0 } 
+set EC(2,tags,104859278694) { 2g1gC T2 Z} 
+set EC(2,opts,104859278695) { line 100.666666666 110.5625 67.3333333331 110.5625 } 
+set EC(2,tags,104859278695) { 2g1g 2g1gC T2 Z} 
+set EC(2,opts,104859278696) { line 67.3333333331 110.5625 67.3333333331 159.0 } 
+set EC(2,tags,104859278696) { 2gC T2 Z} 
+set EC(2,opts,104859278697) { line 67.3333333331 134.78125 33.9999999998 134.78125 } 
+set EC(2,tags,104859278697) { 2g 2gC T2 Z} 
+set EC(2,opts,104859278698) { line 67.3333333333 184.0 67.3333333333 209.0 } 
+set EC(2,tags,104859278698) { 2dC T2 Z} 
+set EC(2,opts,104859278699) { line 67.3333333333 196.5 34.0 196.5 } 
+set EC(2,tags,104859278699) { 2d 2dC T2 Z} 
+set EC(2,opts,1048592786100) { line 33.9999999998 134.78125 33.9999999998 196.5 } 
+set EC(2,tags,1048592786100) { 2C T2 Z} 
+set EC(2,opts,1048592786101) { text 46.0 52.0 -fill magenta -font {-family times -weight normal -size 8 -slant roman -underline 0 -overstrike 0} -text hosts} 
+set EC(2,tags,1048592786101) { TXT T2} 
+set EC(2,ids) { 104859278672 104859278673 104859278674 104859278675 104859278676 104859278677 104859278678 104859278679 104859278680 104859278681 104859278682 104859278683 104859278684 104859278685 104859278686 104859278687 104859278688 104859278689 104859278690 104859278691 104859278692 104859278693 104859278694 104859278695 104859278696 104859278697 104859278698 104859278699 1048592786100 1048592786101} 
+

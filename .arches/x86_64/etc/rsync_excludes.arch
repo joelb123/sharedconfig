@@ -1,0 +1,14 @@
+!
+/distfiles
+/distfiles/go-src
+/distfiles/egit-src
+/distfiles/git3-src
+/distfiles/hg-src
+/distfiles/svn-src
+/local
+/local/arch
+/local/clienttype
+/local/host
+/local/x86_64/ivybridge/
+/local/x86_64/skylake/
+/local/x86_64/cpu

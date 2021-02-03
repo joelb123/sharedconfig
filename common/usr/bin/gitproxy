@@ -1,0 +1,7 @@
+#!/bin/bash
+# proxy use for GIT --JB
+
+_proxy=proxyout.lanl.gov
+_proxyport=8080
+
+exec socat STDIO PROXY:$_proxy:$1:$2,proxyport=$_proxyport

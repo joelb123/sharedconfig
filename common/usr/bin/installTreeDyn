@@ -1,0 +1,5 @@
+#!/bin/bash
+# installs a working copy of the tcl/tk treedyn code in a treedyn subdirectory
+# this is retarded, but the way treedyn works --JB
+mkdir treedyn
+( cd /usr/portage/local/src/treedyn/treedyn-current; tar cf - .) | (cd treedyn; tar -xf -)

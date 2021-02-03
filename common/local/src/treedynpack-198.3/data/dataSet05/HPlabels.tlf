@@ -1,0 +1,18 @@
+T.wardi Interaction T.talpoides
+T.minor Interaction T.bottae
+G.thomomyus Interaction T.talpoides
+G.actuosi Interaction T.bottae
+G.ewingi Interaction G.bursarius
+G.chapini Interaction  O.hispidus
+G.panamensis Interaction O.cavator
+G.setzeri Interaction {O.underwoodi O.cherriei}
+G.cherriei Interaction O.cherriei
+G.costaricensis Interaction O.heterodus
+T.talpoides Interaction {T.wardi G.thomomyus}
+T.bottae Interaction {T.minor G.actuosi}
+G.bursarius Interaction G.ewingi
+O.hispidus Interaction G.chapini 
+O.cavator Interaction G.panamensis
+O.underwoodi Interaction G.setzeri
+O.cherriei Interaction {G.setzeri G.cherriei}
+O.heterodus  Interaction G.costaricensis

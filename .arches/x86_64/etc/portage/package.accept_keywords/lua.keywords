@@ -1,0 +1,8 @@
+#app-eselect/eselect-lua
+dev-lua/lua-md5
+#dev-lua/luajson
+#dev-lua/luaBitOp
+#dev-lua/ljpeg
+#dev-lua/luaexpat
+#dev-lua/luafilesystem
+#dev-lua/luasocket

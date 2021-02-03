@@ -1,0 +1,13 @@
+app-text/docx2txt
+app-text/dvisvgm
+app-text/groonga
+app-text/html2text
+app-text/lcdf-typetools
+app-text/pandoc
+app-text/pdfgrep
+app-text/pdftk
+app-text/po4a
+app-text/pspdftool
+app-text/zathura
+dev-tex/latex-beamer
+dev-tex/latexmk

@@ -1,0 +1,7 @@
+#!/bin/bash
+# usage: readABIintensities filelist
+
+for i in $@
+do
+  echo "$i `getABIfield $i 'S/N%'`"
+done

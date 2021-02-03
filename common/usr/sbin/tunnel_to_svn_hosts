@@ -1,0 +1,3 @@
+#!/bin/bash
+connect-tunnel -v -P ${PROXY_HOST}:${PROXY_PORT} -T 10234:66.92.69.19:3690 # code.open-bio.org
+

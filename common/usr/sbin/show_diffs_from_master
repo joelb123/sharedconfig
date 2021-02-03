@@ -1,0 +1,7 @@
+#!/bin/bash
+eix -I | grep I\] | cut --delim=" " --fields=2 >/tmp/installed
+echo "on master, not on here:"
+diff /tmp/installed /var/lib/portage/installed | grep \> | cut --delim=" " --fields=2
+echo "on here, not on master:"
+diff /tmp/installed /var/lib/portage/installed | grep \< | cut --delim=" " --fields=2
+rm -f /tmp/installed

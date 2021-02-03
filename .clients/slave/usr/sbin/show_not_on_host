@@ -1,0 +1,2 @@
+#!/bin/bash
+comm -1 -3 /var/lib/portage/world /usr/portage/local/arch/cpu/world.cpuhost 

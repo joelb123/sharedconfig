@@ -1,0 +1,2 @@
+#!/bin/bash
+eix -I -c | grep D\] | cut --delim=" " --fields=2

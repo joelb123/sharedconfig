@@ -1,0 +1,19 @@
+#!/bin/bash
+#user="rsyncuser"
+user="root"
+master_server="jbcluster.lanl.gov"
+exclude_file=`( source /etc/make.conf ; echo ${PORTAGE_RSYNC_EXTRA_OPTS#*=} )`
+client_key="/usr/portage/local/rsyncuser/client-rsync-key"
+
+if [[ `hostname -f` == $master_server ]]
+then
+  echo 'this host is master server--no action'
+  exit 1
+fi
+if [ ! -r $exclude_from ]
+then
+  echo "unable to find exclude_from file $exclude_file"
+  exit 1
+fi
+
+/usr/bin/rsync -avz -e "ssh -i $client_key"   --delete --exclude-from=$exclude_file  ${user}@${master_server}:/usr/portage/ /usr/portage

@@ -1,0 +1,14 @@
+#!/bin/bash
+# copy public key to remote machine for access
+#
+# Usage:
+#   copySSHkeys machinename
+#
+#  You will have to give a password for the remote machine
+#
+if [ ! -e ~/.ssh/id_dsa.pub ] ; then
+  echo "generating new key file"
+  ssh-keygen -t dsa -b 1024 
+fi
+cat ~/.ssh/id_dsa.pub | ssh $1 'cat >> .ssh/authorized_keys'
+echo "done"

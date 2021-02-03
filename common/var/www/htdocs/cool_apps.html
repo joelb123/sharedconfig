@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Apps you might want to know about</title>
+</head>
+<body>
+<h2 style="text-align: center;">Other Cool Apps</h2>
+<br>
+By this point you should have set up your desktop and browser.
+&nbsp; There are some applications that are worth mentioning.<br>
+<br>
+<ol>
+  <li><span style="font-weight: bold;">autofs</span> This&nbsp; system
+application automatically mounts NFS directories when needed, then
+dismounts them after a period of inactivity.&nbsp; This tends to make
+cross-mounting more stable, especially when a machine goes down.&nbsp;
+There are two directories where this happens.&nbsp; Any reference to
+/home/hostname will mount /export/home on host hostname.&nbsp; The
+other is more magical: /net/hostname will show all the exported
+directories from hostname. <br>
+  </li>
+  <li><span style="font-weight: bold;">samba</span> This application
+handles communication with Windows machines.&nbsp; This host is
+configured to export /home/${HOSTNAME}/share as a Windows share that
+should be read/write available to Windows clients on your local
+network.&nbsp; You can also use Samba to browse exported filesystems on
+Windows hosts.</li>
+  <li><span style="font-weight: bold;">apache</span> The http daemon
+will serve any files you put in your <code>public_html</code>
+subdirectory under http://localhost/~username/.&nbsp; You can also put
+files in /var/www/localhost/htdocs.&nbsp; It is possible to arrange an
+alias with the LANL hostmaster and have this host act as a virtual
+server for a project under http://myprojectname.lanl.gov where
+"myprojectname" is the name of an arbitrary project.</li>
+  </li>
+  <li><span style="font-weight: bold;">thunderbird</span> and <span
+ style="font-weight: bold;">evolution</span> These two mail programs go
+far beyond terminal-based applications and are particularly good at
+handling those MS Word files and the like that people insist on
+sending.&nbsp; Thunderbird is perhaps the more popular, although I use
+Evolution with the lab mail systems and like it. <br>
+  </li>
+  <li><span style="font-weight: bold;">scipy</span> The <a
+ href="http://www.scipy.org">scipy</a> scientific tools for python are
+installed.&nbsp; These bind a lot of useful science and math libraries
+(LAPACK, gnuplot, image processing, and more) to the programming
+language python, and is particularly good for making
+publication-quality figures from data.</li>
+  <li><span style="font-weight: bold;">nxclient</span> and <span
+ style="font-weight: bold;">nxserver&nbsp; </span>These make secure
+remote X11 desktop connections to other machines.&nbsp; The speed of
+the connections is surprisingly good.&nbsp; Free clients are available
+for Windows&nbsp; machines.&nbsp; As a client, it's a great way to
+connect to a compute server in another room or building and have a full
+desktop available.&nbsp; As a server (after some <a
+ href="http://www.gentoo.org/doc/en/nx-guide.xml">NX server
+configuration</a>) it's a good way to connect to a Linux desktop from a
+Windows laptop.</li>
+  <li><span style="font-weight: bold;">pdflatex</span> Insert the
+command <code>\usepackage[pdftex]{graphicx}</code> into your Latex
+files and use the pdflatex command instead of latex to produce pdf
+files that are better for e-mailing and of equal quality for paper
+prints.&nbsp; The one catch is that any included graphics must also be
+in PDF format.&nbsp; If you are a gnuplot user, this is best done by
+producing eps files using the postscript driver and filtering them to
+PDF with the command <code>epstopdf --compress --outfile=figureX.pdf
+figureX.eps</code>.<br>
+  </li>
+  <li><span style="font-weight: bold;">inkster</span> You've probably
+heard of GIMP, which is a bitmap editor similar to PhotoShop, but you
+may not be familiar with this Scalable Vector Graphics (SVG) drawing
+editor.&nbsp; Drawings produced by inkster may be included in web
+sites&nbsp; and are good at any resolution.&nbsp; They may also be used
+with LaTex in figures for publications.</li>
+  <li><span style="font-weight: bold;">computational biology tools</span>
+Emboss, Embassy, NCBI-tools, gromacs, and lots more.&nbsp; Look in
+/usr/portage/sci-biology for the names of packages or use the esearch
+command to look for others.</li>
+  <li><span style="font-weight: bold;">office tools</span> OpenOffice
+and KOffice are both installed.&nbsp; Each contains a full set of
+office applications (word processor, drawing, presentations,
+etc.)&nbsp; I prefer OpenOffice at this time.<br>
+  </li>
+</ol>
+<br>
+</body>
+</html>

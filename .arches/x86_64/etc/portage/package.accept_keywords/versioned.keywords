@@ -1,0 +1,6 @@
+#dev-lang/python:2.7
+#dev-lang/python:3.9
+sys-devel/gcc:9.3.0
+sys-devel/gcc:10
+=sys-kernel/linux-headers-5.10
+sys-kernel/gentoo-kernel:5.10.11

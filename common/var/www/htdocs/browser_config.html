@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Configuring your Desktop</title>
+</head>
+<body>
+<h2 style="text-align: center;">Quick-Config for your Desktop &amp;
+Browser</h2>
+<br>
+Your desktop and browser will look better and work better if you take a
+few simple steps to configure them.&nbsp; I have made these changes to
+/etc/skel so they may already be done automatically (if you used
+superadduser!).<br>
+<h4>System Configuration&nbsp;</h4>
+<ol>
+  <li>If you're not gonna log in to the root account at least once a
+week, go to <code>/etc/mail </code>and put add an e-mail account that
+you monitor to the root alias, and then issue the command <code>newaliases</code>.&nbsp;
+This way important system messages will be seen promptly.</li>
+  <li>If you have an additional display device such as a second monitor
+or a projector attached, you may wish to use a different <code>xorg.conf</code>.&nbsp;
+Several are provided in <code>/etc/X11</code>, and I suggest you make
+a symbolic link to the closest version.&nbsp; You may need to edit the
+files and change the BusIDs to match what lspci shows you is correct
+for your graphics card.<br>
+  </li>
+  <li>The resolution density (in dpi) of your monitor has been set to
+85dpi, which is correct for a 19" LCD monitor, but may need to be
+adjusted if you have a monitor much larger or smaller.&nbsp; You can
+change this by modifying the following line in <code>/etc/X11/gdm/gdm.conf:
+command=/usr/X11R6/bin/X -dpi 85 -audit 0.</code>&nbsp; (It is
+preferable to set this resolution directly than let X choose the
+resolution, as the horizontal and vertical rarely match, which makes
+fonts look bad).</li>
+  <li>Your graphics card may support full-screen anti-aliasing and
+texture filtering, both of which make 3-D object look better at the
+cost of some performance.&nbsp; I have left them turned off, but if you
+wish to turn them on, edit <code>/etc/env.d/03opengl-attributes </code>and
+follow the instructions listed there.&nbsp; You can also leave them to
+be turned on per-user or per-session.&nbsp; You'll probably want to
+test the settings by loading your favorite protein with <code>vmd</code>;
+you may also want to run the <code>nvidia-settings</code>
+program&nbsp; to adjust colors and play with overclocking.&nbsp; I do
+not know how to make settings from the program permanent, as they seem
+optimal as configured.</li>
+</ol>
+<h4>Per-user configuration</h4>
+Use the <code>superadduser</code> script to add users to the
+system.&nbsp;
+It&nbsp;
+which will prompt you for any needed info, with reasonable
+defaults.&nbsp; The proper home directory is
+/home/${HOSTNAME}/username.&nbsp; The user used be added to groups
+audio, cdrom, cdrw, users, video, and wheel.&nbsp; It is good practice
+to
+coordinate user ID numbers across any systems this account will log
+into.&nbsp; If you use superadduser, it should copy a set of files with
+good defaults from /etc/skel, but in case something goes wrong, here
+are the steps needed to configure a new user account from scratch:<br>
+<ol>
+  <li>You can choose either Gnome or KDE as your default window manager
+at login time.&nbsp; Each has its advantages.</li>
+  <li>Choose some nice default fonts <span style="font-weight: bold;"></span>for
+your desktop.&nbsp; In your window manager, bring up a font
+preferences dialog (in Gnome this is done by Desktop -&gt; Preferences
+-&gt; Font, in KDE this is done via Konqueror, under <code>Control
+Center -&gt;Appearance &amp; Themes -&gt; Fonts</code>).&nbsp; The
+default fonts on Gnome are set to Sans, but most
+people find that another family looks better and is more
+readable.&nbsp; KDE starts off looking better, but you may want to
+change it anyway. You should pick a family is that is complete in that
+is
+has a <span style="font-weight: bold;">bold, </span><span
+ style="font-style: italic;">italic,&nbsp; </span><span
+ style="font-family: monospace;">fixed width, </span>and <span
+ style="font-weight: bold;"><span style="font-style: italic;"><span
+ style="font-weight: bold;">bold italic</span></span></span> variant
+available.&nbsp; Bitstream Vera, Lucida, and Nimbus Sans are all
+popular choices.&nbsp; Personally, I find the Bitstream Vera most
+readable for
+the proportional fonts, but I prefer Terminus for the monospaced
+terminal fonts (which is what I look at the most).&nbsp; As you choose
+the fonts and sizes, your desktop will reflect the changes.&nbsp; You
+will also want to click on "subpixel smoothing" if you are using an LCD
+display.</li>
+  <li>You will probably want to add a terminal icon to the list of
+frequently-used applications on the window manager panel.&nbsp; In
+Gnome, this is done by Applications-&gt;System Tools-&gt;Terminal
+(right-click) Add this launcher to panel.&nbsp;&nbsp; You might also
+want to do this to firefox-bin, which is under Applications -&gt;
+Internet -&gt; Mozilla Firefox (bin).</li>
+  <li>Choose a desktop background that you like.&nbsp; In Gnome, this
+is done through Desktop-&gt;Preferences-&gt;Desktop Background.&nbsp;
+If you wish to add background images of your own, they can be added via
+the "Add Backgrounds" menu here.&nbsp; In KDE, this is done
+through&nbsp; (right-click)-&gt;Configure Desktop-&gt;Background.&nbsp;
+Images of your own may be added under "Picture:" using the browse
+option.</li>
+  <li>Start Firefox, if you haven't already.&nbsp; You may choose other
+fonts for your browser by clicking on
+Edit-&gt;Preferences-&gt;Appearance-&gt;Fonts (in firefox &amp;
+mozilla).&nbsp; I find the default fonts are better than most other
+choices, though.&nbsp; Click on this
+link to download <a href="../../../../2HHB.pdb">a
+PDB file</a>; the browser should ask whether you want to open it with
+VMD, if not, click the "Browse" button and choose <code>/usr/local/bin/vmd
+    </code>(or <code>/usr/bin/rasmol</code> if you prefer).&nbsp;
+You will probably want to leave "Always ask" checked to prevent
+clicking through to potentially harmful files.&nbsp; Next, do the same
+steps after clicking on the <a href="../../../../vmd-demo/">VMD demo
+page</a>,
+but this time the helper files is <code>/usr/local/bin/vmdexec.sh</code>.&nbsp;
+Be aware that VMD is NOT running in any sandbox in this mode, so any
+damaging scripts can affect your system.&nbsp; Sound, java, flash, and
+most types of video files should be
+working with Firefox as configured. A convenient place to test video
+files is at <a href="http://cnn.com/">CNN</a>.&nbsp; If you use other
+browsers such as Konqueror or Epiphany, you may wish to do the same for
+them (although they will probably not work properly with extensions
+such as Java and video unless you do some extensive configuration).</li>
+  <li>Start the Configuration Editor (found under
+Applications-&gt;System Tools) and check that
+system-&gt;gstreamer-&gt;0.8-&gt;default has the following settings:
+audiosink=alsasink, audiosrc=alsasrc, videosink=ximagesink,
+videosrc=v4lsrc.<br>
+  </li>
+</ol>
+</body>
+</html>

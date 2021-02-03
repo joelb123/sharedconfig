@@ -1,0 +1,15 @@
+loadtree C:/chevenet/TreeDyn/+/data/dataSet06/Vibrio_ezurae.tree
+loadlabel C:/chevenet/TreeDyn/+/data/dataSet06/Vibrio_ezurae.tlf
+color blue
+operation nodefgcolor
+ID EU from Vibrio_ezurae where TypeStrain == T
+color black
+font {Times 9 italic}
+AN LeavesReplace {Vibrio_ezurae {Name}} 
+font {Times 6 normal}
+AN LeavesAdd {Vibrio_ezurae {TypeStrain}} {prefix "" exposant -3}
+font {Times 9 normal}
+AN LeavesAdd {Vibrio_ezurae {Strain}}
+font {Times 8 normal}
+AN LeavesAdd {Vibrio_ezurae {Accession}} {prefix "{" suffix "}"} 
+AN Columns {Vibrio_ezurae {Accession}} {prefix "{" suffix "}"} 

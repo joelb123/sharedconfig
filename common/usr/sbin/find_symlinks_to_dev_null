@@ -1,0 +1,9 @@
+#!/bin/bash
+symfiles=`find . -type l -print `
+for file in $symfiles
+do
+ if [[ `ls -l  $file | awk '{print $10}'` == "/dev/null" ]]
+ then
+   echo "$file is symlinked to /dev/null"
+ fi
+done

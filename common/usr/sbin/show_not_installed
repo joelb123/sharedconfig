@@ -1,0 +1,9 @@
+#!/bin/bash
+for category in $@
+do
+   notInstalled=`eix ${category}/ | grep $category | grep -v \[I\] | grep -v \[U\] | cut --delim=" " --fields=2`
+   for package in $notInstalled
+   do
+      eix -e -F $package
+   done
+done
