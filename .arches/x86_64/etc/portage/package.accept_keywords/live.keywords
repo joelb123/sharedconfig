@@ -4,21 +4,17 @@ dev-python/python-louvain		**
 sci-biology/assembly-stats		**
 sci-biology/bamtools			**
 sci-biology/biobambam2			**
-sci-biology/cramtools			**
 sci-biology/discrover
 sci-biology/epga			**
 sci-biology/Fastaq			**
 sci-biology/grabix			**
 sci-biology/HTSeq			**
 sci-biology/idba			**
-sci-biology/msautil			**
+sci-biology/mmseqs2			**
 sci-biology/oases			**
 sci-biology/paHMM-Tree			**
-sci-biology/portrait			**
 sci-biology/RADtools			**
 sci-biology/raxml-ng			**
-sci-biology/rtg-tools			**
-sci-biology/Sibelia			**
 sci-biology/sabre			**
 sci-biology/sickle			**
 sci-biology/STAR			**

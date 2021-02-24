@@ -17,3 +17,4 @@ java-virtuals/servlet-api:3.1
 x11-libs/gtksourceview:4
 =dev-lang/perl-5.30.3
 =dev-lang/perl-5.30.3-r1
+=sci-libs/cholmod-3.0.14

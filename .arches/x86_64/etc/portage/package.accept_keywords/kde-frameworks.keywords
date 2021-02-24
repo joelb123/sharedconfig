@@ -22,7 +22,6 @@ kde-frameworks/kdeclarative
 kde-frameworks/kded
 kde-frameworks/kdelibs4support
 kde-frameworks/kdesu
-#kde-frameworks/kdewebkit
 kde-frameworks/kdnssd
 kde-frameworks/kdoctools
 kde-frameworks/kemoticons
@@ -64,6 +63,7 @@ kde-frameworks/kwindowsystem
 kde-frameworks/kxmlgui
 kde-frameworks/networkmanager-qt
 kde-frameworks/plasma
+kde-frameworks/prison
 kde-frameworks/purpose
 kde-frameworks/qqc2-desktop-style
 kde-frameworks/solid

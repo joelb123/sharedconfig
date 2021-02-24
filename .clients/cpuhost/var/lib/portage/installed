@@ -180,6 +180,7 @@ app-eselect/eselect-timidity
 app-eselect/eselect-vi
 app-eselect/eselect-wxwidgets
 app-eselect/eselect-xvmc
+app-i18n/enca
 app-misc/c_rehash
 app-misc/ca-certificates
 app-misc/colordiff
@@ -317,7 +318,6 @@ dev-cpp/range-v3
 dev-cpp/rttr
 dev-cpp/sparsehash
 dev-cpp/tbb
-dev-cpp/tclap
 dev-cpp/yaml-cpp
 dev-db/lmdb
 dev-db/mariadb-connector-c
@@ -648,6 +648,8 @@ dev-libs/libatomic_ops
 dev-libs/libbsd
 dev-libs/libburn
 dev-libs/libbytesize
+dev-libs/libcdio
+dev-libs/libcdio-paranoia
 dev-libs/libdbusmenu
 dev-libs/libdbusmenu-qt
 dev-libs/libdivsufsort
@@ -691,8 +693,10 @@ dev-libs/libyaml
 dev-libs/lzo
 dev-libs/maloc
 dev-libs/mathjax
+dev-libs/mmtf-cpp
 dev-libs/mpc
 dev-libs/mpfr
+dev-libs/msgpack
 dev-libs/nettle
 dev-libs/newt
 dev-libs/npth
@@ -700,6 +704,7 @@ dev-libs/nspr
 dev-libs/nss
 dev-libs/ocl-icd
 dev-libs/onigmo
+dev-libs/oniguruma
 dev-libs/openssl
 dev-libs/plasma-wayland-protocols
 dev-libs/popt
@@ -810,7 +815,6 @@ dev-perl/File-Next
 dev-perl/File-ShareDir
 dev-perl/File-ShareDir-Install
 dev-perl/File-Slurp
-dev-perl/File-Slurp-Tiny
 dev-perl/File-Slurper
 dev-perl/File-Sort
 dev-perl/File-Which
@@ -821,7 +825,6 @@ dev-perl/Graph
 dev-perl/GraphViz
 dev-perl/HTML-Parser
 dev-perl/HTML-Tagset
-dev-perl/HTML-Template
 dev-perl/HTML-TokeParser-Simple
 dev-perl/HTTP-Cookies
 dev-perl/HTTP-Daemon
@@ -852,11 +855,8 @@ dev-perl/List-UtilsBy
 dev-perl/Locale-gettext
 dev-perl/Log-Dispatch
 dev-perl/Log-Log4perl
-dev-perl/Log-Report
-dev-perl/Log-Report-Optional
 dev-perl/MIME-Charset
 dev-perl/MRO-Compat
-dev-perl/Math-CDF
 dev-perl/Module-Build
 dev-perl/Module-Build-Tiny
 dev-perl/Module-Implementation
@@ -897,7 +897,6 @@ dev-perl/Sort-Key
 dev-perl/Specio
 dev-perl/Spreadsheet-ParseExcel
 dev-perl/Statistics-Descriptive
-dev-perl/String-Print
 dev-perl/Sub-Exporter
 dev-perl/Sub-Exporter-Progressive
 dev-perl/Sub-Identify
@@ -943,10 +942,6 @@ dev-perl/Variable-Magic
 dev-perl/WWW-Curl
 dev-perl/WWW-RobotRules
 dev-perl/X11-Protocol
-dev-perl/XML-Compile
-dev-perl/XML-Compile-Cache
-dev-perl/XML-Compile-SOAP
-dev-perl/XML-Compile-WSDL11
 dev-perl/XML-DOM
 dev-perl/XML-LibXML
 dev-perl/XML-LibXML-Simple
@@ -983,6 +978,7 @@ dev-python/appdirs
 dev-python/argcomplete
 dev-python/argh
 dev-python/argon2-cffi
+dev-python/arrow
 dev-python/astroid
 dev-python/async_generator
 dev-python/attrs
@@ -994,6 +990,7 @@ dev-python/baycomp
 dev-python/bcbio-gff
 dev-python/bcrypt
 dev-python/beautifulsoup
+dev-python/binaryornot
 dev-python/bitarray
 dev-python/black
 dev-python/bleach
@@ -1019,7 +1016,6 @@ dev-python/commonmark
 dev-python/constantly
 dev-python/coverage
 dev-python/cppy
-dev-python/crashtest
 dev-python/cryptography
 dev-python/cycler
 dev-python/cython
@@ -1064,8 +1060,10 @@ dev-python/isodate
 dev-python/isort
 dev-python/itsdangerous
 dev-python/jdcal
+dev-python/jedi
 dev-python/jeepney
 dev-python/jinja
+dev-python/jinja2-time
 dev-python/joblib
 dev-python/jsonpointer
 dev-python/jsonschema
@@ -1142,9 +1140,11 @@ dev-python/pipx
 dev-python/pkginfo
 dev-python/pluggy
 dev-python/ply
+dev-python/pmw
 dev-python/poetry
 dev-python/poetry-core
 dev-python/poetry-dynamic-versioning
+dev-python/poyo
 dev-python/prometheus_client
 dev-python/prompt_toolkit
 dev-python/psutil
@@ -1191,6 +1191,8 @@ dev-python/python-dotenv
 dev-python/python-louvain
 dev-python/python-memcached
 dev-python/python-mimeparse
+dev-python/python-slip
+dev-python/python-slugify
 dev-python/pytz
 dev-python/pyxdg
 dev-python/pyyaml
@@ -1247,6 +1249,7 @@ dev-python/tblib
 dev-python/terminado
 dev-python/testpath
 dev-python/testtools
+dev-python/text-unidecode
 dev-python/texttable
 dev-python/threadpoolctl
 dev-python/toml
@@ -1256,6 +1259,7 @@ dev-python/tox
 dev-python/tqdm
 dev-python/traceback2
 dev-python/traitlets
+dev-python/tree-sitter
 dev-python/twine
 dev-python/twisted
 dev-python/typed-ast
@@ -1374,6 +1378,7 @@ dev-util/checkstyle
 dev-util/cmake
 dev-util/cmocka
 dev-util/colm
+dev-util/cookiecutter
 dev-util/cppunit
 dev-util/ctags
 dev-util/ddd
@@ -1413,6 +1418,7 @@ dev-util/tsv-utils
 dev-util/unifdef
 dev-util/valgrind
 dev-util/vbindiff
+dev-util/wayland-scanner
 dev-util/yacc
 dev-vcs/git
 dev-vcs/git-lfs
@@ -1429,6 +1435,7 @@ gnome-base/librsvg
 gnome-extra/libgsf
 gnome-extra/polkit-gnome
 gnome-extra/yelp-xsl
+gui-libs/display-manager-init
 java-virtuals/script-api
 java-virtuals/servlet-api
 kde-apps/analitza
@@ -1689,9 +1696,11 @@ kde-plasma/oxygen
 kde-plasma/plasma-browser-integration
 kde-plasma/plasma-desktop
 kde-plasma/plasma-disks
+kde-plasma/plasma-firewall
 kde-plasma/plasma-integration
 kde-plasma/plasma-meta
 kde-plasma/plasma-nm
+kde-plasma/plasma-systemmonitor
 kde-plasma/plasma-vault
 kde-plasma/plasma-workspace
 kde-plasma/plasma-workspace-wallpapers
@@ -1821,6 +1830,7 @@ media-libs/gd
 media-libs/gegl
 media-libs/gexiv2
 media-libs/giflib
+media-libs/glew
 media-libs/glm
 media-libs/glu
 media-libs/graphene
@@ -1841,6 +1851,8 @@ media-libs/lcms
 media-libs/lensfun
 media-libs/libao
 media-libs/libart_lgpl
+media-libs/libass
+media-libs/libcddb
 media-libs/libcdr
 media-libs/libdca
 media-libs/libdmtx
@@ -1929,6 +1941,8 @@ media-video/ffmpeg
 media-video/gpac
 media-video/lsdvd
 media-video/movit
+media-video/mpeg-tools
+media-video/mplayer
 media-video/transcode
 media-video/vlc
 media-video/vobcopy
@@ -1954,7 +1968,11 @@ net-dns/dnscrypt-proxy
 net-dns/libidn
 net-dns/libidn2
 net-dns/openresolv
+net-firewall/ebtables
+net-firewall/firewalld
+net-firewall/ipset
 net-firewall/iptables
+net-firewall/nftables
 net-fs/autofs
 net-fs/cifs-utils
 net-fs/curlftpfs
@@ -1988,6 +2006,7 @@ net-libs/liblockfile
 net-libs/libmbim
 net-libs/libmnl
 net-libs/libndp
+net-libs/libnftnl
 net-libs/libnice
 net-libs/libnsl
 net-libs/libotr
@@ -2026,6 +2045,7 @@ net-misc/clusterssh
 net-misc/curl
 net-misc/dhcp
 net-misc/dropbox
+net-misc/ethertypes
 net-misc/iperf
 net-misc/iputils
 net-misc/keychain
@@ -2132,14 +2152,12 @@ sci-biology/Fastaq
 sci-biology/GBrowse
 sci-biology/HTSeq
 sci-biology/KaKs_Calculator
-sci-biology/MMseqs2
 sci-biology/ParaAT
 sci-biology/RADtools
 sci-biology/RAILS
 sci-biology/RapMap
 sci-biology/SSAKE
 sci-biology/STAR
-sci-biology/Sibelia
 sci-biology/SnpEff
 sci-biology/SolexaQA
 sci-biology/VarScan-bin
@@ -2174,13 +2192,10 @@ sci-biology/bwa
 sci-biology/bwa-mem2
 sci-biology/cast-bin
 sci-biology/cd-hit
-sci-biology/cdbfasta
-sci-biology/ce
 sci-biology/clustal-omega
 sci-biology/clustalw
 sci-biology/clustalx
 sci-biology/codonw
-sci-biology/conifer
 sci-biology/coral
 sci-biology/cramtools
 sci-biology/cutadapt
@@ -2206,7 +2221,6 @@ sci-biology/genepop
 sci-biology/genometools
 sci-biology/gffcompare
 sci-biology/gffpandas
-sci-biology/gffread
 sci-biology/gffutils
 sci-biology/gibbs
 sci-biology/glimmer
@@ -2226,7 +2240,6 @@ sci-biology/kallisto
 sci-biology/karect
 sci-biology/kat
 sci-biology/khmer
-sci-biology/kraken
 sci-biology/lagan
 sci-biology/last
 sci-biology/lastz
@@ -2236,9 +2249,9 @@ sci-biology/maq
 sci-biology/maqview
 sci-biology/mavid
 sci-biology/mcl
-sci-biology/meme
 sci-biology/minimap2
 sci-biology/miranda
+sci-biology/mmseqs2
 sci-biology/mothur
 sci-biology/mrbayes
 sci-biology/mrfast
@@ -2265,7 +2278,6 @@ sci-biology/poa
 sci-biology/portrait
 sci-biology/pplacer-bin
 sci-biology/prank
-sci-biology/price
 sci-biology/prints
 sci-biology/probcons
 sci-biology/prodigal
@@ -2277,7 +2289,6 @@ sci-biology/pybedtools
 sci-biology/pyfaidx
 sci-biology/pysam
 sci-biology/qrna
-sci-biology/quick-join
 sci-biology/quicktree
 sci-biology/quorum
 sci-biology/raxml
@@ -2286,11 +2297,9 @@ sci-biology/reaper
 sci-biology/rebase
 sci-biology/recon
 sci-biology/rnaview
-sci-biology/rtg-tools
 sci-biology/sabre
 sci-biology/samstat
 sci-biology/samtools
-sci-biology/sap
 sci-biology/scan_for_matches
 sci-biology/screed
 sci-biology/scythe
@@ -2299,13 +2308,11 @@ sci-biology/seqan
 sci-biology/seqmagick
 sci-biology/seqtk
 sci-biology/seqtools
-sci-biology/sequedex-bin
 sci-biology/sff_dump
 sci-biology/sibsim4
 sci-biology/sickle
 sci-biology/snap
 sci-biology/snp-mutator
-sci-biology/split-dist
 sci-biology/stride
 sci-biology/t-coffee
 sci-biology/taxtastic
@@ -2321,7 +2328,6 @@ sci-biology/usearch-bin
 sci-biology/vcftools
 sci-biology/velvet
 sci-biology/weblogo
-sci-biology/wise
 sci-biology/yass
 sci-biology/zmsort
 sci-calculators/datamash
@@ -2336,6 +2342,7 @@ sci-chemistry/chemtool
 sci-chemistry/clashlist
 sci-chemistry/cluster
 sci-chemistry/drawxtl
+sci-chemistry/dssp
 sci-chemistry/easychem
 sci-chemistry/gperiodic
 sci-chemistry/ksdssp
@@ -2348,13 +2355,17 @@ sci-chemistry/mopac7
 sci-chemistry/mustang
 sci-chemistry/pdbcat
 sci-chemistry/pdbcns
+sci-chemistry/pdbmat
 sci-chemistry/prekin
 sci-chemistry/probe
 sci-chemistry/procheck
+sci-chemistry/pymol
+sci-chemistry/pymol-plugins-psico
 sci-chemistry/raster3d
 sci-chemistry/ssp
 sci-chemistry/suitename
 sci-chemistry/surf
+sci-chemistry/theseus
 sci-chemistry/tinker
 sci-chemistry/tm-align
 sci-electronics/electric
@@ -2366,7 +2377,6 @@ sci-libs/bliss
 sci-libs/btf
 sci-libs/camd
 sci-libs/ccolamd
-sci-libs/cholmod
 sci-libs/clashscore-db
 sci-libs/clblas
 sci-libs/clfft
@@ -2389,6 +2399,7 @@ sci-libs/libqalculate
 sci-libs/libsvm
 sci-libs/metis
 sci-libs/minuit
+sci-libs/netcdf
 sci-libs/nfft
 sci-libs/openblas
 sci-libs/profnet
@@ -2403,6 +2414,7 @@ sci-libs/szip
 sci-libs/udunits
 sci-libs/umfpack
 sci-mathematics/cgal
+sci-mathematics/diagrtb
 sci-mathematics/lpsolve
 sci-mathematics/rkward
 sci-mathematics/rstudio
@@ -2670,7 +2682,6 @@ virtual/perl-IPC-Cmd
 virtual/perl-JSON-PP
 virtual/perl-MIME-Base64
 virtual/perl-Math-BigInt
-virtual/perl-Math-BigRat
 virtual/perl-Module-Load
 virtual/perl-Module-Metadata
 virtual/perl-Parse-CPAN-Meta

@@ -2,6 +2,7 @@ dev-libs/c-blosc		zstd
 acct-user/git			gitea
 app-arch/bzip2			static-libs
 app-arch/unzip			-natspec
+app-arch/zstd			static-libs
 app-crypt/heimdal		-ssl
 app-crypt/pinentry		gnome-keyring
 app-crypt/qca			qt5
@@ -77,13 +78,9 @@ dev-python/matplotlib		latex traits -wxwidgets
 dev-python/mpmath		matplotlib
 dev-python/networkx		examples graphviz matplotlib numpy pyparsing scipy yaml
 dev-python/numba		-python_targets_python3_9
-dev-python/nuitka		-python_targets_python3_9
 dev-python/pynndescent		-python_targets_python3_9
 dev-python/openTSNE		-python_targets_python3_9
-dev-python/line_profiler	-python_targets_python3_9
-dev-python/pylint		-python_targets_python3_9 python_single_target_python3_8
 dev-util/Orange			-python_targets_python3_9 python_single_target_python3_8
-sci-biology/mappy		-python_targets_python3_9 python_single_target_python3_8
 dev-python/numexpr		-mkl
 dev-python/numpy		-mkl lapack
 dev-python/PyQt5		designer testlib webchannel
@@ -138,7 +135,6 @@ media-libs/gexiv2		-python
 media-libs/gst-plugins-bad	theora egl
 media-libs/gst-plugins-base	theora
 media-libs/harfbuzz		icu
-media-libs/jpeg			static-libs
 media-libs/lcms			static-libs
 media-libs/libass		enca
 media-libs/libjpeg-turbo	static-libs
@@ -201,7 +197,7 @@ sci-biology/plink		lapack
 sci-biology/rebase		-emboss
 sci-chemistry/chemtool		-kde
 sci-chemistry/gnome-chemistry-utils	gnumeric
-sci-chemistry/pymol		shaders numpy web python
+sci-chemistry/pymol		web
 sci-chemistry/vmd		msms povray
 sci-chemistry/wxmacmolplt	-flash
 sci-geosciences/mapserver	-tcl agg gdal geos proj -tiff  -php
@@ -216,6 +212,7 @@ sci-libs/geos			-php -ruby
 sci-libs/hdf5			static szip cxx -threads
 sci-libs/htslib			static-libs
 sci-libs/lapack			eselect-ldso
+sci-libs/netcdf			szip
 sci-libs/openblas		eselect-ldso
 sci-libs/plplot			latex qhull wxwidgets -truetype -python
 sci-libs/spqr			tbb
@@ -267,5 +264,3 @@ x11-libs/fltk			xft
 x11-libs/libdrm			video_cards_radeon
 x11-libs/libva			vdpau egl
 x11-libs/wxGTK			-webkit
-sci-biology/pybedtools		-python_targets_python3_9
-sci-biology/kat			-python_targets_python3_9
