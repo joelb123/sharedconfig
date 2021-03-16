@@ -5,11 +5,8 @@ media-gfx/apngdis
 media-gfx/apngopt
 media-gfx/freewrl
 media-gfx/gif2apng
-media-gfx/gif2png
-media-gfx/gphoto2
 media-gfx/imagemagick
 media-gfx/inkscape
-media-gfx/optipng
 media-gfx/springgraph
 media-gfx/termtosvg
 media-libs/exiftool
@@ -17,7 +14,6 @@ media-libs/alsa-lib
 media-libs/mesa
 media-libs/nv-codec-headers
 media-libs/qhull
-media-libs/xine-lib
 media-sound/elisa
 media-sound/mpg123
 media-video/xvattr

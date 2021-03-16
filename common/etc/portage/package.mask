@@ -11,7 +11,6 @@ dev-java/snappy:1.1
 dev-java/tomcat-servlet-api:3.1
 dev-java/tomcat-servlet-api:4.0
 =dev-java/validation-api-1.1.0-r1
-=dev-python/parso-0.8.0
 java-virtuals/servlet-api:3.1
 =media-libs/gegl-0.4.28
 x11-libs/gtksourceview:4

@@ -7,6 +7,6 @@ app-text/pdfgrep
 app-text/pdftk
 app-text/po4a
 app-text/pspdftool
+app-text/restview
 app-text/zathura
 dev-tex/latex-beamer
-dev-tex/latexmk

@@ -104,6 +104,7 @@ dev-ruby/activerecord		sqlite3
 dev-util/Orange			postgres
 dev-util/boost-build		-python
 dev-util/nvidia-cuda-toolkit	profiler
+dev-util/pycharm-professional	-bundled-jdk
 dev-util/quilt			graphviz
 dev-vcs/git			doc mozsha1 webdav highlight -perl
 gnome-base/librsvg		gtk3

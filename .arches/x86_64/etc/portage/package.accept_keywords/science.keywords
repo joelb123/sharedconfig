@@ -3,7 +3,6 @@ sci-biology/abacas
 sci-biology/abyss
 sci-biology/align_to_scf
 sci-biology/amap
-sci-biology/ANGLE-bin
 sci-biology/ApE
 sci-biology/augustus
 sci-biology/BAli-Phy
@@ -32,10 +31,10 @@ sci-biology/cutadapt
 sci-biology/cutg
 sci-biology/dagchainer
 sci-biology/deeptools
+sci-biology/deeptools-intervals
 sci-biology/dialign2
 sci-biology/diamond
 sci-biology/diya
-sci-biology/dna2pep
 sci-biology/elph
 sci-biology/erpin
 sci-biology/exonerate
@@ -92,7 +91,6 @@ sci-biology/picard
 sci-biology/pilon-bin
 sci-biology/plink
 sci-biology/poa
-sci-biology/portrait
 sci-biology/pplacer-bin
 sci-biology/prank
 sci-biology/prints
@@ -110,7 +108,6 @@ sci-biology/quorum
 sci-biology/RAILS
 sci-biology/RapMap
 sci-biology/raxml
-sci-biology/reaper
 sci-biology/rebase
 sci-biology/recon
 sci-biology/rnaview
@@ -118,7 +115,6 @@ sci-biology/samstat
 sci-biology/samtools
 sci-biology/scan_for_matches
 sci-biology/screed
-sci-biology/scythe
 sci-biology/seaview
 sci-biology/seqan
 sci-biology/seqmagick
@@ -145,7 +141,6 @@ sci-biology/YASRA
 sci-biology/yass
 sci-biology/zmsort
 sci-calculators/datamash
-sci-calculators/qalculate-gtk
 sci-chemistry/autodock
 sci-chemistry/bodr
 sci-chemistry/chemtool
@@ -177,15 +172,12 @@ sci-libs/ipp
 sci-libs/lib2bit
 sci-libs/libexcelformat
 sci-libs/libpdb++
-sci-libs/libqalculate
 sci-libs/minuit
-sci-libs/netcdf
 sci-libs/nfft
 sci-libs/openblas
 sci-libs/profnet
 sci-libs/profphd-utils
 sci-libs/pycifrw
 sci-libs/scikit-learn
-sci-libs/udunits
 sci-mathematics/rkward
 sci-mathematics/rstudio

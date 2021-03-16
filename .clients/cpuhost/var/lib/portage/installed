@@ -282,6 +282,7 @@ app-text/psutils
 app-text/qpdf
 app-text/rarian
 app-text/recode
+app-text/restview
 app-text/rman
 app-text/scrollkeeper-dtd
 app-text/sgml-common
@@ -352,8 +353,6 @@ dev-haskell/blaze-builder
 dev-haskell/blaze-html
 dev-haskell/blaze-markup
 dev-haskell/bytestring-builder
-dev-haskell/cabal
-dev-haskell/cabal-doctest
 dev-haskell/case-insensitive
 dev-haskell/cereal
 dev-haskell/citeproc
@@ -385,7 +384,6 @@ dev-haskell/exceptions
 dev-haskell/fail
 dev-haskell/file-embed
 dev-haskell/glob
-dev-haskell/haddock-library
 dev-haskell/hashable
 dev-haskell/hourglass
 dev-haskell/hslua
@@ -437,7 +435,6 @@ dev-haskell/tagged
 dev-haskell/tagsoup
 dev-haskell/temporary
 dev-haskell/texmath
-dev-haskell/text
 dev-haskell/text-conversions
 dev-haskell/text-icu
 dev-haskell/th-abstraction
@@ -543,7 +540,6 @@ dev-java/jnr-x86asm
 dev-java/jsch
 dev-java/json
 dev-java/jsr305
-dev-java/junit
 dev-java/jython
 dev-java/jzlib
 dev-java/log4j
@@ -552,7 +548,7 @@ dev-java/netty-buffer
 dev-java/netty-common
 dev-java/netty-transport
 dev-java/objenesis
-dev-java/openjdk
+dev-java/openjdk-bin
 dev-java/osgi-core-api
 dev-java/qdox
 dev-java/rhino
@@ -574,7 +570,6 @@ dev-java/xz-java
 dev-lang/R
 dev-lang/dmd
 dev-lang/erlang
-dev-lang/ghc
 dev-lang/go
 dev-lang/ldc2
 dev-lang/lua
@@ -682,7 +677,6 @@ dev-libs/libtasn1
 dev-libs/libtomcrypt
 dev-libs/libtommath
 dev-libs/libunibreak
-dev-libs/libunistring
 dev-libs/libusb
 dev-libs/libuv
 dev-libs/libverto
@@ -1016,6 +1010,7 @@ dev-python/commonmark
 dev-python/constantly
 dev-python/coverage
 dev-python/cppy
+dev-python/crashtest
 dev-python/cryptography
 dev-python/cycler
 dev-python/cython
@@ -1043,7 +1038,9 @@ dev-python/flask
 dev-python/fsspec
 dev-python/future
 dev-python/graph-tool
+dev-python/h11
 dev-python/html5lib
+dev-python/httpcore
 dev-python/httpretty
 dev-python/httpx
 dev-python/hyperlink
@@ -1116,6 +1113,7 @@ dev-python/nuitka
 dev-python/numba
 dev-python/numexpr
 dev-python/numpy
+dev-python/numpydoc
 dev-python/olefile
 dev-python/openTSNE
 dev-python/openpyxl
@@ -1138,6 +1136,7 @@ dev-python/pip-tools
 dev-python/pipenv
 dev-python/pipx
 dev-python/pkginfo
+dev-python/plotly
 dev-python/pluggy
 dev-python/ply
 dev-python/pmw
@@ -1206,6 +1205,7 @@ dev-python/regex
 dev-python/reportlab
 dev-python/requests
 dev-python/requests-toolbelt
+dev-python/retrying
 dev-python/rfc3339-validator
 dev-python/rfc3986
 dev-python/rfc3986-validator
@@ -1228,6 +1228,7 @@ dev-python/simplejson
 dev-python/sip
 dev-python/six
 dev-python/snakeoil
+dev-python/sniffio
 dev-python/snowballstemmer
 dev-python/sortedcollections
 dev-python/sortedcontainers
@@ -1264,6 +1265,7 @@ dev-python/twine
 dev-python/twisted
 dev-python/typed-ast
 dev-python/typing-extensions
+dev-python/tzlocal
 dev-python/unittest2
 dev-python/urllib3
 dev-python/userpath
@@ -1420,7 +1422,6 @@ dev-util/valgrind
 dev-util/vbindiff
 dev-util/wayland-scanner
 dev-util/yacc
-dev-vcs/git
 dev-vcs/git-lfs
 dev-vcs/hub
 dev-vcs/mercurial
@@ -1597,7 +1598,6 @@ kde-frameworks/breeze-icons
 kde-frameworks/extra-cmake-modules
 kde-frameworks/frameworkintegration
 kde-frameworks/kactivities
-kde-frameworks/kactivities-stats
 kde-frameworks/karchive
 kde-frameworks/kauth
 kde-frameworks/kbookmarks
@@ -1613,7 +1613,6 @@ kde-frameworks/kcrash
 kde-frameworks/kdbusaddons
 kde-frameworks/kdeclarative
 kde-frameworks/kded
-kde-frameworks/kdelibs4support
 kde-frameworks/kdesu
 kde-frameworks/kdnssd
 kde-frameworks/kdoctools
@@ -1623,7 +1622,6 @@ kde-frameworks/kfilemetadata
 kde-frameworks/kglobalaccel
 kde-frameworks/kguiaddons
 kde-frameworks/kholidays
-kde-frameworks/khtml
 kde-frameworks/ki18n
 kde-frameworks/kiconthemes
 kde-frameworks/kidletime
@@ -1644,10 +1642,7 @@ kde-frameworks/kpeople
 kde-frameworks/kplotting
 kde-frameworks/kpty
 kde-frameworks/kquickcharts
-kde-frameworks/kross
-kde-frameworks/krunner
 kde-frameworks/kservice
-kde-frameworks/ktexteditor
 kde-frameworks/ktextwidgets
 kde-frameworks/kunitconversion
 kde-frameworks/kwallet
@@ -1656,9 +1651,7 @@ kde-frameworks/kwidgetsaddons
 kde-frameworks/kwindowsystem
 kde-frameworks/kxmlgui
 kde-frameworks/networkmanager-qt
-kde-frameworks/plasma
 kde-frameworks/prison
-kde-frameworks/purpose
 kde-frameworks/qqc2-desktop-style
 kde-frameworks/solid
 kde-frameworks/sonnet
@@ -1797,6 +1790,7 @@ media-gfx/pdf2svg
 media-gfx/pngtoico
 media-gfx/pngtools
 media-gfx/potrace
+media-gfx/povray
 media-gfx/pqiv
 media-gfx/pstoedit
 media-gfx/qrencode
@@ -2143,7 +2137,6 @@ sci-CRAN/waldo
 sci-CRAN/withr
 sci-CRAN/xtable
 sci-astronomy/stellarium
-sci-biology/ANGLE-bin
 sci-biology/ApE
 sci-biology/BAli-Phy
 sci-biology/BlastToSam
@@ -2153,7 +2146,6 @@ sci-biology/GBrowse
 sci-biology/HTSeq
 sci-biology/KaKs_Calculator
 sci-biology/ParaAT
-sci-biology/RADtools
 sci-biology/RAILS
 sci-biology/RapMap
 sci-biology/SSAKE
@@ -2202,11 +2194,11 @@ sci-biology/cutadapt
 sci-biology/cutg
 sci-biology/dagchainer
 sci-biology/deeptools
+sci-biology/deeptools-intervals
 sci-biology/dialign2
 sci-biology/diamond
 sci-biology/discrover
 sci-biology/diya
-sci-biology/dna2pep
 sci-biology/elph
 sci-biology/epga
 sci-biology/erpin
@@ -2221,6 +2213,7 @@ sci-biology/genepop
 sci-biology/genometools
 sci-biology/gffcompare
 sci-biology/gffpandas
+sci-biology/gffread
 sci-biology/gffutils
 sci-biology/gibbs
 sci-biology/glimmer
@@ -2275,7 +2268,6 @@ sci-biology/pilercr
 sci-biology/pilon-bin
 sci-biology/plink
 sci-biology/poa
-sci-biology/portrait
 sci-biology/pplacer-bin
 sci-biology/prank
 sci-biology/prints
@@ -2293,7 +2285,6 @@ sci-biology/quicktree
 sci-biology/quorum
 sci-biology/raxml
 sci-biology/raxml-ng
-sci-biology/reaper
 sci-biology/rebase
 sci-biology/recon
 sci-biology/rnaview
@@ -2302,7 +2293,6 @@ sci-biology/samstat
 sci-biology/samtools
 sci-biology/scan_for_matches
 sci-biology/screed
-sci-biology/scythe
 sci-biology/seaview
 sci-biology/seqan
 sci-biology/seqmagick
@@ -2352,6 +2342,7 @@ sci-chemistry/moldy
 sci-chemistry/molmol
 sci-chemistry/molscript
 sci-chemistry/mopac7
+sci-chemistry/msms-bin
 sci-chemistry/mustang
 sci-chemistry/pdbcat
 sci-chemistry/pdbcns
@@ -2368,6 +2359,7 @@ sci-chemistry/surf
 sci-chemistry/theseus
 sci-chemistry/tinker
 sci-chemistry/tm-align
+sci-chemistry/vmd
 sci-electronics/electric
 sci-electronics/electronics-menu
 sci-libs/alglib
@@ -2377,6 +2369,7 @@ sci-libs/bliss
 sci-libs/btf
 sci-libs/camd
 sci-libs/ccolamd
+sci-libs/cholmod
 sci-libs/clashscore-db
 sci-libs/clblas
 sci-libs/clfft
@@ -2576,7 +2569,6 @@ sys-libs/gpm
 sys-libs/kpmcore
 sys-libs/ldb
 sys-libs/libblockdev
-sys-libs/libcap
 sys-libs/libcap-ng
 sys-libs/libomp
 sys-libs/libseccomp
