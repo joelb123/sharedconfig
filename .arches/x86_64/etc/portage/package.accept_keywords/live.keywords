@@ -6,11 +6,10 @@ sci-biology/bamtools			**
 sci-biology/biobambam2			**
 sci-biology/discrover
 sci-biology/epga			**
-sci-biology/Fastaq			**
 sci-biology/grabix			**
 sci-biology/HTSeq			**
 sci-biology/idba			**
-sci-biology/mmseqs2			**
+sci-biology/kat				**
 sci-biology/oases			**
 sci-biology/paHMM-Tree			**
 sci-biology/raxml-ng			**
@@ -20,4 +19,3 @@ sci-biology/STAR			**
 sci-biology/taxtastic			**
 sci-libs/arpack				**
 sci-libs/libmaus2			**
-#dev-perl/Bio-EnsEMBL			**

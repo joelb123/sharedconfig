@@ -55,6 +55,7 @@ dev-haskell/haddock-library
 dev-haskell/hashable
 dev-haskell/hourglass
 dev-haskell/hslua
+dev-haskell/hslua-module-path
 dev-haskell/hslua-module-system
 dev-haskell/hslua-module-text
 dev-haskell/hsyaml
@@ -62,10 +63,6 @@ dev-haskell/http
 dev-haskell/http-client
 dev-haskell/http-client-tls
 dev-haskell/http-types
-dev-haskell/hxt
-dev-haskell/hxt-charproperties
-dev-haskell/hxt-regex-xmlschema
-dev-haskell/hxt-unicode
 dev-haskell/indexed-traversable
 dev-haskell/integer-logarithms
 dev-haskell/ipynb

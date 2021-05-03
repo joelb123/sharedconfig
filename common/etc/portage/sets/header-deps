@@ -22,12 +22,16 @@ media-libs/xine-lib
 media-sound/pulseaudio
 media-video/ffmpeg
 media-video/gpac
+media-video/mplayer
 media-video/transcode
 net-analyzer/bmon
 net-analyzer/iptraf-ng
 net-analyzer/netdata
 net-dialup/ppp
+net-firewall/firewalld
+net-firewall/ipset
 net-firewall/iptables
+net-firewall/nftables
 net-fs/autofs
 net-fs/cifs-utils
 net-fs/nfs-utils
@@ -35,6 +39,7 @@ net-fs/samba
 net-im/discord-bin
 net-im/skypeforlinux
 net-libs/gupnp
+net-libs/libnftnl
 net-misc/bridge-utils
 net-misc/dhcp
 net-misc/iputils
@@ -66,6 +71,7 @@ sys-fs/lvm2
 sys-fs/ntfs3g
 sys-fs/udev
 sys-fs/udisks
+sys-kernel/dracut
 sys-libs/efivar
 sys-libs/glibc
 sys-libs/libcap

@@ -1,8 +1,6 @@
 dev-perl/Alien-Build
-dev-perl/BerkeleyDB
 dev-perl/Bio-Das
 dev-perl/Bio-Graphics
-dev-perl/CGI
 dev-perl/Clone
 dev-perl/Config-AutoConf
 dev-perl/Config-IniFiles
@@ -14,7 +12,6 @@ dev-perl/DBD-mysql
 dev-perl/Data-Compare
 dev-perl/Data-Dump
 dev-perl/Data-Uniqid
-dev-perl/Data-Utilities
 dev-perl/Date-Manip
 dev-perl/DateTime
 dev-perl/DateTime-Calendar-Julian
@@ -44,7 +41,6 @@ dev-perl/File-Which
 dev-perl/List-MoreUtils
 dev-perl/OLE-StorageLite
 dev-perl/Sub-Quote
-dev-perl/TimeDate
 dev-perl/common-sense
 dev-perl/Digest-Perl-MD5
 dev-perl/GD
@@ -52,6 +48,7 @@ dev-perl/librg-utils-perl
 dev-perl/Pod-LaTeX
 dev-perl/Tk
 dev-perl/X11-Protocol
+perl-core/Unicode-Collate
 virtual/perl-Archive-Tar
 virtual/perl-Compress-Raw-Bzip2
 virtual/perl-Compress-Raw-Zlib
@@ -74,8 +71,8 @@ virtual/perl-Storable
 virtual/perl-Sys-Syslog
 virtual/perl-Test-Simple
 virtual/perl-Time-HiRes
+virtual/perl-Unicode-Collate
 virtual/perl-Unicode-Normalize
-virtual/perl-libnet
 virtual/perl-parent
 virtual/perl-podlators
 virtual/perl-Module-Metadata

@@ -1,5 +1,6 @@
 dev-libs/c-blosc		zstd
 acct-user/git			gitea
+app-admin/sysstat		lm-sensors
 app-arch/bzip2			static-libs
 app-arch/unzip			-natspec
 app-arch/zstd			static-libs
@@ -8,12 +9,11 @@ app-crypt/pinentry		gnome-keyring
 app-crypt/qca			qt5
 app-doc/doxygen			latex
 app-editors/emacs		-alsa
+app-editors/vim			-python
 app-i18n/ibus			dconf
-app-misc/pax-utils		-python
 app-office/calligra		kdepim
 app-office/gnucash		-webkit
-app-office/gnumeric		-python
-app-office/libreoffice		-eds googledrive kde pdfimport python_single_target_python3_8 -python_single_target_python3_9
+app-office/libreoffice		-eds googledrive kde pdfimport
 app-office/lyx			latex -dia
 app-portage/eix			strong-optimization 
 app-text/evince			t1lib djvu
@@ -46,12 +46,10 @@ dev-lang/ldc2			ldc2-1_22
 dev-lang/mono			minimal
 dev-lang/perl			ithreads
 dev-lang/php			readline bcmath calendar cgi ctype curlwrappers imap mhash ming pcntl posix sharedext simplexml soap sockets sysvipc tidy tokenizer wddx xmlreader xmlrpc xmlwriter xsl pdo zip sqlite3 xslt
-dev-lang/python:3.8		pgo lto
 dev-lang/python:3.9		pgo lto
 dev-lang/scala			binary
 dev-lang/spidermonkey		threadsafe
 dev-lang/tk			-truetype
-dev-lang/yasm			-python
 dev-libs/apr-util		-sqlite sqlite3
 dev-libs/boost			context static-libs
 dev-libs/elfutils		static-libs
@@ -61,12 +59,10 @@ dev-libs/gmp			pgo cxx
 dev-libs/intel-common		-mpi
 dev-libs/libcdio		cddb
 dev-libs/libdbusmenu-qt		qt5
-dev-libs/libgamin		-python
 dev-libs/libgcrypt		static-libs
 dev-libs/libgpg-error		static-libs
 dev-libs/libpcre		pcre16 pcre32
 dev-libs/libpcre2		pcre16 pcre32
-dev-libs/libxslt		-python
 dev-libs/popt			static-libs
 dev-libs/qcustomplot		qt5
 dev-libs/xmlsec			nss
@@ -77,10 +73,6 @@ dev-perl/Type-Tiny		minimal
 dev-python/matplotlib		latex traits -wxwidgets
 dev-python/mpmath		matplotlib
 dev-python/networkx		examples graphviz matplotlib numpy pyparsing scipy yaml
-dev-python/numba		-python_targets_python3_9
-dev-python/pynndescent		-python_targets_python3_9
-dev-python/openTSNE		-python_targets_python3_9
-dev-util/Orange			-python_targets_python3_9 python_single_target_python3_8
 dev-python/numexpr		-mkl
 dev-python/numpy		-mkl lapack
 dev-python/PyQt5		designer testlib webchannel
@@ -102,26 +94,23 @@ dev-qt/qtwebengine		-system-ffmpeg widgets
 dev-qt/qtwebkit			printsupport
 dev-ruby/activerecord		sqlite3
 dev-util/Orange			postgres
-dev-util/boost-build		-python
 dev-util/nvidia-cuda-toolkit	profiler
-dev-util/pycharm-professional	-bundled-jdk
+#dev-util/pycharm-professional	-bundled-jdk
 dev-util/quilt			graphviz
 dev-vcs/git			doc mozsha1 webdav highlight -perl
 gnome-base/librsvg		gtk3
-kde-apps/cantor			-python
 kde-apps/k3b			taglib -vcd
-kde-apps/kate			-python
-kde-apps/kdegames-meta		-python
 kde-apps/krdc			-rdp vnc
 kde-apps/ktp-common-internals	otr
 kde-apps/libkexiv2		xmp
 kde-frameworks/kfilemetadata	taglib
+kde-plasma/plasma-meta		-firewall
 mail-client/thunderbird		-crypt mozdom lightning
 media-gfx/blender		-cuda collada openimageio
 media-gfx/digikam		-video -panorama
 media-gfx/exiv2			xmp
 media-gfx/freewrl		-sox
-media-gfx/gimp			gimpprint gtkhtml postscript -webkit -python
+media-gfx/gimp			postscript
 media-gfx/gmic			-ffmpeg -gimp
 media-gfx/graphviz		lasi -tcl doc postscript 
 media-gfx/imagemagick		fpx -hdri graphviz gs raw -djvu graphviz -autotrace cxx
@@ -130,9 +119,8 @@ media-gfx/povray		-tiff
 media-gfx/pqiv			postscript
 media-gfx/pstoedit		plotutils
 media-libs/babl			introspection
-media-libs/freetype		kpathsea static-libs infinality
+media-libs/freetype		kpathsea static-libs
 media-libs/gd			fontconfig
-media-libs/gexiv2		-python
 media-libs/gst-plugins-bad	theora egl
 media-libs/gst-plugins-base	theora
 media-libs/harfbuzz		icu
@@ -144,7 +132,7 @@ media-libs/libmypaint		gegl
 media-libs/libpng		apng static-libs
 media-libs/libvpx		postproc svc
 media-libs/mesa			osmesa wayland 
-media-libs/mlt			qt5 -qt4 -kde ffmpeg kdenlive melt -ruby -python
+media-libs/mlt			qt5 -qt4 -kde ffmpeg kdenlive melt -ruby
 media-libs/phonon		qt5 -vlc
 media-libs/phonon-vlc		-qt4 qt5
 media-libs/xine-lib		modplug mmap -vcd
@@ -154,11 +142,10 @@ media-plugins/gst-plugins-libav	libav
 media-plugins/gst-plugins-meta	http v4l theora
 media-sound/alsa-tools		-gtk
 media-sound/timidity++		-flac ao motif
-media-video/ffmpeg		chromium snappy theora vaapi vdpau x265 opus cuda
+media-video/ffmpeg		chromium snappy theora vaapi vdpau x265 opus
 media-video/gpac		amr javascript wxwindows
 media-video/transcode		fame network -imagemagick
 media-video/vlc			postproc
-net-analyzer/net-snmp		-python
 net-fs/autofs			-ldap -sasl
 net-fs/cifs-utils		ads
 net-fs/nfs-utils		-kerberos
@@ -166,11 +153,10 @@ net-fs/samba			automount syslog winbind
 net-im/empathy			applet
 net-im/pidgin			prediction -eds -spell 
 net-im/telepathy-connection-managers -irc 
-net-libs/farstream		-python msn
 net-libs/glib-networking	-libproxy
 net-libs/gtk-vnc		gtk3
 net-libs/liboauth		-nss
-net-libs/libproxy		-webkit -mono -python
+net-libs/libproxy		-webkit -mono
 net-libs/telepathy-qt		farstream
 net-libs/zeromq			drafts
 net-misc/curl			http2
@@ -180,7 +166,7 @@ net-misc/openssh		-ldap
 net-misc/rsync			xxhash zstd system-zlib lz4
 net-misc/tigervnc		server
 net-misc/vinagre		applet
-net-print/cups			samba gnutls -php -python
+net-print/cups			samba gnutls -php
 net-print/gutenprint		foomaticdb
 sci-biology/abyss		-mpi
 sci-biology/cluster		-X
@@ -190,7 +176,7 @@ sci-biology/GBrowse		minimal
 sci-biology/gmap		-goby
 sci-biology/hmmer		gsl
 sci-biology/mira		doc
-sci-biology/mothur		boost
+sci-biology/mothur		boost gsl
 sci-biology/ncbi-blast+		-sqlite -sqlite3 -X -berkdb -bzip2 -curl -gif -hdf5 -icu -jpeg -lzo -mysql -opengl -pcre -png -python -tiff -wxwidgets -xml -xpm -rpm static static-libs
 sci-biology/ncbi-tools++	-opengl
 sci-biology/ncbi-tools		static-libs
@@ -203,21 +189,19 @@ sci-chemistry/vmd		msms povray
 sci-chemistry/wxmacmolplt	-flash
 sci-geosciences/mapserver	-tcl agg gdal geos proj -tiff  -php
 sci-geosciences/merkaartor	gdal proj
-sci-geosciences/qgis		-python
 sci-libs/arrayfire		-graphics -examples nonfree opencl unified
 sci-libs/avogadrolibs		qt5
-sci-libs/cholmod		-cuda
 sci-libs/fftw			float
 sci-libs/gdal			geos hdf odbc -ruby -pdf
 sci-libs/geos			-php -ruby
+sci-libs/gsl			static-libs
 sci-libs/hdf5			static szip cxx -threads
+sci-libs/htscodecs		static-libs
 sci-libs/htslib			static-libs
 sci-libs/lapack			eselect-ldso
 sci-libs/netcdf			szip
 sci-libs/openblas		eselect-ldso
-sci-libs/plplot			latex qhull wxwidgets -truetype -python
 sci-libs/spqr			tbb
-sci-libs/suitesparse		-cuda
 sci-libs/umfpack		metis
 sci-mathematics/geomview	-pdf
 sci-mathematics/mathomatic	gnuplot
@@ -228,7 +212,6 @@ sci-mathematics/scilab		xcos doc
 sci-mathematics/singular	boost
 sci-visualization/gnuplot	wxwidgets latex plotutils 
 sys-apps/busybox		netboot static -nfs -pam
-sys-apps/file			-python
 sys-apps/ipmitool		-openipmi
 sys-apps/irqbalance		numa
 sys-apps/man-db			-berkdb
@@ -248,8 +231,10 @@ sys-fs/mdadm			static
 sys-fs/quota			rpc
 sys-libs/db			cxx
 sys-libs/gpm			static-libs
-sci-libs/pytorch		-mkl openblas -cuda
-sci-libs/tensorflow		-cuda
+sys-libs/libcap-ng		-python
+sci-libs/pytorch		eigen
+sys-libs/ncurses		static-libs
+sys-libs/readline		static-libs
 sys-libs/zlib			minizip static-libs
 #sys-kernel/gentoo-kernel	savedconfig
 sys-process/tini		static

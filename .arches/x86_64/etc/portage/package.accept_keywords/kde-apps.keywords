@@ -1,6 +1,6 @@
 app-cdr/dolphin-plugins-mountiso
-media-libs/kcolorpicker
-media-libs/kimageannotator
+media-sound/elisa
+sys-libs/kpmcore
 kde-apps/analitza
 kde-apps/ark
 kde-apps/artikulate
@@ -20,6 +20,7 @@ kde-apps/juk
 kde-apps/k3b
 kde-apps/kaccounts-integration
 kde-apps/kaccounts-providers
+kde-apps/kajongg
 kde-apps/kalgebra
 kde-apps/kalzium
 kde-apps/kamera
@@ -48,7 +49,6 @@ kde-apps/kdegames-meta
 kde-apps/kdegraphics-meta
 kde-apps/kdegraphics-mobipocket
 kde-apps/kdemultimedia-meta
-kde-apps/kdenetwork-filesharing
 kde-apps/kdenetwork-meta
 kde-apps/kdenlive
 kde-apps/kdeutils-meta
