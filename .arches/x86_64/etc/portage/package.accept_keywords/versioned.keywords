@@ -1,5 +1,4 @@
-dev-cpp/glibmm:2
 dev-lang/python:3.9
 sys-devel/gcc:10
 sys-devel/gcc:11
-=sys-kernel/linux-headers-5.11
+=sys-kernel/linux-headers-5.12

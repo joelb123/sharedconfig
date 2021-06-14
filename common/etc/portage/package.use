@@ -21,7 +21,7 @@ app-text/fbreader		-gtk
 app-text/ghostscript-gpl	djvu
 app-text/lcdf-typetools		kpathsea
 app-text/texlive-core		xetex
-app-text/texlive		extra graphics pstricks publishers science tex4ht
+app-text/texlive		graphics pstricks publishers science tex4ht
 app-text/xmlto			latex
 dev-cpp/eigen			c++11
 dev-db/libdbi-drivers		sqlite3
@@ -34,7 +34,6 @@ dev-java/ant			-javamail
 dev-java/ant-apache-bsf		-python
 dev-java/antlr			script
 dev-java/bsf			-python
-dev-java/httpcomponents-core	deprecated
 dev-java/icedtea-bin		-nsplugin -X -alsa -cups -gtk -webstart
 dev-java/junit			source
 dev-java/jython			doc source
@@ -95,10 +94,11 @@ dev-qt/qtwebkit			printsupport
 dev-ruby/activerecord		sqlite3
 dev-util/Orange			postgres
 dev-util/nvidia-cuda-toolkit	profiler
-#dev-util/pycharm-professional	-bundled-jdk
+dev-util/pycharm-professional	-bundled-jdk
 dev-util/quilt			graphviz
 dev-vcs/git			doc mozsha1 webdav highlight -perl
 gnome-base/librsvg		gtk3
+kde-apps/akonadi		-mysql
 kde-apps/k3b			taglib -vcd
 kde-apps/krdc			-rdp vnc
 kde-apps/ktp-common-internals	otr
@@ -109,7 +109,6 @@ mail-client/thunderbird		-crypt mozdom lightning
 media-gfx/blender		-cuda collada openimageio
 media-gfx/digikam		-video -panorama
 media-gfx/exiv2			xmp
-media-gfx/freewrl		-sox
 media-gfx/gimp			postscript
 media-gfx/gmic			-ffmpeg -gimp
 media-gfx/graphviz		lasi -tcl doc postscript 
@@ -157,6 +156,7 @@ net-libs/glib-networking	-libproxy
 net-libs/gtk-vnc		gtk3
 net-libs/liboauth		-nss
 net-libs/libproxy		-webkit -mono
+net-libs/libwebsockets		mbedtls
 net-libs/telepathy-qt		farstream
 net-libs/zeromq			drafts
 net-misc/curl			http2
@@ -232,6 +232,7 @@ sys-fs/quota			rpc
 sys-libs/db			cxx
 sys-libs/gpm			static-libs
 sys-libs/libcap-ng		-python
+sys-libs/libseccomp		static-libs
 sci-libs/pytorch		eigen
 sys-libs/ncurses		static-libs
 sys-libs/readline		static-libs

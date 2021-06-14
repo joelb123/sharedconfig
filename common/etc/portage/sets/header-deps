@@ -12,6 +12,7 @@ dev-libs/libusb
 dev-libs/rasqal
 dev-qt/qtcore
 dev-qt/qtgui
+dev-util/perf
 kde-frameworks/kfilemetadata
 media-gfx/pqiv
 media-libs/libv4l
@@ -28,18 +29,12 @@ net-analyzer/bmon
 net-analyzer/iptraf-ng
 net-analyzer/netdata
 net-dialup/ppp
-net-firewall/firewalld
-net-firewall/ipset
 net-firewall/iptables
-net-firewall/nftables
 net-fs/autofs
-net-fs/cifs-utils
 net-fs/nfs-utils
-net-fs/samba
 net-im/discord-bin
 net-im/skypeforlinux
 net-libs/gupnp
-net-libs/libnftnl
 net-misc/bridge-utils
 net-misc/dhcp
 net-misc/iputils
@@ -74,6 +69,7 @@ sys-fs/udisks
 sys-kernel/dracut
 sys-libs/efivar
 sys-libs/glibc
+sys-libs/gpm
 sys-libs/libcap
 sys-libs/libcap-ng
 sys-libs/libomp

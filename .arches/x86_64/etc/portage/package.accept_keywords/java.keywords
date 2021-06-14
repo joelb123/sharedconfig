@@ -1,7 +1,4 @@
-dev-java/openjdk-bin
 dev-java/antlr
-dev-java/brotli-dec
-dev-java/commons-compress
 dev-java/gin
 dev-java/gradle-bin
 dev-java/gwt
@@ -11,4 +8,3 @@ dev-java/json
 dev-java/jsr305
 dev-java/snappy
 dev-java/validation-api
-dev-java/zstd-jni
