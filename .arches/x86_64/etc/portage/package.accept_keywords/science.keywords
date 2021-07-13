@@ -60,6 +60,7 @@ sci-biology/kalign
 sci-biology/kallisto
 sci-biology/karect
 sci-biology/khmer
+sci-biology/kprocessor
 sci-biology/lagan
 sci-biology/last
 sci-biology/lastz
@@ -178,7 +179,6 @@ sci-libs/profnet
 sci-libs/profphd-utils
 sci-libs/pycifrw
 sci-libs/pytorch
-sci-libs/scikit-learn
 sci-libs/tensorflow
 sci-mathematics/cgal
 sci-mathematics/rkward

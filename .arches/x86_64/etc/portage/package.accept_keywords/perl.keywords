@@ -20,12 +20,8 @@ dev-perl/File-MimeInfo
 dev-perl/File-ShareDir
 dev-perl/File-Which
 dev-perl/HTTP-Message
-dev-perl/JSON
-dev-perl/Lchown
-dev-perl/Net-HTTP
 dev-perl/OLE-StorageLite
 dev-perl/Sub-Quote
-dev-perl/common-sense
 dev-perl/GD
 dev-perl/librg-utils-perl
 dev-perl/XML-Parser

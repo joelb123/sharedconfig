@@ -11,6 +11,6 @@ media-libs/babl
 media-libs/gegl
 media-libs/imlib2
 media-libs/libwebp
-media-libs/mesa
 media-libs/nv-codec-headers
+media-video/vlc
 media-video/xvattr

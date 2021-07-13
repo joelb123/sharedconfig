@@ -118,7 +118,7 @@ media-gfx/povray		-tiff
 media-gfx/pqiv			postscript
 media-gfx/pstoedit		plotutils
 media-libs/babl			introspection
-media-libs/freetype		kpathsea static-libs
+media-libs/freetype		kpathsea static-libs harfbuzz
 media-libs/gd			fontconfig
 media-libs/gst-plugins-bad	theora egl
 media-libs/gst-plugins-base	theora

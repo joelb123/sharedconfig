@@ -5,7 +5,5 @@ dev-java/tomcat-servlet-api:3.1
 dev-java/tomcat-servlet-api:4.0
 dev-java/tomcat-servlet-api:5.0
 =dev-java/validation-api-1.1.0-r1
-=dev-python/idna-3.1
-=dev-python/lunr-0.6.0
 java-virtuals/servlet-api:3.1
 =sci-libs/cholmod-3.0.14
