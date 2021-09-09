@@ -1,9 +1,6 @@
-app-text/docx2txt
-app-text/editorconfig-core-c
 app-text/ghostscript-gpl
 app-text/groonga
 app-text/html2text
-app-text/libpaper
 app-text/opensp
 app-text/pandoc
 app-text/po4a

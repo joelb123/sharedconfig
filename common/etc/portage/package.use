@@ -151,6 +151,7 @@ net-fs/nfs-utils		-kerberos
 net-fs/samba			automount syslog winbind
 net-im/empathy			applet
 net-im/pidgin			prediction -eds -spell 
+net-im/slack			suid
 net-im/telepathy-connection-managers -irc 
 net-libs/glib-networking	-libproxy
 net-libs/gtk-vnc		gtk3
@@ -179,7 +180,6 @@ sci-biology/mira		doc
 sci-biology/mothur		boost gsl
 sci-biology/ncbi-blast+		-sqlite -sqlite3 -X -berkdb -bzip2 -curl -gif -hdf5 -icu -jpeg -lzo -mysql -opengl -pcre -png -python -tiff -wxwidgets -xml -xpm -rpm static static-libs
 sci-biology/ncbi-tools++	-opengl
-sci-biology/ncbi-tools		static-libs
 sci-biology/plink		lapack
 sci-biology/rebase		-emboss
 sci-chemistry/chemtool		-kde
@@ -224,7 +224,7 @@ sys-block/parted		device-mapper
 sys-boot/grub			device-mapper mount
 sys-cluster/charm		charmproduction cmkopt static-libs
 sys-cluster/openmpi		romio
-sys-devel/gcc:10		lto pgo graphite
+sys-devel/gcc			lto pgo graphite
 sys-devel/llvm			clang gold
 sys-fs/lessfs			-lzo -crypt
 sys-fs/mdadm			static

@@ -1,5 +1,2 @@
-x11-libs/libdrm
-x11-libs/libva
 x11-libs/pango
 x11-libs/wxGTK
-x11-misc/shared-mime-info

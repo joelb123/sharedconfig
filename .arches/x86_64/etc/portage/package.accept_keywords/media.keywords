@@ -1,4 +1,6 @@
 media-fonts/stix-fonts
+media-libs/kcolorpicker
+media-libs/kimageannotator
 media-gfx/apng2gif
 media-gfx/apngdis
 media-gfx/apngopt
@@ -11,6 +13,7 @@ media-libs/babl
 media-libs/gegl
 media-libs/imlib2
 media-libs/libwebp
+media-libs/mlt
 media-libs/nv-codec-headers
 media-video/vlc
 media-video/xvattr

@@ -93,6 +93,7 @@ mail_owner = postfix
 #
 #myhostname = host.domain.tld
 #myhostname = virtual.domain.tld
+myhostname = generisbio.com
 
 # The mydomain parameter specifies the local internet domain name.
 # The default is to use $myhostname minus the first component.
@@ -100,6 +101,7 @@ mail_owner = postfix
 # parameters.
 #
 #mydomain = domain.tld
+mydomain = generisbio.com
 
 # SENDING MAIL
 # 
@@ -115,7 +117,7 @@ mail_owner = postfix
 # to recipient addresses that have no @domain part.
 #
 #myorigin = $myhostname
-#myorigin = $mydomain
+myorigin = $mydomain
 
 # RECEIVING MAIL
 
@@ -129,7 +131,7 @@ mail_owner = postfix
 #
 # Note: you need to stop/start Postfix when this parameter changes.
 #
-#inet_interfaces = all
+inet_interfaces = all
 #inet_interfaces = $myhostname
 #inet_interfaces = $myhostname, localhost
 
@@ -263,7 +265,7 @@ unknown_local_recipient_reject_code = 550
 # 
 #mynetworks_style = class
 #mynetworks_style = subnet
-#mynetworks_style = host
+mynetworks_style = host
 
 # Alternatively, you can specify the mynetworks list by hand, in
 # which case Postfix ignores the mynetworks_style setting.
@@ -432,7 +434,7 @@ unknown_local_recipient_reject_code = 550
 #
 #home_mailbox = Mailbox
 #home_mailbox = Maildir/
- 
+
 # The mail_spool_directory parameter specifies the directory where
 # UNIX-style mailboxes are kept. The default setting depends on the
 # system type.

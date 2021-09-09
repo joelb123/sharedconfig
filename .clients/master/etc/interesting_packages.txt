@@ -19,6 +19,7 @@ app-editors/emacs
 dev-python/flask
 dev-python/numpy
 dev-python/pandas
+sci-libs/openblas
 sci-libs/scipy
 sci-biology/biopython
 ncbi-tools++

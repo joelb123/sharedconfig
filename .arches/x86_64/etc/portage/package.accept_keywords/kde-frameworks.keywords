@@ -9,6 +9,7 @@ kde-frameworks/kactivities-stats
 kde-frameworks/karchive
 kde-frameworks/kauth
 kde-frameworks/kbookmarks
+kde-frameworks/kcalendarcore
 kde-frameworks/kcmutils
 kde-frameworks/kcodecs
 kde-frameworks/kcompletion
@@ -17,6 +18,7 @@ kde-frameworks/kconfigwidgets
 kde-frameworks/kcontacts
 kde-frameworks/kcoreaddons
 kde-frameworks/kcrash
+kde-frameworks/kdav
 kde-frameworks/kdbusaddons
 kde-frameworks/kdeclarative
 kde-frameworks/kded
