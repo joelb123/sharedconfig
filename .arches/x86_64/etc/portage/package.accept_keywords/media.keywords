@@ -15,5 +15,4 @@ media-libs/imlib2
 media-libs/libwebp
 media-libs/mlt
 media-libs/nv-codec-headers
-media-video/vlc
 media-video/xvattr

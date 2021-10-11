@@ -1,2 +1,3 @@
-x11-libs/pango
+x11-base/xorg-proto
+x11-drivers/xf86-input-libinput
 x11-libs/wxGTK

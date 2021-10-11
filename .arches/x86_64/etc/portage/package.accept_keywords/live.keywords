@@ -3,7 +3,6 @@ dev-python/pipx				**
 dev-python/python-louvain		**
 sci-biology/assembly-stats		**
 sci-biology/bamtools			**
-sci-biology/biobambam2			**
 sci-biology/discrover
 sci-biology/epga			**
 sci-biology/grabix			**
@@ -18,4 +17,3 @@ sci-biology/sickle			**
 sci-biology/STAR			**
 sci-biology/taxtastic			**
 sci-libs/arpack				**
-sci-libs/libmaus2			**

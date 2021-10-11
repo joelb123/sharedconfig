@@ -2,5 +2,3 @@ dev-perl/Bio-Das
 dev-perl/Bio-Graphics
 dev-perl/GD
 dev-perl/librg-utils-perl
-perl-core/Encode
-virtual/perl-Encode

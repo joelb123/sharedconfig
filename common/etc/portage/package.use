@@ -45,7 +45,7 @@ dev-lang/ldc2			ldc2-1_22
 dev-lang/mono			minimal
 dev-lang/perl			ithreads
 dev-lang/php			readline bcmath calendar cgi ctype curlwrappers imap mhash ming pcntl posix sharedext simplexml soap sockets sysvipc tidy tokenizer wddx xmlreader xmlrpc xmlwriter xsl pdo zip sqlite3 xslt
-dev-lang/python:3.9		pgo lto
+dev-lang/python			pgo lto
 dev-lang/scala			binary
 dev-lang/spidermonkey		threadsafe
 dev-lang/tk			-truetype
@@ -90,7 +90,6 @@ dev-qt/qtmultimedia		qml
 dev-qt/qtscript			scripttools
 dev-qt/qtwebchannel		qml
 dev-qt/qtwebengine		-system-ffmpeg widgets
-dev-qt/qtwebkit			printsupport
 dev-ruby/activerecord		sqlite3
 dev-util/Orange			postgres
 dev-util/nvidia-cuda-toolkit	profiler
@@ -161,6 +160,7 @@ net-libs/libwebsockets		mbedtls
 net-libs/telepathy-qt		farstream
 net-libs/zeromq			drafts
 net-misc/curl			http2
+net-misc/onedrive		ldc2-1_24
 net-misc/networkmanager		-nss gnutls -wifi -wext
 net-misc/ntp			parse-clocks
 net-misc/openssh		-ldap
@@ -176,7 +176,6 @@ sci-biology/fasttree		double-precision -cpu_flags_x86_sse3
 sci-biology/GBrowse		minimal
 sci-biology/gmap		-goby
 sci-biology/hmmer		gsl
-sci-biology/mira		doc
 sci-biology/mothur		boost gsl
 sci-biology/ncbi-blast+		-sqlite -sqlite3 -X -berkdb -bzip2 -curl -gif -hdf5 -icu -jpeg -lzo -mysql -opengl -pcre -png -python -tiff -wxwidgets -xml -xpm -rpm static static-libs
 sci-biology/ncbi-tools++	-opengl
@@ -201,7 +200,6 @@ sci-libs/htslib			static-libs
 sci-libs/lapack			eselect-ldso
 sci-libs/netcdf			szip
 sci-libs/openblas		eselect-ldso
-sci-libs/spqr			tbb
 sci-libs/umfpack		metis
 sci-mathematics/geomview	-pdf
 sci-mathematics/mathomatic	gnuplot
