@@ -1,9 +1,2 @@
-dev-java/gin
-dev-java/gradle-bin
-dev-java/gwt
 dev-java/htsjdk
-dev-java/javax-inject
-dev-java/json
-dev-java/jsr305
-dev-java/snappy
-dev-java/validation-api
+dev-java/openjdk-bin

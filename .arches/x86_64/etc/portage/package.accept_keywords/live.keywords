@@ -3,7 +3,6 @@ dev-python/pipx				**
 dev-python/python-louvain		**
 sci-biology/assembly-stats		**
 sci-biology/bamtools			**
-sci-biology/discrover
 sci-biology/epga			**
 sci-biology/grabix			**
 sci-biology/HTSeq			**

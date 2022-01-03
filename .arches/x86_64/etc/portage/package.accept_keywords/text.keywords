@@ -1,6 +1,7 @@
+app-text/asciidoc
+app-text/build-docbook-catalog
 app-text/groonga
 app-text/html2text
-app-text/opensp
 app-text/pandoc
 app-text/po4a
 app-text/pspdftool

@@ -4,6 +4,7 @@ app-arch/libarchive
 app-emulation/docker
 app-emulation/runc
 app-misc/pax-utils
+dev-db/mysql
 dev-db/postgresql
 dev-lang/mono
 dev-libs/glib
@@ -23,7 +24,6 @@ media-libs/xine-lib
 media-sound/pulseaudio
 media-video/ffmpeg
 media-video/gpac
-media-video/mplayer
 media-video/transcode
 net-analyzer/bmon
 net-analyzer/iptraf-ng
@@ -43,7 +43,6 @@ net-misc/openssh
 net-print/cups
 net-vpn/wireguard-tools
 sys-apps/baselayout
-sys-apps/busybox
 sys-apps/dbus
 sys-apps/gptfdisk
 sys-apps/iproute2
@@ -55,6 +54,7 @@ sys-apps/openrc
 sys-apps/portage
 sys-apps/pv
 sys-apps/shadow
+sys-apps/systemd-tmpfiles
 sys-apps/sysvinit
 sys-apps/util-linux
 sys-auth/elogind
@@ -82,6 +82,7 @@ sys-process/iotop
 sys-process/latencytop
 virtual/os-headers
 virtual/service-manager
+www-client/firefox-bin
 www-client/google-chrome-unstable
 x11-drivers/nvidia-drivers
 x11-drivers/xf86-input-libinput

@@ -1,10 +1,6 @@
 >app-text/docbook-sgml-dtd-3.1
 dev-java/jakarta-regexp:1.5
 dev-java/jmock:2
-dev-java/snappy:1.1
-dev-java/tomcat-servlet-api:3.1
-dev-java/tomcat-servlet-api:4.0
-dev-java/tomcat-servlet-api:5.0
-=dev-java/validation-api-1.1.0-r1
-java-virtuals/servlet-api:3.1
+=dev-python/docutils-0.18
+=dev-python/wrapt-1.13.2
 =sci-libs/cholmod-3.0.14

@@ -39,9 +39,8 @@ dev-java/junit			source
 dev-java/jython			doc source
 dev-java/swing-layout		source
 dev-java/swt			-webkit
-dev-java/validation-api		source
 dev-lang/erlang			hipe kpoll
-dev-lang/ldc2			ldc2-1_22
+dev-lang/ldc2			dmd-2_096
 dev-lang/mono			minimal
 dev-lang/perl			ithreads
 dev-lang/php			readline bcmath calendar cgi ctype curlwrappers imap mhash ming pcntl posix sharedext simplexml soap sockets sysvipc tidy tokenizer wddx xmlreader xmlrpc xmlwriter xsl pdo zip sqlite3 xslt
@@ -72,6 +71,10 @@ dev-perl/Type-Tiny		minimal
 dev-python/matplotlib		latex traits -wxwidgets
 dev-python/mpmath		matplotlib
 dev-python/networkx		examples graphviz matplotlib numpy pyparsing scipy yaml
+dev-python/numba		-python_targets_python3_10
+dev-python/openTSNE		-python_targets_python3_10
+dev-python/pynndescent		-python_targets_python3_10
+dev-util/Orange			-python_targets_python3_10 python_single_target_python3_9 -python_single_target_python3_10
 dev-python/numexpr		-mkl
 dev-python/numpy		-mkl lapack
 dev-python/PyQt5		designer testlib webchannel
@@ -140,7 +143,7 @@ media-plugins/gst-plugins-libav	libav
 media-plugins/gst-plugins-meta	http v4l theora
 media-sound/alsa-tools		-gtk
 media-sound/timidity++		-flac ao motif
-media-video/ffmpeg		chromium snappy theora vaapi vdpau x265 opus
+media-video/ffmpeg		chromium snappy theora vaapi vdpau x265 opus libdrm
 media-video/gpac		amr javascript wxwindows
 media-video/transcode		fame network -imagemagick
 media-video/vlc			postproc
@@ -160,7 +163,6 @@ net-libs/libwebsockets		mbedtls
 net-libs/telepathy-qt		farstream
 net-libs/zeromq			drafts
 net-misc/curl			http2
-net-misc/onedrive		ldc2-1_24
 net-misc/networkmanager		-nss gnutls -wifi -wext
 net-misc/ntp			parse-clocks
 net-misc/openssh		-ldap
@@ -195,7 +197,6 @@ sci-libs/gdal			geos hdf odbc -ruby -pdf
 sci-libs/geos			-php -ruby
 sci-libs/gsl			static-libs
 sci-libs/hdf5			static szip cxx -threads
-sci-libs/htscodecs		static-libs
 sci-libs/htslib			static-libs
 sci-libs/lapack			eselect-ldso
 sci-libs/netcdf			szip
@@ -216,6 +217,7 @@ sys-apps/man-db			-berkdb
 sys-apps/pciutils		-zlib
 sys-apps/portage		-rsync-verify
 sys-apps/util-linux		static-libs
+sys-apps/xdg-desktop-portal	screencast
 sys-auth/pambase		-systemd
 sys-auth/polkit-qt		qt5
 sys-block/parted		device-mapper
@@ -228,9 +230,11 @@ sys-fs/lessfs			-lzo -crypt
 sys-fs/mdadm			static
 sys-fs/quota			rpc
 sys-libs/db			cxx
+sys-libs/glibc			-clone3
 sys-libs/gpm			static-libs
 sys-libs/libcap-ng		-python
 sys-libs/libseccomp		static-libs
+sys-libs/libomp			-cuda
 sci-libs/pytorch		eigen
 sys-libs/ncurses		static-libs
 sys-libs/readline		static-libs

@@ -47,4 +47,4 @@ fi
 #echo "Emerging linux-headers"
 #emerge -1v $pretend linux-headers
 echo "Doing emerge of linux-headers dependencies."
-emerge --nodeps -1v $pretend @$setfile
+emerge --nodeps -1v --keep-going $pretend @$setfile
