@@ -140,6 +140,7 @@ app-crypt/libb2
 app-crypt/libmd
 app-crypt/libsecret
 app-crypt/mhash
+app-crypt/mit-krb5
 app-crypt/p11-kit
 app-crypt/pinentry
 app-crypt/qca
@@ -225,6 +226,7 @@ app-shells/push
 app-shells/quoter
 app-shells/tcsh
 app-text/apvlv
+app-text/asciidoc
 app-text/build-docbook-catalog
 app-text/docbook-dsssl-stylesheets
 app-text/docbook-sgml-dtd
@@ -285,6 +287,7 @@ app-text/ps2pkm
 app-text/pspdftool
 app-text/pstotext
 app-text/psutils
+app-text/qpdf
 app-text/rarian
 app-text/recode
 app-text/restview
@@ -310,13 +313,18 @@ app-vim/csv
 app-vim/gentoo-syntax
 app-vim/vim-spell-en
 dev-cpp/atkmm
+dev-cpp/cairomm
 dev-cpp/clucene
 dev-cpp/eigen
+dev-cpp/glibmm
 dev-cpp/gtest
+dev-cpp/gtkmm
 dev-cpp/libcmis
 dev-cpp/nlohmann_json
+dev-cpp/pangomm
 dev-cpp/range-v3
 dev-cpp/sparsehash
+dev-cpp/tbb
 dev-db/lmdb
 dev-db/mariadb-connector-c
 dev-db/mysql
@@ -485,23 +493,20 @@ dev-java/antlr
 dev-java/asm
 dev-java/bcel
 dev-java/bcprov
-dev-java/brotli-dec
 dev-java/bsf
 dev-java/byaccj
-dev-java/commons-compress
-dev-java/commons-jexl
+dev-java/commons-cli
 dev-java/commons-lang
 dev-java/commons-logging
 dev-java/commons-net
 dev-java/eclipse-ecj
 dev-java/hamcrest-core
 dev-java/hamcrest-generator
-dev-java/htsjdk
 dev-java/jacl
 dev-java/jakarta-oro
 dev-java/jakarta-regexp
 dev-java/java-config
-dev-java/javacc
+dev-java/java-dep-check
 dev-java/javacup
 dev-java/javatoolkit
 dev-java/jdepend
@@ -519,8 +524,6 @@ dev-java/treelayout
 dev-java/xalan
 dev-java/xalan-serializer
 dev-java/xml-commons-resolver
-dev-java/xz-java
-dev-java/zstd-jni
 dev-lang/R
 dev-lang/dmd
 dev-lang/erlang
@@ -555,6 +558,7 @@ dev-libs/boehm-gc
 dev-libs/boost
 dev-libs/c-blosc
 dev-libs/cdk
+dev-libs/cereal
 dev-libs/check
 dev-libs/concurrencykit
 dev-libs/confuse
@@ -562,6 +566,7 @@ dev-libs/cyrus-sasl
 dev-libs/dbus-glib
 dev-libs/dotconf
 dev-libs/double-conversion
+dev-libs/elfutils
 dev-libs/expat
 dev-libs/fribidi
 dev-libs/gdl
@@ -619,6 +624,7 @@ dev-libs/libpcre2
 dev-libs/libpipeline
 dev-libs/librevenge
 dev-libs/libsass
+dev-libs/libsigc++
 dev-libs/libsodium
 dev-libs/libtasn1
 dev-libs/libtomcrypt
@@ -633,7 +639,6 @@ dev-libs/libxml2
 dev-libs/libxslt
 dev-libs/libyaml
 dev-libs/lzo
-dev-libs/maloc
 dev-libs/mathjax
 dev-libs/mmtf-cpp
 dev-libs/mpc
@@ -916,6 +921,7 @@ dev-python/argon2-cffi
 dev-python/argon2-cffi-bindings
 dev-python/arrow
 dev-python/astroid
+dev-python/asttokens
 dev-python/atomicwrites
 dev-python/attrs
 dev-python/automat
@@ -963,6 +969,7 @@ dev-python/debugpy
 dev-python/decorator
 dev-python/defusedxml
 dev-python/deprecated
+dev-python/deprecation
 dev-python/distlib
 dev-python/distributed
 dev-python/distro
@@ -975,10 +982,12 @@ dev-python/docutils
 dev-python/dunamai
 dev-python/entrypoints
 dev-python/et_xmlfile
+dev-python/executing
 dev-python/feedparser
 dev-python/filelock
 dev-python/flake8
 dev-python/flask
+dev-python/flit_core
 dev-python/fonttools
 dev-python/fqdn
 dev-python/fs
@@ -1003,6 +1012,7 @@ dev-python/imagesize
 dev-python/importlib_metadata
 dev-python/incremental
 dev-python/iniconfig
+dev-python/installer
 dev-python/ipykernel
 dev-python/ipyparallel
 dev-python/ipython
@@ -1018,14 +1028,19 @@ dev-python/jinja
 dev-python/jinja2-time
 dev-python/joblib
 dev-python/jsonpointer
+dev-python/jsonschema
 dev-python/jupyter
 dev-python/jupyter_client
 dev-python/jupyter_console
 dev-python/jupyter_core
+dev-python/jupyter_packaging
+dev-python/jupyter_server
 dev-python/jupyterlab_pygments
+dev-python/keyring
 dev-python/kiwisolver
 dev-python/lastversion
 dev-python/lazy-object-proxy
+dev-python/line_profiler
 dev-python/llvmlite
 dev-python/locket
 dev-python/lockfile
@@ -1059,12 +1074,15 @@ dev-python/networkx
 dev-python/nodeenv
 dev-python/nose
 dev-python/notebook
+dev-python/nuitka
 dev-python/numba
 dev-python/numexpr
+dev-python/numpy
 dev-python/numpydoc
 dev-python/olefile
 dev-python/openTSNE
 dev-python/openpyxl
+dev-python/ordered-set
 dev-python/packaging
 dev-python/pandas
 dev-python/pandocfilters
@@ -1081,7 +1099,6 @@ dev-python/pickleshare
 dev-python/pillow
 dev-python/pip
 dev-python/pip-tools
-dev-python/pipenv
 dev-python/pipx
 dev-python/pkginfo
 dev-python/platformdirs
@@ -1098,6 +1115,7 @@ dev-python/prompt_toolkit
 dev-python/psutil
 dev-python/psycopg
 dev-python/ptyprocess
+dev-python/pure_eval
 dev-python/py
 dev-python/py-cpuinfo
 dev-python/py2bit
@@ -1154,7 +1172,9 @@ dev-python/qtconsole
 dev-python/random2
 dev-python/rdflib
 dev-python/readme_renderer
+dev-python/redis-py
 dev-python/regex
+dev-python/reportlab
 dev-python/requests
 dev-python/requests-toolbelt
 dev-python/restructuredtext-lint
@@ -1162,6 +1182,7 @@ dev-python/rfc3339-validator
 dev-python/rfc3986
 dev-python/rfc3986-validator
 dev-python/rfc3987
+dev-python/rich
 dev-python/rpy
 dev-python/scikit-build
 dev-python/scipy
@@ -1180,6 +1201,7 @@ dev-python/shellingham
 dev-python/simplejson
 dev-python/sip
 dev-python/six
+dev-python/snakeoil
 dev-python/snappy
 dev-python/sniffio
 dev-python/snowballstemmer
@@ -1194,6 +1216,7 @@ dev-python/sphinxcontrib-jsmath
 dev-python/sphinxcontrib-qthelp
 dev-python/sphinxcontrib-serializinghtml
 dev-python/ssl-fetch
+dev-python/stack_data
 dev-python/statsmodels
 dev-python/stevedore
 dev-python/strict-rfc3339
@@ -1218,6 +1241,7 @@ dev-python/twisted
 dev-python/typed-ast
 dev-python/typer
 dev-python/typer-cli
+dev-python/typing-extensions
 dev-python/tzlocal
 dev-python/ukkonen
 dev-python/uritemplate
@@ -1237,7 +1261,6 @@ dev-python/wheel
 dev-python/widgetsnbextension
 dev-python/wrapt
 dev-python/xcffib
-dev-python/xgboost
 dev-python/xlrd
 dev-python/xlsxwriter
 dev-python/xopen
@@ -1277,19 +1300,23 @@ dev-qt/qttranslations
 dev-qt/qtvirtualkeyboard
 dev-qt/qtwayland
 dev-qt/qtwebchannel
+dev-qt/qtwebengine
 dev-qt/qtwidgets
 dev-qt/qtx11extras
 dev-qt/qtxml
 dev-qt/qtxmlpatterns
 dev-ruby/bundler
+dev-ruby/did_you_mean
 dev-ruby/json
 dev-ruby/kpeg
+dev-ruby/minitest
 dev-ruby/net-telnet
 dev-ruby/power_assert
 dev-ruby/racc
 dev-ruby/rake
 dev-ruby/rdoc
 dev-ruby/rubygems
+dev-ruby/test-unit
 dev-ruby/webrick
 dev-ruby/xmlrpc
 dev-tcltk/blt
@@ -1366,12 +1393,12 @@ dev-util/tsv-utils
 dev-util/unifdef
 dev-util/valgrind
 dev-util/vbindiff
-dev-util/watchman
 dev-util/wayland-scanner
 dev-util/yacc
 dev-vcs/git
 dev-vcs/git-lfs
 dev-vcs/hub
+dev-vcs/mercurial
 dev-vcs/pre-commit
 games-board/gnuchess
 games-board/gnugo
@@ -1385,6 +1412,7 @@ gnome-extra/libgsf
 gnome-extra/polkit-gnome
 gnome-extra/yelp-xsl
 gui-libs/display-manager-init
+gui-libs/egl-gbm
 gui-libs/egl-wayland
 gui-libs/eglexternalplatform
 gui-libs/gtk
@@ -1417,6 +1445,7 @@ kde-apps/juk
 kde-apps/k3b
 kde-apps/kaccounts-integration
 kde-apps/kaccounts-providers
+kde-apps/kajongg
 kde-apps/kalarmcal
 kde-apps/kalgebra
 kde-apps/kalzium
@@ -1571,6 +1600,7 @@ kde-frameworks/attica
 kde-frameworks/baloo
 kde-frameworks/bluez-qt
 kde-frameworks/breeze-icons
+kde-frameworks/countryflags
 kde-frameworks/extra-cmake-modules
 kde-frameworks/frameworkintegration
 kde-frameworks/kactivities
@@ -1691,6 +1721,7 @@ kde-plasma/xdg-desktop-portal-kde
 kde-plasma/xembed-sni-proxy
 mail-client/mailx
 mail-client/mailx-support
+mail-client/mutt
 mail-mta/postfix
 media-fonts/dejavu
 media-fonts/encodings
@@ -1741,6 +1772,7 @@ media-fonts/urw-fonts
 media-gfx/apng2gif
 media-gfx/apngdis
 media-gfx/apngopt
+media-gfx/argyllcms
 media-gfx/crwinfo
 media-gfx/darktable
 media-gfx/exif
@@ -1864,6 +1896,7 @@ media-libs/libwebp
 media-libs/libwmf
 media-libs/libxmi
 media-libs/libzmf
+media-libs/mesa
 media-libs/mlt
 media-libs/nv-codec-headers
 media-libs/openal
@@ -1893,9 +1926,11 @@ media-sound/alsa-tools
 media-sound/alsa-utils
 media-sound/cdparanoia
 media-sound/elisa
+media-sound/fluidsynth
 media-sound/gsm
 media-sound/lame
 media-sound/mpg123
+media-sound/pulseaudio
 media-sound/sox
 media-sound/timidity++
 media-sound/timidity-freepats
@@ -2001,6 +2036,7 @@ net-misc/chrony
 net-misc/clusterssh
 net-misc/curl
 net-misc/dhcp
+net-misc/dropbox
 net-misc/iperf
 net-misc/iputils
 net-misc/keychain
@@ -2009,11 +2045,12 @@ net-misc/mobile-broadband-provider-info
 net-misc/modemmanager
 net-misc/netifrc
 net-misc/netkit-telnetd
+net-misc/networkmanager
+net-misc/openssh
 net-misc/proxytunnel
 net-misc/rsync
 net-misc/snarf
 net-misc/socat
-net-misc/tigervnc
 net-misc/wget
 net-misc/youtube-dl
 net-misc/zsync
@@ -2028,6 +2065,7 @@ net-print/gutenprint
 net-voip/telepathy-gabble
 net-vpn/tor
 net-vpn/wireguard-tools
+perl-core/CPAN
 perl-core/Encode
 perl-core/File-Temp
 perl-core/Scalar-List-Utils
@@ -2162,7 +2200,6 @@ sci-biology/clustalw
 sci-biology/clustalx
 sci-biology/codonw
 sci-biology/coral
-sci-biology/cramtools
 sci-biology/cutadapt
 sci-biology/cutg
 sci-biology/dagchainer
@@ -2219,7 +2256,6 @@ sci-biology/muscle
 sci-biology/newick-utils
 sci-biology/nrcl
 sci-biology/ntCard
-sci-biology/oases
 sci-biology/paHMM-Tree
 sci-biology/pals
 sci-biology/paml
@@ -2227,7 +2263,6 @@ sci-biology/phylip
 sci-biology/phyml
 sci-biology/piler
 sci-biology/pilercr
-sci-biology/pilon-bin
 sci-biology/poa
 sci-biology/pplacer-bin
 sci-biology/prank
@@ -2242,7 +2277,6 @@ sci-biology/pyfaidx
 sci-biology/pysam
 sci-biology/qrna
 sci-biology/quicktree
-sci-biology/quorum
 sci-biology/raxml
 sci-biology/raxml-ng
 sci-biology/rebase
@@ -2298,8 +2332,8 @@ sci-chemistry/mage
 sci-chemistry/mm-align
 sci-chemistry/moldy
 sci-chemistry/molmol
-sci-chemistry/molscript
 sci-chemistry/mopac7
+sci-chemistry/msms-bin
 sci-chemistry/mustang
 sci-chemistry/pdbcat
 sci-chemistry/pdbcns
@@ -2312,8 +2346,8 @@ sci-chemistry/raster3d
 sci-chemistry/ssp
 sci-chemistry/suitename
 sci-chemistry/surf
-sci-chemistry/tinker
 sci-chemistry/tm-align
+sci-chemistry/vmd
 sci-electronics/electric
 sci-electronics/electronics-menu
 sci-libs/alglib
@@ -2386,6 +2420,7 @@ sys-apps/groff
 sys-apps/hdparm
 sys-apps/help2man
 sys-apps/hwdata
+sys-apps/hwloc
 sys-apps/install-xattr
 sys-apps/iproute2
 sys-apps/irqbalance
@@ -2419,6 +2454,7 @@ sys-apps/sandbox
 sys-apps/sdparm
 sys-apps/sed
 sys-apps/sg3_utils
+sys-apps/shadow
 sys-apps/smartmontools
 sys-apps/systemd-tmpfiles
 sys-apps/sysvinit
@@ -2439,6 +2475,7 @@ sys-block/gparted
 sys-block/mpt-status
 sys-block/parted
 sys-block/partitionmanager
+sys-block/thin-provisioning-tools
 sys-boot/efibootmgr
 sys-boot/gnu-efi
 sys-boot/grub
@@ -2446,6 +2483,7 @@ sys-boot/os-prober
 sys-boot/syslinux
 sys-boot/unetbootin
 sys-cluster/minikube
+sys-cluster/openmpi
 sys-cluster/spark-bin
 sys-devel/autoconf
 sys-devel/autoconf-archive
@@ -2495,8 +2533,11 @@ sys-fs/udev
 sys-fs/udev-init-scripts
 sys-fs/udisks
 sys-fs/unionfs-fuse
+sys-kernel/dracut
+sys-kernel/gentoo-kernel
 sys-kernel/installkernel-gentoo
 sys-kernel/linux-firmware
+sys-kernel/linux-headers
 sys-libs/binutils-libs
 sys-libs/compiler-rt
 sys-libs/compiler-rt-sanitizers
@@ -2509,7 +2550,7 @@ sys-libs/gpm
 sys-libs/kpmcore
 sys-libs/libblockdev
 sys-libs/libcap
-sys-libs/libcap-ng
+sys-libs/libomp
 sys-libs/libseccomp
 sys-libs/libunwind
 sys-libs/libutempter
@@ -2532,6 +2573,7 @@ sys-process/latencytop
 sys-process/lsof
 sys-process/memwatch
 sys-process/numactl
+sys-process/parallel
 sys-process/prll
 sys-process/procps
 sys-process/psmisc
@@ -2548,6 +2590,7 @@ virtual/cblas
 virtual/codetools
 virtual/cron
 virtual/dev-manager
+virtual/dist-kernel
 virtual/editor
 virtual/fortran
 virtual/freedesktop-icon-theme
@@ -2579,6 +2622,7 @@ virtual/os-headers
 virtual/package-manager
 virtual/pager
 virtual/perl-Archive-Tar
+virtual/perl-CPAN
 virtual/perl-CPAN-Meta
 virtual/perl-CPAN-Meta-Requirements
 virtual/perl-CPAN-Meta-YAML
@@ -2748,6 +2792,7 @@ x11-libs/libpciaccess
 x11-libs/libva
 x11-libs/libvdpau
 x11-libs/libxcb
+x11-libs/libxcvt
 x11-libs/libxkbcommon
 x11-libs/libxkbfile
 x11-libs/libxshmfence
@@ -2778,6 +2823,9 @@ x11-misc/xkeyboard-config
 x11-misc/xlockmore
 x11-misc/xorg-cf-files
 x11-misc/xsettingsd
+x11-terms/kitty
+x11-terms/kitty-shell-integration
+x11-terms/kitty-terminfo
 x11-terms/xterm
 x11-themes/adwaita-icon-theme
 x11-themes/gnome-themes-standard

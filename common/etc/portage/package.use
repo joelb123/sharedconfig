@@ -11,6 +11,7 @@ app-doc/doxygen			latex
 app-editors/emacs		-alsa
 app-editors/vim			-python
 app-i18n/ibus			dconf
+app-misc/mime-types		nginx
 app-office/calligra		kdepim
 app-office/gnucash		-webkit
 app-office/libreoffice		-eds googledrive kde pdfimport
@@ -71,10 +72,10 @@ dev-perl/Type-Tiny		minimal
 dev-python/matplotlib		latex traits -wxwidgets
 dev-python/mpmath		matplotlib
 dev-python/networkx		examples graphviz matplotlib numpy pyparsing scipy yaml
-dev-python/numba		-python_targets_python3_10
-dev-python/openTSNE		-python_targets_python3_10
-dev-python/pynndescent		-python_targets_python3_10
-dev-util/Orange			-python_targets_python3_10 python_single_target_python3_9 -python_single_target_python3_10
+#dev-python/numba		-python_targets_python3_10
+#dev-python/openTSNE		-python_targets_python3_10
+#dev-python/pynndescent		-python_targets_python3_10
+#dev-util/Orange			-python_targets_python3_10 python_single_target_python3_9 -python_single_target_python3_10
 dev-python/numexpr		-mkl
 dev-python/numpy		-mkl lapack
 dev-python/PyQt5		designer testlib webchannel
@@ -136,6 +137,7 @@ media-libs/mesa			osmesa wayland
 media-libs/mlt			qt5 -qt4 -kde ffmpeg kdenlive melt -ruby
 media-libs/phonon		qt5 -vlc
 media-libs/phonon-vlc		-qt4 qt5
+media-libs/libsdl2		gles2
 media-libs/xine-lib		modplug mmap -vcd
 media-plugins/alsa-plugins	pulseaudio
 media-plugins/frei0r-plugins	-facedetect
@@ -186,7 +188,7 @@ sci-biology/rebase		-emboss
 sci-chemistry/chemtool		-kde
 sci-chemistry/gnome-chemistry-utils	gnumeric
 sci-chemistry/pymol		web
-sci-chemistry/vmd		msms povray
+sci-chemistry/vmd		msms povray -cuda
 sci-chemistry/wxmacmolplt	-flash
 sci-geosciences/mapserver	-tcl agg gdal geos proj -tiff  -php
 sci-geosciences/merkaartor	gdal proj
@@ -207,7 +209,6 @@ sci-mathematics/mathomatic	gnuplot
 sci-mathematics/maxima		clisp latex
 sci-mathematics/octave		-imagemagick
 sci-mathematics/pari		-emacs
-sci-mathematics/scilab		xcos doc
 sci-mathematics/singular	boost
 sci-visualization/gnuplot	wxwidgets latex plotutils 
 sys-apps/busybox		netboot static -nfs -pam

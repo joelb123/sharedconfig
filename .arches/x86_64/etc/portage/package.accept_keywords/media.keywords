@@ -2,10 +2,10 @@ media-gfx/apng2gif
 media-gfx/apngdis
 media-gfx/apngopt
 media-gfx/argyllcms
-media-gfx/feh
 media-gfx/gif2apng
 media-gfx/imagemagick
 media-gfx/imageworsener
+media-gfx/inkscape
 media-gfx/springgraph
 media-gfx/termtosvg
 media-libs/alsa-lib
@@ -16,7 +16,6 @@ media-libs/exiftool
 media-libs/gd
 media-libs/imlib2
 media-libs/libwebp
-media-libs/mesa
 media-libs/nv-codec-headers
 media-libs/x265
 media-plugins/alsa-plugins

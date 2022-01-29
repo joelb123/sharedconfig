@@ -1,6 +1,13 @@
 >app-text/docbook-sgml-dtd-3.1
+dev-cpp/cairomm:1.16
+dev-cpp/glibmm:2.68
+dev-cpp/gtkmm:4.0
+dev-cpp/pangomm:2.48
+dev-java/asm:9
 dev-java/jakarta-regexp:1.5
 dev-java/jmock:2
-=dev-python/docutils-0.18
-=dev-python/wrapt-1.13.2
+dev-libs/libsigc++:3
+=dev-python/docutils-0.18.1
+=dev-python/mistune-2.0.1
+=dev-python/setuptools-60.5.0-r1
 =sci-libs/cholmod-3.0.14

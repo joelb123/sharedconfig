@@ -24,7 +24,6 @@ sci-biology/CAT
 sci-biology/cd-hit
 sci-biology/codonw
 sci-biology/coral
-sci-biology/cramtools
 sci-biology/cutadapt
 sci-biology/cutg
 sci-biology/dagchainer
@@ -58,7 +57,6 @@ sci-biology/KaKs_Calculator
 sci-biology/kalign
 sci-biology/kallisto
 sci-biology/karect
-sci-biology/khmer
 sci-biology/kprocessor
 sci-biology/lagan
 sci-biology/last
@@ -83,8 +81,6 @@ sci-biology/paml
 sci-biology/ParaAT
 sci-biology/phylip
 sci-biology/phyml
-sci-biology/picard
-sci-biology/pilon-bin
 sci-biology/poa
 sci-biology/pplacer-bin
 sci-biology/prank
@@ -98,7 +94,6 @@ sci-biology/pyfaidx
 sci-biology/pysam
 sci-biology/qrna
 sci-biology/quicktree
-sci-biology/quorum
 sci-biology/RAILS
 sci-biology/RapMap
 sci-biology/raxml
@@ -153,7 +148,6 @@ sci-chemistry/raster3d
 sci-chemistry/ssp
 sci-chemistry/suitename
 sci-chemistry/surf
-sci-chemistry/tinker
 sci-chemistry/vmd
 sci-electronics/electric
 sci-libs/bliss

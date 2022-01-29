@@ -1,2 +1,11 @@
+gui-libs/egl-gbm
+x11-drivers/xf86-input-libinput
+x11-libs/goffice
+x11-libs/gtk+
+x11-libs/pango
 x11-libs/wxGTK
+x11-terms/kitty
+x11-terms/kitty-shell-integration
+x11-terms/kitty-terminfo
 x11-terms/xterm
+x11-themes/adwaita-icon-theme
