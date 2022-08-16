@@ -1,12 +1,12 @@
 app-portage/smart-live-rebuild		**
-dev-python/pipx				**
-dev-python/python-louvain		**
 sci-biology/assembly-stats		**
 sci-biology/bamtools			**
 sci-biology/epga			**
+sci-biology/foldseek			**
 sci-biology/grabix			**
 sci-biology/HTSeq			**
 sci-biology/idba			**
+sci-biology/mmseqs2			**
 sci-biology/paHMM-Tree			**
 sci-biology/raxml-ng			**
 sci-biology/sabre			**

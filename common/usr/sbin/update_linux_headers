@@ -37,7 +37,7 @@ set -e
 if [ "$newdeps" -eq 1 ] || [ ! -e "${setdir}/${setfile}" ]; then
   echo "Finding dependencies of linux-headers."
   tmpfile=$(mktemp /tmp/pkglist.XXX)
-  equery -q --no-color hasuse kernel_linux >>$tmpfile
+  #equery -q --no-color hasuse kernel_linux >>$tmpfile
   equery -q --no-color depends os-headers >>$tmpfile 
   equery -q --no-color depends linux-headers >>$tmpfile
   echo "# packages that directly depend upon sys-kernel/linux-headers" >${setdir}/${setfile}

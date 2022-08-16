@@ -1,6 +1,5 @@
 sci-biology/aaindex
 sci-biology/abacas
-sci-biology/abyss
 sci-biology/align_to_scf
 sci-biology/amap
 sci-biology/augustus
@@ -39,7 +38,6 @@ sci-biology/fasta
 sci-biology/fastdnaml
 sci-biology/fasttree
 sci-biology/forester
-sci-biology/GBrowse
 sci-biology/genepop
 sci-biology/genometools
 sci-biology/gffcompare
@@ -69,7 +67,6 @@ sci-biology/mavid
 sci-biology/mcl
 sci-biology/minimap2
 sci-biology/miranda
-sci-biology/mmseqs2
 sci-biology/msautil
 sci-biology/mrbayes
 sci-biology/mrfast
@@ -95,7 +92,6 @@ sci-biology/pysam
 sci-biology/qrna
 sci-biology/quicktree
 sci-biology/RAILS
-sci-biology/RapMap
 sci-biology/raxml
 sci-biology/rebase
 sci-biology/recon
@@ -103,7 +99,6 @@ sci-biology/rnaview
 sci-biology/samstat
 sci-biology/samtools
 sci-biology/scan_for_matches
-sci-biology/screed
 sci-biology/seaview
 sci-biology/seqan
 sci-biology/seqmagick
@@ -136,7 +131,6 @@ sci-chemistry/drawxtl
 sci-chemistry/dssp
 sci-chemistry/ksdssp
 sci-chemistry/mage
-sci-chemistry/mm-align
 sci-chemistry/msms-bin
 sci-chemistry/openstructure
 sci-chemistry/pdbcat
@@ -150,9 +144,16 @@ sci-chemistry/suitename
 sci-chemistry/surf
 sci-chemistry/vmd
 sci-electronics/electric
-sci-libs/bliss
+sci-libs/coinor-cgl
+sci-libs/coinor-dylp
+sci-libs/coinor-osi
+sci-libs/coinor-cbc
+sci-libs/coinor-clp
+sci-libs/coinor-utils
+sci-libs/coinor-vol
 sci-libs/htslib
 sci-libs/ipp
+sci-libs/lemon
 sci-libs/lib2bit
 sci-libs/libcifpp
 sci-libs/libexcelformat
@@ -166,4 +167,3 @@ sci-libs/profphd-utils
 sci-libs/scotch
 sci-mathematics/cgal
 sci-mathematics/rkward
-sci-mathematics/rstudio

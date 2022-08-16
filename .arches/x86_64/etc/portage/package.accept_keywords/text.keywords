@@ -1,9 +1,9 @@
 app-text/asciidoc
-app-text/build-docbook-catalog
 app-text/groonga
-app-text/html2text
+app-text/mandoc
 app-text/pandoc
 app-text/po4a
+app-text/poppler
 app-text/pspdftool
 app-text/restview
-app-text/zathura
+dev-texlive/texlive-luatex
