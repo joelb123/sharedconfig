@@ -4,4 +4,3 @@ dev-ruby/rubygems
 dev-ruby/test-unit
 dev-ruby/power_assert
 dev-ruby/did_you_mean
-dev-ruby/racc

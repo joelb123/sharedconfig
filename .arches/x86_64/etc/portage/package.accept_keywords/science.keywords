@@ -17,7 +17,6 @@ sci-biology/biopython
 sci-biology/bowtie
 sci-biology/brat_nova
 sci-biology/bwa
-sci-biology/bwa-mem2
 sci-biology/cast-bin
 sci-biology/CAT
 sci-biology/cd-hit
@@ -39,7 +38,6 @@ sci-biology/fastdnaml
 sci-biology/fasttree
 sci-biology/forester
 sci-biology/genepop
-sci-biology/genometools
 sci-biology/gffcompare
 sci-biology/gffread
 sci-biology/gffutils
@@ -49,13 +47,11 @@ sci-biology/hexamer
 sci-biology/hmmer
 sci-biology/iedera
 sci-biology/iqpnni
-sci-biology/iqtree
 sci-biology/jellyfish
 sci-biology/KaKs_Calculator
 sci-biology/kalign
 sci-biology/kallisto
 sci-biology/karect
-sci-biology/kprocessor
 sci-biology/lagan
 sci-biology/last
 sci-biology/lastz
@@ -132,7 +128,6 @@ sci-chemistry/dssp
 sci-chemistry/ksdssp
 sci-chemistry/mage
 sci-chemistry/msms-bin
-sci-chemistry/openstructure
 sci-chemistry/pdbcat
 sci-chemistry/pdbcns
 sci-chemistry/pymol
@@ -141,7 +136,6 @@ sci-chemistry/prekin
 sci-chemistry/raster3d
 sci-chemistry/ssp
 sci-chemistry/suitename
-sci-chemistry/surf
 sci-chemistry/vmd
 sci-electronics/electric
 sci-libs/coinor-cgl
@@ -151,8 +145,9 @@ sci-libs/coinor-cbc
 sci-libs/coinor-clp
 sci-libs/coinor-utils
 sci-libs/coinor-vol
+sci-libs/hdf5
 sci-libs/htslib
-sci-libs/ipp
+sci-libs/lapack
 sci-libs/lemon
 sci-libs/lib2bit
 sci-libs/libcifpp
@@ -160,6 +155,7 @@ sci-libs/libexcelformat
 sci-libs/libmaus2
 sci-libs/libpdb++
 sci-libs/minuit
+sci-libs/netcdf
 sci-libs/nfft
 sci-libs/openblas
 sci-libs/profnet
@@ -167,3 +163,4 @@ sci-libs/profphd-utils
 sci-libs/scotch
 sci-mathematics/cgal
 sci-mathematics/rkward
+sci-visualization/gnuplot

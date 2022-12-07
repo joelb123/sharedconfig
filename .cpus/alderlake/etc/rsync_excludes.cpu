@@ -1,0 +1,10 @@
+!
+/distfiles
+local/overlays/local/distfiles
+local/overlays/sequedex/distfiles
+local/arch
+local/clienttype
+local/host
+local/x86
+local/x86_64/k8
+local/x86_64/cpu

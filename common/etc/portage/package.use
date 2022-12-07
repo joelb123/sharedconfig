@@ -1,6 +1,7 @@
 dev-libs/c-blosc		zstd
 app-admin/sysstat		lm-sensors
 app-arch/bzip2			static-libs
+app-arch/rpm			lua_single_target_lua5-4
 app-arch/unzip			-natspec
 app-arch/zstd			static-libs lz4
 app-containers/docker		-cli
@@ -9,6 +10,7 @@ app-editors/emacs		-alsa
 app-misc/mime-types		nginx
 app-office/libreoffice		-eds googledrive kde pdfimport
 app-text/lcdf-typetools		kpathsea
+app-text/highlight		lua_single_target_lua5-4
 app-text/texlive-core		xetex
 app-text/texlive		graphics pstricks publishers science tex4ht
 app-text/xmlto			latex
@@ -29,10 +31,12 @@ dev-lang/spidermonkey		threadsafe
 dev-libs/boost			context static-libs numpy zstd
 dev-libs/elfutils		static-libs threads
 dev-libs/gmp			pgo cxx
-dev-libs/intel-common		-mpi
+dev-libs/libbytesize		-python
 dev-libs/libdbusmenu-qt		qt5
 dev-libs/libgcrypt		static-libs
 dev-libs/libgpg-error		static-libs
+dev-libs/libnl			-python
+dev-libs/tre			-python
 dev-libs/libpcre		pcre16 pcre32
 dev-libs/libpcre2		pcre16 pcre32
 dev-libs/popt			static-libs
@@ -40,19 +44,18 @@ dev-libs/xmlsec			nss
 dev-python/matplotlib		latex traits webagg
 dev-python/numpy		lapack
 dev-python/pyside2		webengine
-dev-python/PyQt5		designer testlib webchannel
+dev-python/PyQt5		designer testlib webchannel sql
 dev-python/QtPy			gui designer printsupport
 dev-python/scipy		sparse
 dev-python/sphinx		latex 
 dev-qt/qtcore			icu
 dev-qt/qtgui			evdev
 dev-qt/qthelp			compat
-dev-qt/qtmultimedia		qml
+dev-qt/qtmultimedia		qml gstreamer
 dev-qt/qtscript			scripttools
 dev-qt/qtwebchannel		qml
 dev-qt/qtwebengine		-system-ffmpeg widgets
 dev-ruby/activerecord		sqlite3
-dev-util/Orange			postgres
 dev-util/nvidia-cuda-toolkit	profiler
 dev-util/pycharm-professional	-bundled-jdk
 dev-util/quilt			graphviz
@@ -60,6 +63,7 @@ dev-vcs/git			doc mozsha1 webdav highlight -perl
 gnome-base/librsvg		gtk3
 kde-apps/akonadi		-mysql
 kde-apps/k3b			taglib -vcd
+kde-apps/kdenetwork-meta	telepathy dropbox
 kde-apps/krdc			-rdp vnc
 kde-apps/ktp-common-internals	otr
 kde-apps/libkexiv2		xmp
@@ -67,7 +71,7 @@ kde-frameworks/kfilemetadata	taglib
 kde-plasma/plasma-meta		-firewall
 mail-client/thunderbird		-crypt mozdom lightning
 media-gfx/blender		-cuda collada openimageio
-media-gfx/darktable		gphoto2
+media-gfx/darktable		gphoto2 lua_single_target_lua5-4
 media-gfx/digikam		-video -panorama
 media-gfx/exiv2			xmp
 media-gfx/gimp			postscript
@@ -99,10 +103,12 @@ media-libs/xine-lib		modplug mmap -vcd
 media-plugins/alsa-plugins	pulseaudio
 media-plugins/frei0r-plugins	-facedetect
 media-sound/alsa-tools		-gtk
+media-sound/elisa		-vlc gstreamer
 media-sound/timidity++		-flac ao motif
-media-video/ffmpeg		chromium snappy theora x265 opus libdrm
+media-video/ffmpeg		chromium snappy theora x265 opus libdrm libass nvenc
 media-video/transcode		fame -imagemagick postproc
 media-video/vlc			postproc
+media-video/wireplumber		lua_single_target_lua5-4
 net-fs/autofs			-ldap -sasl
 net-fs/nfs-utils		-kerberos
 net-im/slack			suid
@@ -113,7 +119,7 @@ net-libs/libwebsockets		mbedtls
 net-libs/telepathy-qt		farstream
 net-libs/zeromq			drafts
 net-misc/curl			http2
-net-misc/networkmanager		-nss gnutls -wifi -wext
+net-misc/networkmanager		-iwd -nss gnutls -wifi -wext
 net-misc/openssh		-ldap
 net-misc/rsync			xxhash zstd system-zlib lz4
 net-print/cups			samba gnutls -php
@@ -127,7 +133,7 @@ sci-biology/hmmer		gsl
 sci-biology/rebase		-emboss
 sci-chemistry/chemtool		-kde
 sci-chemistry/pymol		web
-sci-chemistry/vmd		msms povray
+sci-chemistry/vmd		msms povray -cuda
 #sci-libs/arrayfire		-graphics -examples nonfree opencl unified
 sci-libs/gsl			static-libs
 sci-libs/hdf5			static szip cxx -threads
@@ -137,7 +143,7 @@ sci-libs/linux-gpib		-tcl firmware pcmcia
 sci-libs/netcdf			szip
 sci-libs/openblas		eselect-ldso
 sci-libs/umfpack		metis
-sci-visualization/gnuplot	wxwidgets latex
+sci-visualization/gnuplot	wxwidgets latex lua_single_target_lua5-4
 sys-apps/irqbalance		numa
 sys-apps/man-db			-berkdb
 sys-apps/pciutils		-zlib
@@ -155,8 +161,7 @@ sys-fs/lessfs			-lzo -crypt
 sys-libs/db			cxx
 sys-libs/glibc			-clone3
 sys-libs/gpm			static-libs
-sys-libs/libseccomp		static-libs
-#sys-libs/libomp			-cuda
+sys-libs/libseccomp		static-libs -python
 sys-libs/ncurses		static-libs
 sys-libs/readline		static-libs
 sys-libs/zlib			minizip static-libs
@@ -169,5 +174,4 @@ x11-base/xorg-server		xvfb
 x11-drivers/nvidia-drivers	dist-kernel
 x11-libs/fltk			xft
 x11-libs/libdrm			video_cards_radeon
-x11-libs/libva			utils
 x11-libs/wxGTK			gstreamer

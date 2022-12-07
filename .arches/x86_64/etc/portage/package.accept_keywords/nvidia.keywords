@@ -1,3 +1,2 @@
 dev-util/nvidia-cuda-toolkit
 x11-drivers/nvidia-drivers
-gui-libs/egl-wayland

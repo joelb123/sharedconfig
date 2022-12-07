@@ -1,5 +1,4 @@
-#app-eselect/eselect-lua
-dev-lua/lua-md5
+#dev-lua/md5
 #dev-lua/luajson
 #dev-lua/luaBitOp
 #dev-lua/ljpeg

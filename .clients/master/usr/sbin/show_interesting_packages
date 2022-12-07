@@ -1,2 +1,3 @@
 #!/bin/bash
 cat /etc/interesting_packages.txt | xargs -n 1 eix -eF | less
+eix -F --in-overlay pybio| less

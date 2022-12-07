@@ -6,6 +6,7 @@ sci-biology/foldseek			**
 sci-biology/grabix			**
 sci-biology/HTSeq			**
 sci-biology/idba			**
+sci-biology/iqtree			**
 sci-biology/mmseqs2			**
 sci-biology/paHMM-Tree			**
 sci-biology/raxml-ng			**
@@ -13,4 +14,5 @@ sci-biology/sabre			**
 sci-biology/sickle			**
 sci-biology/STAR			**
 sci-biology/taxtastic			**
+sci-chemistry/openstructure		**
 sci-libs/arpack				**

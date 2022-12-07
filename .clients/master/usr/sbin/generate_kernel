@@ -4,5 +4,9 @@ set -e
 #genkernel --mdadm --microcode-initramfs all
 #binutils-config --linker ld.gold
 eselect kernel list
-emerge -1 @x11-module-rebuild
+#emerge -1 @x11-module-rebuild
+# firmware may have been updated
+iucode_tool -S --overwrite --write-earlyfw=/boot/early_ucode.cpio /lib/firmware/intel-ucode/*
+# grub may have been updated since last kernel, reinstall it.
+grub-install --removable --efi-directory=/boot
 grub-mkconfig -o /boot/grub/grub.cfg

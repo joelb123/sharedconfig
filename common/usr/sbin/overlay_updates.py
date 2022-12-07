@@ -71,8 +71,9 @@ for pkg in [p for p in packages if p not in config_dict[cwd]["ignore"]]:
     except ErrorReturnCode_1:
         logger.warning(f"Package {pkg} failed lastversion check")
         continue
-    except ErrorReturnCode_4:
+    except ErrorReturnCode_4 as e:
         logger.warning(f"Bad package location for {pkg}: {repo_string}")
+        print(e)
         continue
     last_version = parse(strip_nonprintables(last_version_string))
     logger.debug(f"tried {pkg} at {repo_string} last version {last_version_string}")

@@ -1,1 +1,2 @@
-dev-java/log4j-core
+dev-java/openjdk-bin:8
+dev-java/openjdk-bin:17
