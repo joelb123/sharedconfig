@@ -1,7 +1,7 @@
+app-crypt/gcr:4
 app-text/docbook-sgml-dtd:4.3
 app-text/docbook-sgml-dtd:4.5
 app-text/docbook-xml-simple-dtd:4.1.2.5
-dev-cpp/atkmm:2.36
 dev-cpp/cairomm:1.16
 dev-cpp/glibmm:2.68
 dev-cpp/gtkmm:4.0
@@ -15,6 +15,10 @@ dev-java/qdox:2
 dev-lang/lua:5.1
 dev-libs/libffi-compat:7
 dev-libs/libsigc++:3
->dev-python/cleo-1.0.0_alpha5
 >=dev-python/markdown-3.4.1
+net-libs/gssdp:1.6
+net-libs/gupnp:1.6
+net-libs/libsoup:3.0
+net-libs/webkit-gtk:4.1
+net-libs/webkit-gtk:5
 =sci-libs/cholmod-3.0.14

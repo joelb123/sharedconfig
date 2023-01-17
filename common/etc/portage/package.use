@@ -70,6 +70,7 @@ kde-apps/libkexiv2		xmp
 kde-frameworks/kfilemetadata	taglib
 kde-plasma/plasma-meta		-firewall
 mail-client/thunderbird		-crypt mozdom lightning
+mail-mta/postfix 		-berkdb
 media-gfx/blender		-cuda collada openimageio
 media-gfx/darktable		gphoto2 lua_single_target_lua5-4
 media-gfx/digikam		-video -panorama
@@ -118,7 +119,7 @@ net-libs/libproxy		-webkit -mono
 net-libs/libwebsockets		mbedtls
 net-libs/telepathy-qt		farstream
 net-libs/zeromq			drafts
-net-misc/curl			http2
+net-misc/curl			alt-svc brotli gnutls nghttp3 quiche zstd
 net-misc/networkmanager		-iwd -nss gnutls -wifi -wext
 net-misc/openssh		-ldap
 net-misc/rsync			xxhash zstd system-zlib lz4
