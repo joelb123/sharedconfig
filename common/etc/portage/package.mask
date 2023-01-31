@@ -21,4 +21,5 @@ net-libs/gupnp:1.6
 net-libs/libsoup:3.0
 net-libs/webkit-gtk:4.1
 net-libs/webkit-gtk:5
+=sci-CRAN/fs-1.6.0
 =sci-libs/cholmod-3.0.14

@@ -1,4 +1,6 @@
 app-portage/smart-live-rebuild		**
+net-libs/ngtcp2				**
+net-libs/nghttp3			**
 sci-biology/assembly-stats		**
 sci-biology/bamtools			**
 sci-biology/epga			**

@@ -1,6 +1,7 @@
 #app-text/ghostscript-gpl
 app-text/groonga
 app-text/mupdf
+#app-text/pandoc-bin
 app-text/po4a
 #app-text/poppler
 app-text/psutils

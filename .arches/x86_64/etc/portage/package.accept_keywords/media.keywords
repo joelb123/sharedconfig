@@ -10,8 +10,6 @@ media-gfx/springgraph
 media-libs/kcolorpicker
 media-libs/kimageannotator
 media-libs/lensfun
-media-libs/libglvnd
 media-libs/mesa
 media-libs/xvid
-media-sound/pulseaudio-daemon
 media-video/xvattr

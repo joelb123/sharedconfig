@@ -1,7 +1,7 @@
 dev-libs/c-blosc		zstd
 app-admin/sysstat		lm-sensors
 app-arch/bzip2			static-libs
-app-arch/rpm			lua_single_target_lua5-4
+app-arch/rpm			lua_single_target_lua5-4 -python
 app-arch/unzip			-natspec
 app-arch/zstd			static-libs lz4
 app-containers/docker		-cli
@@ -9,6 +9,7 @@ app-crypt/pinentry		gnome-keyring
 app-editors/emacs		-alsa
 app-misc/mime-types		nginx
 app-office/libreoffice		-eds googledrive kde pdfimport
+app-text/docbook-xsl-stylesheets -ruby
 app-text/lcdf-typetools		kpathsea
 app-text/highlight		lua_single_target_lua5-4
 app-text/texlive-core		xetex
@@ -115,11 +116,12 @@ net-fs/nfs-utils		-kerberos
 net-im/slack			suid
 net-im/telepathy-connection-managers -irc 
 net-libs/glib-networking	-libproxy
+net-libs/gnutls			brotli sslv2 sslv3 zstd
 net-libs/libproxy		-webkit -mono
 net-libs/libwebsockets		mbedtls
 net-libs/telepathy-qt		farstream
 net-libs/zeromq			drafts
-net-misc/curl			alt-svc brotli gnutls nghttp3 quiche zstd
+net-misc/curl			alt-svc brotli gnutls nghttp3 zstd -openssl
 net-misc/networkmanager		-iwd -nss gnutls -wifi -wext
 net-misc/openssh		-ldap
 net-misc/rsync			xxhash zstd system-zlib lz4
