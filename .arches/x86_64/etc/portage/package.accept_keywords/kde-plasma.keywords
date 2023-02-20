@@ -1,4 +1,4 @@
-#dev-libs/plasma-wayland-protocols
+dev-libs/plasma-wayland-protocols
 kde-plasma/kscreen
 kde-plasma/libkscreen
 kde-plasma/breeze
@@ -35,6 +35,7 @@ kde-plasma/plasma-meta
 kde-plasma/plasma-nm
 kde-plasma/plasma-systemmonitor
 kde-plasma/plasma-vault
+kde-plasma/plasma-welcome
 kde-plasma/plasma-workspace
 kde-plasma/plasma-workspace-wallpapers
 kde-plasma/polkit-kde-agent

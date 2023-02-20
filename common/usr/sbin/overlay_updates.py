@@ -77,5 +77,5 @@ for pkg in [p for p in packages if p not in config_dict[cwd]["ignore"]]:
         continue
     last_version = parse(strip_nonprintables(last_version_string))
     logger.debug(f"tried {pkg} at {repo_string} last version {last_version_string}")
-    if pkg_version < last_version:
+    if pkg_version < last_version and not last_version.is_postrelease:
         print(f"{pkg}\t{pkg_version}\t->\t{last_version}")

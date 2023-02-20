@@ -22,6 +22,7 @@ dev-db/unixODBC			-minimal
 dev-java/ant			-javamail -regexp
 dev-java/ant-apache-bsf		-python
 dev-java/bsf			-python
+dev-lang/ghc			-doc
 dev-java/junit			source
 dev-lang/ldc2			dmd-2_099
 dev-lang/mono			minimal
@@ -60,11 +61,11 @@ dev-ruby/activerecord		sqlite3
 dev-util/nvidia-cuda-toolkit	profiler
 dev-util/pycharm-professional	-bundled-jdk
 dev-util/quilt			graphviz
-dev-vcs/git			doc mozsha1 webdav highlight -perl
+dev-vcs/git			doc mozsha1 webdav -perl
 gnome-base/librsvg		gtk3
 kde-apps/akonadi		-mysql
 kde-apps/k3b			taglib -vcd
-kde-apps/kdenetwork-meta	telepathy dropbox
+kde-apps/kdenetwork-meta	telepathy 
 kde-apps/krdc			-rdp vnc
 kde-apps/ktp-common-internals	otr
 kde-apps/libkexiv2		xmp
@@ -80,7 +81,7 @@ media-gfx/gimp			postscript
 media-gfx/gmic			-ffmpeg -gimp
 media-gfx/graphviz		lasi -tcl doc postscript 
 media-gfx/imagemagick		fpx -hdri graphviz gs raw -djvu graphviz -autotrace cxx
-media-gfx/inkscape		postscript -spell -imagemagick fontconfig
+media-gfx/inkscape		postscript -spell -imagemagick fontconfig svg2
 media-gfx/povray		-tiff
 media-gfx/pqiv			postscript
 media-gfx/pstoedit		plotutils
@@ -111,12 +112,15 @@ media-video/ffmpeg		chromium snappy theora x265 opus libdrm libass nvenc
 media-video/transcode		fame -imagemagick postproc
 media-video/vlc			postproc
 media-video/wireplumber		lua_single_target_lua5-4
+net-analyzer/netdata		-mysql -python
+net-analyzer/net-snmp		-python
 net-fs/autofs			-ldap -sasl
 net-fs/nfs-utils		-kerberos
 net-im/slack			suid
 net-im/telepathy-connection-managers -irc 
 net-libs/glib-networking	-libproxy
 net-libs/gnutls			brotli sslv2 sslv3 zstd
+net-libs/nghttp2		hpack-tools utils
 net-libs/libproxy		-webkit -mono
 net-libs/libwebsockets		mbedtls
 net-libs/telepathy-qt		farstream

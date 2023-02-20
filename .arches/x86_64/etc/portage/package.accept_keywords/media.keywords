@@ -2,10 +2,10 @@ media-gfx/apng2gif
 media-gfx/apngopt
 media-gfx/argyllcms
 media-gfx/fontforge
-media-gfx/graphviz
+#media-gfx/graphviz
 #media-gfx/imagemagick
 media-gfx/imageworsener
-#media-gfx/inkscape
+media-gfx/inkscape
 media-gfx/springgraph
 media-libs/kcolorpicker
 media-libs/kimageannotator
