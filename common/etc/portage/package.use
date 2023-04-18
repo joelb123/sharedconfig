@@ -30,8 +30,8 @@ dev-lang/perl			ithreads
 dev-lang/python			pgo lto
 dev-lang/scala			binary
 dev-lang/spidermonkey		threadsafe
+dev-libs/apache-arrow		snappy
 dev-libs/boost			context static-libs numpy zstd
-dev-libs/elfutils		static-libs threads
 dev-libs/gmp			pgo cxx
 dev-libs/libbytesize		-python
 dev-libs/libdbusmenu-qt		qt5
@@ -43,8 +43,10 @@ dev-libs/libpcre		pcre16 pcre32
 dev-libs/libpcre2		pcre16 pcre32
 dev-libs/popt			static-libs
 dev-libs/xmlsec			nss
+dev-python/httpx		cli
 dev-python/matplotlib		latex traits webagg
 dev-python/numpy		lapack
+dev-python/pandas		full-support
 dev-python/pyside2		webengine
 dev-python/PyQt5		designer testlib webchannel sql
 dev-python/QtPy			gui designer printsupport
@@ -59,7 +61,7 @@ dev-qt/qtwebchannel		qml
 dev-qt/qtwebengine		-system-ffmpeg widgets
 dev-ruby/activerecord		sqlite3
 dev-util/nvidia-cuda-toolkit	profiler
-dev-util/pycharm-professional	-bundled-jdk
+#dev-util/pycharm-professional	-bundled-jdk
 dev-util/quilt			graphviz
 dev-vcs/git			doc mozsha1 webdav -perl
 gnome-base/librsvg		gtk3
@@ -109,6 +111,8 @@ media-sound/alsa-tools		-gtk
 media-sound/elisa		-vlc gstreamer
 media-sound/timidity++		-flac ao motif
 media-video/ffmpeg		chromium snappy theora x265 opus libdrm libass nvenc
+media-video/mediainfo		-wxwidgets
+media-video/pipewire		extra
 media-video/transcode		fame -imagemagick postproc
 media-video/vlc			postproc
 media-video/wireplumber		lua_single_target_lua5-4
@@ -124,7 +128,7 @@ net-libs/nghttp2		hpack-tools utils
 net-libs/libproxy		-webkit -mono
 net-libs/libwebsockets		mbedtls
 net-libs/telepathy-qt		farstream
-net-libs/zeromq			drafts
+#net-libs/zeromq			drafts
 net-misc/curl			alt-svc brotli gnutls nghttp3 zstd -openssl
 net-misc/networkmanager		-iwd -nss gnutls -wifi -wext
 net-misc/openssh		-ldap
@@ -150,7 +154,7 @@ sci-libs/linux-gpib		-tcl firmware pcmcia
 sci-libs/netcdf			szip
 sci-libs/openblas		eselect-ldso
 sci-libs/umfpack		metis
-sci-visualization/gnuplot	wxwidgets latex lua_single_target_lua5-4
+sci-visualization/gnuplot	latex lua_single_target_lua5-4 -wxwidgets
 sys-apps/irqbalance		numa
 sys-apps/man-db			-berkdb
 sys-apps/pciutils		-zlib

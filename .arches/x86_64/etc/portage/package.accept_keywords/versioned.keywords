@@ -1,4 +1,3 @@
 dev-lang/python:3.10
 dev-lang/python:3.11
-#sys-devel/gcc:11
-#sys-devel/gcc:12
+sys-devel/gcc:12

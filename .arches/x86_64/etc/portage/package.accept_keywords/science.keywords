@@ -126,13 +126,11 @@ sci-chemistry/chemtool
 sci-chemistry/drawxtl
 sci-chemistry/dssp
 sci-chemistry/ksdssp
-sci-chemistry/mage
 sci-chemistry/msms-bin
 sci-chemistry/pdbcat
 sci-chemistry/pdbcns
 sci-chemistry/pymol
 sci-chemistry/pymol-plugins-psico
-sci-chemistry/prekin
 sci-chemistry/ssp
 sci-chemistry/suitename
 sci-chemistry/vmd
@@ -144,9 +142,9 @@ sci-libs/coinor-cbc
 sci-libs/coinor-clp
 sci-libs/coinor-utils
 sci-libs/coinor-vol
-sci-libs/hdf5
+#sci-libs/hdf5
 sci-libs/htslib
-sci-libs/lapack
+#sci-libs/lapack
 sci-libs/lemon
 sci-libs/lib2bit
 sci-libs/libcifpp
@@ -154,11 +152,8 @@ sci-libs/libexcelformat
 sci-libs/libmaus2
 sci-libs/libpdb++
 sci-libs/minuit
-sci-libs/netcdf
 sci-libs/nfft
-sci-libs/openblas
 sci-libs/profnet
 sci-libs/profphd-utils
-sci-libs/scotch
 sci-mathematics/rkward
 sci-visualization/gnuplot

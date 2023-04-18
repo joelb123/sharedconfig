@@ -9,6 +9,7 @@ acct-group/dialout
 acct-group/disk
 acct-group/dnscrypt-proxy
 acct-group/docker
+acct-group/floppy
 acct-group/groonga
 acct-group/input
 acct-group/kmem
@@ -26,6 +27,7 @@ acct-group/netdata
 acct-group/nginx
 acct-group/nobody
 acct-group/ntp
+acct-group/pipewire
 acct-group/plugdev
 acct-group/polkitd
 acct-group/portage
@@ -41,6 +43,7 @@ acct-group/sshd
 acct-group/tape
 acct-group/tor
 acct-group/tty
+acct-group/usb
 acct-group/utmp
 acct-group/video
 acct-user/cron
@@ -124,7 +127,6 @@ app-arch/xz-utils
 app-arch/zip
 app-arch/zopfli
 app-arch/zstd
-app-backup/rsnapshot
 app-benchmarks/i7z
 app-benchmarks/iozone
 app-benchmarks/nbench
@@ -165,9 +167,14 @@ app-editors/vim
 app-editors/vim-core
 app-emacs/autoconf-mode
 app-emacs/csv-mode
+app-emacs/dash
+app-emacs/ebuild-mode
 app-emacs/emacs-common
+app-emacs/epl
 app-emacs/eselect-mode
 app-emacs/ess
+app-emacs/flycheck
+app-emacs/pkg-info
 app-emacs/po-mode
 app-emacs/python-mode
 app-eselect/eselect-blas
@@ -192,7 +199,6 @@ app-eselect/eselect-ruby
 app-eselect/eselect-rust
 app-eselect/eselect-timidity
 app-eselect/eselect-vi
-app-eselect/eselect-wxwidgets
 app-i18n/translate-shell
 app-misc/ca-certificates
 app-misc/colordiff
@@ -241,13 +247,11 @@ app-text/dos2unix
 app-text/dvipng
 app-text/dvipsk
 app-text/editorconfig-core-c
-app-text/enchant
 app-text/epstool
 app-text/fbreader
 app-text/flpsed
 app-text/ghostscript-gpl
 app-text/groonga
-app-text/gspell
 app-text/html2text
 app-text/hunspell
 app-text/iso-codes
@@ -330,6 +334,7 @@ dev-cpp/range-v3
 dev-cpp/rapidfuzz-cpp
 dev-cpp/sparsehash
 dev-cpp/taskflow
+dev-cpp/xsimd
 dev-cpp/yaml-cpp
 dev-db/lmdb
 dev-db/mariadb-connector-c
@@ -478,6 +483,7 @@ dev-lang/tk
 dev-lang/vala
 dev-lang/yaggo
 dev-lang/yasm
+dev-libs/apache-arrow
 dev-libs/appstream-glib
 dev-libs/argtable
 dev-libs/atk
@@ -560,6 +566,7 @@ dev-libs/libtommath
 dev-libs/libunibreak
 dev-libs/libunistring
 dev-libs/libusb
+dev-libs/libutf8proc
 dev-libs/libuv
 dev-libs/libverto
 dev-libs/libx86emu
@@ -592,6 +599,7 @@ dev-libs/rasqal
 dev-libs/re2
 dev-libs/redland
 dev-libs/rinutils
+dev-libs/thrift
 dev-libs/tinyxml2
 dev-libs/tre
 dev-libs/tree-sitter
@@ -704,7 +712,6 @@ dev-perl/IPC-Run3
 dev-perl/IPC-System-Simple
 dev-perl/LWP-MediaTypes
 dev-perl/LWP-Protocol-https
-dev-perl/Lchown
 dev-perl/Lingua-Translit
 dev-perl/List-AllUtils
 dev-perl/List-MoreUtils
@@ -841,7 +848,6 @@ dev-python/argon2-cffi-bindings
 dev-python/arrow
 dev-python/astroid
 dev-python/asttokens
-dev-python/async-timeout
 dev-python/attrdict3
 dev-python/attrs
 dev-python/autocommand
@@ -858,14 +864,16 @@ dev-python/bleach
 dev-python/blinker
 dev-python/blosc
 dev-python/bokeh
+dev-python/boolean-py
 dev-python/botocore
 dev-python/bottleneck
 dev-python/brotlicffi
+dev-python/build
 dev-python/cachecontrol
 dev-python/cachetools
-dev-python/cachy
 dev-python/cairocffi
 dev-python/calver
+dev-python/cerberus
 dev-python/certifi
 dev-python/cffi
 dev-python/cfgv
@@ -876,6 +884,7 @@ dev-python/click
 dev-python/click-plugins
 dev-python/cloudpickle
 dev-python/colorama
+dev-python/colorlog
 dev-python/comm
 dev-python/constantly
 dev-python/contourpy
@@ -904,16 +913,16 @@ dev-python/ensurepip-pip
 dev-python/ensurepip-setuptools
 dev-python/ensurepip-wheels
 dev-python/entrypoints
-dev-python/exceptiongroup
+dev-python/et_xmlfile
 dev-python/executing
 dev-python/fastjsonschema
 dev-python/feedparser
 dev-python/filelock
+dev-python/findpython
 dev-python/flake8
 dev-python/flask
 dev-python/flit
 dev-python/flit_core
-dev-python/flit_scm
 dev-python/fonttools
 dev-python/fqdn
 dev-python/fs
@@ -966,19 +975,20 @@ dev-python/jmespath
 dev-python/jsonpointer
 dev-python/jsonschema
 dev-python/jupyter
+dev-python/jupyter-client
+dev-python/jupyter-core
+dev-python/jupyter-server
 dev-python/jupyter-server-terminals
-dev-python/jupyter_client
 dev-python/jupyter_console
-dev-python/jupyter_core
 dev-python/jupyter_events
 dev-python/jupyter_packaging
-dev-python/jupyter_server
 dev-python/jupyterlab_pygments
 dev-python/keyring
 dev-python/kiwisolver
 dev-python/lark
 dev-python/lastversion
 dev-python/lazy-object-proxy
+dev-python/license-expression
 dev-python/line_profiler
 dev-python/linkify-it-py
 dev-python/locket
@@ -1003,6 +1013,7 @@ dev-python/mpmath
 dev-python/msgpack
 dev-python/mypy
 dev-python/mypy_extensions
+dev-python/nbclassic
 dev-python/nbclient
 dev-python/nbconvert
 dev-python/nbformat
@@ -1012,11 +1023,13 @@ dev-python/networkx
 dev-python/nodeenv
 dev-python/nose
 dev-python/notebook
+dev-python/notebook_shim
 dev-python/nspektr
 dev-python/numexpr
 dev-python/numpy
 dev-python/numpydoc
 dev-python/olefile
+dev-python/openpyxl
 dev-python/ordered-set
 dev-python/packaging
 dev-python/pandas
@@ -1027,6 +1040,9 @@ dev-python/path
 dev-python/pathspec
 dev-python/patsy
 dev-python/pbr
+dev-python/pdm
+dev-python/pdm-backend
+dev-python/pdm-pep517
 dev-python/pexpect
 dev-python/pickleshare
 dev-python/pillow
@@ -1044,13 +1060,14 @@ dev-python/poetry-core
 dev-python/poetry-plugin-export
 dev-python/pooch
 dev-python/prometheus_client
-dev-python/prompt_toolkit
+dev-python/prompt-toolkit
 dev-python/psutil
 dev-python/ptyprocess
 dev-python/pure_eval
 dev-python/py-cpuinfo
 dev-python/py2bit
 dev-python/pyBigWig
+dev-python/pyarrow
 dev-python/pyasn1
 dev-python/pyasn1-modules
 dev-python/pybind11
@@ -1059,7 +1076,6 @@ dev-python/pycodestyle
 dev-python/pycparser
 dev-python/pycryptodome
 dev-python/pycups
-dev-python/pycurl
 dev-python/pydantic
 dev-python/pydevd
 dev-python/pydocstyle
@@ -1075,6 +1091,7 @@ dev-python/pyopengl
 dev-python/pyopenssl
 dev-python/pyparsing
 dev-python/pyproject-api
+dev-python/pyproject-hooks
 dev-python/pyproject-metadata
 dev-python/pypy3
 dev-python/pypy3-exe-bin
@@ -1083,8 +1100,8 @@ dev-python/pysol_cards
 dev-python/pytables
 dev-python/pytest
 dev-python/python-dateutil
+dev-python/python-dotenv
 dev-python/python-json-logger
-dev-python/python-memcached
 dev-python/python-slugify
 dev-python/python-snappy
 dev-python/pythran
@@ -1106,6 +1123,7 @@ dev-python/reportlab
 dev-python/requests
 dev-python/requests-toolbelt
 dev-python/requests_download
+dev-python/resolvelib
 dev-python/restructuredtext-lint
 dev-python/rfc3339-validator
 dev-python/rfc3986
@@ -1125,7 +1143,7 @@ dev-python/service_identity
 dev-python/setproctitle
 dev-python/setuptools
 dev-python/setuptools-rust
-dev-python/setuptools_scm
+dev-python/setuptools-scm
 dev-python/sgmllib3k
 dev-python/sh
 dev-python/shellingham
@@ -1144,6 +1162,7 @@ dev-python/sphinxcontrib-htmlhelp
 dev-python/sphinxcontrib-jsmath
 dev-python/sphinxcontrib-qthelp
 dev-python/sphinxcontrib-serializinghtml
+dev-python/sqlalchemy
 dev-python/stack_data
 dev-python/statsmodels
 dev-python/stevedore
@@ -1175,9 +1194,12 @@ dev-python/typing-extensions
 dev-python/tzlocal
 dev-python/uc-micro-py
 dev-python/ukkonen
+dev-python/unearth
 dev-python/uri_template
 dev-python/urllib3
 dev-python/userpath
+dev-python/validate-pyproject
+dev-python/versioneer
 dev-python/virtualenv
 dev-python/virtualenv-clone
 dev-python/virtualenvwrapper
@@ -1190,9 +1212,11 @@ dev-python/werkzeug
 dev-python/wheel
 dev-python/widgetsnbextension
 dev-python/wrapt
-dev-python/wxpython
+dev-python/xarray
 dev-python/xcffib
 dev-python/xlrd
+dev-python/xlsxwriter
+dev-python/xlwt
 dev-python/xopen
 dev-python/zconfig
 dev-python/zeroconf
@@ -1303,6 +1327,7 @@ dev-util/gtk-update-icon-cache
 dev-util/indent
 dev-util/intltool
 dev-util/itstool
+dev-util/maturin
 dev-util/mdds
 dev-util/memprof
 dev-util/meson
@@ -1318,6 +1343,7 @@ dev-util/pkgconf
 dev-util/pycharm-professional
 dev-util/ragel
 dev-util/re2c
+dev-util/ruff
 dev-util/scons
 dev-util/tsv-utils
 dev-util/unifdef
@@ -1334,7 +1360,6 @@ games-board/gnuchess
 games-board/gnugo
 games-engines/box2d
 gnome-base/dconf
-gnome-base/gconf
 gnome-base/gnome-keyring
 gnome-base/gsettings-desktop-schemas
 gnome-base/libglade
@@ -1347,8 +1372,6 @@ gui-libs/egl-gbm
 gui-libs/egl-wayland
 gui-libs/eglexternalplatform
 gui-libs/gtk
-gui-libs/libwpe
-gui-libs/wpebackend-fdo
 kde-apps/akonadi
 kde-apps/akonadi-calendar
 kde-apps/akonadi-contacts
@@ -1810,7 +1833,6 @@ media-libs/speexdsp
 media-libs/taglib
 media-libs/tiff
 media-libs/webrtc-audio-processing
-media-libs/woff2
 media-libs/x264
 media-libs/x265
 media-libs/xine-lib
@@ -1819,7 +1841,6 @@ media-libs/zxing-cpp
 media-plugins/alsa-plugins
 media-plugins/frei0r-plugins
 media-plugins/gst-plugins-libnice
-media-plugins/gst-plugins-opus
 media-plugins/gst-plugins-srtp
 media-sound/alsa-utils
 media-sound/cdparanoia
@@ -1883,6 +1904,7 @@ net-libs/accounts-qt
 net-libs/farstream
 net-libs/glib-networking
 net-libs/gnutls
+net-libs/grpc
 net-libs/gssdp
 net-libs/gupnp
 net-libs/gupnp-igd
@@ -1924,7 +1946,6 @@ net-libs/telepathy-farstream
 net-libs/telepathy-glib
 net-libs/telepathy-logger-qt
 net-libs/telepathy-qt
-net-libs/webkit-gtk
 net-libs/zeromq
 net-mail/mailbase
 net-mail/ripmime
@@ -2169,7 +2190,6 @@ sci-biology/t-coffee
 sci-biology/taxtastic
 sci-biology/tigr-foundation-libs
 sci-biology/tree-puzzle
-sci-biology/treeviewx
 sci-biology/trimmomatic
 sci-biology/trnascan-se
 sci-biology/unafold
@@ -2196,7 +2216,6 @@ sci-chemistry/dssp
 sci-chemistry/easychem
 sci-chemistry/gperiodic
 sci-chemistry/ksdssp
-sci-chemistry/mage
 sci-chemistry/moldy
 sci-chemistry/molmol
 sci-chemistry/mopac7
@@ -2205,7 +2224,6 @@ sci-chemistry/mustang
 sci-chemistry/openstructure
 sci-chemistry/pdbcat
 sci-chemistry/pdbcns
-sci-chemistry/prekin
 sci-chemistry/probe
 sci-chemistry/procheck
 sci-chemistry/pymol
@@ -2275,7 +2293,6 @@ sys-apps/acl
 sys-apps/attr
 sys-apps/baselayout
 sys-apps/baselayout-java
-sys-apps/bubblewrap
 sys-apps/coreutils
 sys-apps/dbus
 sys-apps/debianutils
@@ -2336,7 +2353,6 @@ sys-apps/sysvinit
 sys-apps/texinfo
 sys-apps/util-linux
 sys-apps/which
-sys-apps/xdg-dbus-proxy
 sys-apps/xdg-desktop-portal
 sys-apps/xinetd
 sys-auth/elogind
@@ -2385,7 +2401,6 @@ sys-devel/llvmgold
 sys-devel/m4
 sys-devel/make
 sys-devel/patch
-sys-devel/ucpp
 sys-firmware/intel-microcode
 sys-fs/avfs
 sys-fs/cachefilesd
@@ -2641,7 +2656,6 @@ x11-libs/libxshmfence
 x11-libs/motif
 x11-libs/pango
 x11-libs/pixman
-x11-libs/wxGTK
 x11-libs/xcb-util
 x11-libs/xcb-util-cursor
 x11-libs/xcb-util-image

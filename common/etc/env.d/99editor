@@ -1,5 +1,5 @@
 # Configuration file for eselect
 # This file has been automatically generated.
-EDITOR="/usr/bin/vi"
+EDITOR="vi"
 BROWSER="/usr/bin/firefox-bin"
 VISUAL="/usr/bin/vi"
