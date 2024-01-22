@@ -1,8 +1,5 @@
-dev-lang/ruby
+#dev-lang/ruby
 dev-ruby/bundler
-dev-ruby/did_you_mean
-dev-ruby/rbs
-dev-ruby/rdoc
 dev-ruby/rubygems
 dev-ruby/stringio
 virtual/ruby-ssl

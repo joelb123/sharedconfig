@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import os
 import sys
+import tomllib
 from pathlib import Path
 
-import toml
 from loguru import logger
 from packaging.version import Version, parse
 from sh import ErrorReturnCode_1, ErrorReturnCode_4, eix, lastversion
@@ -28,7 +28,7 @@ logger.add(sys.stderr, level="INFO", colorize=True)
 if not CONFIG_PATH.exists():
     logger.error(f"Error-config file {CONFIG_PATH} not found")
     sys.exit(1)
-config_dict = toml.loads(CONFIG_PATH.read_text())
+config_dict = tomllib.loads(CONFIG_PATH.read_text())
 cwd = str(Path(".").resolve())
 if cwd not in config_dict:
     logger.error(f"Directory {cwd} not found in {CONFIG_PATH}")
