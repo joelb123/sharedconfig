@@ -24,6 +24,7 @@ sci-biology/codonw
 sci-biology/coral
 sci-biology/cutadapt
 sci-biology/cutg
+sci-biology/cytoscape-bin
 sci-biology/dagchainer
 sci-biology/dashing2
 sci-biology/deeptools
@@ -36,6 +37,7 @@ sci-biology/erpin
 sci-biology/exonerate
 sci-biology/Fastaq
 sci-biology/fasta
+sci-biology/fastp
 sci-biology/fastdnaml
 sci-biology/fasttree
 sci-biology/forester
@@ -49,6 +51,7 @@ sci-biology/hexamer
 sci-biology/hmmer
 sci-biology/iedera
 sci-biology/iqpnni
+sci-biology/jalview-bin
 sci-biology/jellyfish
 sci-biology/KaKs_Calculator
 sci-biology/kalign
@@ -65,6 +68,7 @@ sci-biology/mavid
 sci-biology/mcl
 sci-biology/minimap2
 sci-biology/miranda
+sci-biology/muscle
 sci-biology/msautil
 sci-biology/mrbayes
 sci-biology/mrfast
@@ -130,6 +134,7 @@ sci-chemistry/drawxtl
 sci-chemistry/dssp
 sci-chemistry/ksdssp
 sci-chemistry/gemmi
+#sci-chemistry/gromacs
 sci-chemistry/modeller
 sci-chemistry/msms-bin
 sci-chemistry/pdbcat
@@ -142,6 +147,7 @@ sci-chemistry/suitename
 sci-chemistry/theseus
 sci-chemistry/vmd
 sci-electronics/electric
+sci-geosciences/xyzservices
 sci-libs/blaze
 sci-libs/coinor-cgl
 sci-libs/coinor-dylp
@@ -169,7 +175,7 @@ sci-libs/profnet
 sci-libs/profphd-utils
 sci-libs/rdkit
 sci-libs/sketch
-sci-mathematics/cgal
+#sci-mathematics/cgal
 sci-mathematics/diagrtb
 sci-mathematics/rkward
-sci-visualization/gnuplot
+#sci-visualization/gnuplot

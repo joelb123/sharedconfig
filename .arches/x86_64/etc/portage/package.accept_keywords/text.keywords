@@ -4,11 +4,12 @@ app-text/groonga
 app-text/html2text
 app-text/hunspell
 app-text/lcdf-typetools
-app-text/pandoc-bin
+#app-text/libetonyek
+#app-text/pandoc-bin
 app-text/po4a
-app-text/poppler
+#app-text/poppler
 app-text/pspdftool
 app-text/qpdf
 #app-text/texlive-core
 app-text/xmlstarlet
-app-text/zathura
+#app-text/zathura

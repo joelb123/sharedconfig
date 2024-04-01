@@ -143,7 +143,7 @@ net-libs/telepathy-qt		farstream
 #net-libs/zeromq			drafts
 net-misc/curl			alt-svc brotli gnutls nghttp3 zstd -openssl
 net-misc/networkmanager		-iwd -nss gnutls -wifi -wext lto
-net-misc/openssh		-ldap
+net-misc/openssh		-ldap security-key
 net-misc/rsync			xxhash zstd system-zlib lz4
 net-print/cups			samba gnutls -php
 net-print/gutenprint		foomaticdb
@@ -156,7 +156,7 @@ sci-biology/hmmer		gsl
 sci-biology/rebase		-emboss
 sci-chemistry/chemtool		-kde
 sci-chemistry/pymol		web
-sci-chemistry/vmd		msms povray cuda
+sci-chemistry/vmd		msms povray -cuda
 sci-libs/arpack			icbexmm
 #sci-libs/arrayfire		-graphics -examples nonfree opencl unified
 sci-libs/cholmod		-cuda
@@ -183,10 +183,12 @@ sys-auth/polkit-qt		qt5
 sys-block/parted		device-mapper
 sys-boot/grub			device-mapper mount
 sys-devel/binutils		pgo gprofng
+sys-devel/gcc:12		-cet
 sys-devel/gcc:13		lto pgo graphite
 sys-devel/llvm			clang gold
 sys-fs/e2fsprogs		fuse
 sys-fs/lessfs			-lzo -crypt
+sys-kernel/installkernel	dracut grub
 sys-libs/db			cxx
 sys-libs/glibc			-clone3
 sys-libs/gpm			static-libs

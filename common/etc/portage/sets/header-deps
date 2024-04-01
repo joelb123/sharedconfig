@@ -3,7 +3,7 @@ dev-libs/libbsd
 dev-libs/libusb
 dev-qt/qtgui
 dev-qt/qtmultimedia
-kde-frameworks/kwayland
+kde-plasma/kwayland
 media-libs/openal
 media-libs/xine-lib
 media-video/ffmpeg
