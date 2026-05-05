@@ -1,6 +1,8 @@
 #dev-libs/kweathercore
 kde-misc/kdeconnect
 kde-misc/kio-gdrive
+#kde-misc/kio-gdrive-common
+#kde-misc/kio-fuse
 kde-misc/kclock
 kde-misc/kweather
 kde-misc/markdownpart

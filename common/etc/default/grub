@@ -54,3 +54,4 @@ GRUB_DISTRIBUTOR="Gentoo"
 
 # Uncomment to disable generation of recovery mode menu entries
 #GRUB_DISABLE_RECOVERY=true
+GRUB_DISABLE_OS_PROBER=false

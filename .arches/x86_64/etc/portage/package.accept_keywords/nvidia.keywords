@@ -1,2 +1,5 @@
+app-containers/nvidia-container-toolkit
 dev-util/nvidia-cuda-toolkit
-#x11-drivers/nvidia-drivers
+media-libs/nv-codec-headers
+sys-libs/libnvidia-container
+x11-drivers/nvidia-drivers

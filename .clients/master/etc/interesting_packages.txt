@@ -23,9 +23,8 @@ dev-libs/apache-arrow
 dev-python/pyarrow
 sci-libs/openblas
 dev-python/scipy
+dev-python/statsmodels
 sci-biology/biopython
 ncbi-tools++
 matplotlib
 networkx
-dev-lang/R
-sci-mathematics/rstudio

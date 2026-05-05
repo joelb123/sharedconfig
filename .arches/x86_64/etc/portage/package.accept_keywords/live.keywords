@@ -2,9 +2,8 @@ app-portage/smart-live-rebuild		**
 sci-biology/assembly-stats		**
 sci-biology/bamtools			**
 sci-biology/foldseek			**
-sci-biology/iqtree			**
 sci-biology/mmseqs2			**
 sci-biology/paHMM-Tree			**
-sci-biology/raxml-ng			**
+#sci-biology/raxml-ng			**
 sci-biology/taxtastic			**
 sci-chemistry/openstructure		**

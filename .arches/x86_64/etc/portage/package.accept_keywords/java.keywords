@@ -1,2 +1,6 @@
-#dev-java/openjdk-bin:8
-#dev-java/openjdk-bin:17
+#virtual/jre
+#virtual/jdk
+#dev-java/bnd-annotation
+#dev-java/java-config
+#dev-java/javatoolkit
+#dev-java/openjdk-bin

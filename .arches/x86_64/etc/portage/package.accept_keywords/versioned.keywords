@@ -1,4 +1,7 @@
-#dev-lang/python:3.11
-#dev-lang/python:3.12
-#sys-devel/gcc:12
-#sys-devel/gcc:13
+dev-lang/python:3.13
+dev-lang/python:3.14
+#dev-python/python-tests:3.13
+#sys-devel/gcc:14
+#sys-devel/gcc:15
+sys-devel/gcc:16
+
